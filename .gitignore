@@ -5,8 +5,6 @@
 .idea/
 
 # Misc
-*/target/
-*/bin/
-!.mvn/wrapper/maven-wrapper.jar
+target/
 *.orig
 *.log
