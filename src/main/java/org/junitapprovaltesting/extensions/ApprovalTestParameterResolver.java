@@ -19,7 +19,10 @@ public class ApprovalTestParameterResolver implements ParameterResolver {
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
             throws ParameterResolutionException {
-        return new Approver();
-
+        Object approver = null;
+        if (this.supportsParameter(parameterContext, extensionContext)) {
+            approver = new Approver();
+        }
+        return approver;
     }
 }

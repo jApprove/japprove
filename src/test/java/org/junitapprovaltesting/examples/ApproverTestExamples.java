@@ -17,8 +17,8 @@ public class ApproverTestExamples {
     void testSortNames(Approver approver) {
         // arrange
         List<String> names = Arrays.asList("Peter", "Mike", "John");
-        // act
 
+        // act
         Collections.sort(names);
 
         // approve

@@ -8,3 +8,7 @@
 target/
 *.orig
 *.log
+
+# Application text files
+baseline.txt
+toApprove.txt
