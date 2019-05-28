@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 import java.util.Scanner;
 
@@ -25,71 +24,66 @@ public class Approver {
      */
     public void approve(List<String> data) {
 
-        File baseline = new File(BASELINE);
-        try {
-            if (baseline.createNewFile()) {
-                System.out.println("Created baseline.txt!");
-            } else {
-                System.out.println("Use existing baseline!");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        TextFile baseline = this.createTextFile(BASELINE);
+        TextFile toApprove = this.createTextFile(TO_APPROVE);
 
-        File toApprove = new File(TO_APPROVE);
         try {
-            if (toApprove.createNewFile()) {
-                System.out.println("Created toApprove.txt!");
-            } else {
-                System.out.println("toApprove.txt already exists... Use existing one!");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        PrintWriter out = null;
-        try {
-            out = new PrintWriter(TO_APPROVE);
-            for (String name : data) {
-                out.println(name);
-            }
+            toApprove.writeData(data);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        } finally {
-            out.close();
         }
 
-        String cmd = KDIFF + " " + TO_APPROVE + " " + BASELINE;
+        try {
+            if (!toApprove.equals(baseline)) {
+                this.callDiffer(toApprove, baseline);
+
+                System.out.println("Approve? (y/n)");
+                Scanner scanner = new Scanner(System.in);
+                String input = scanner.next();
+                scanner.close();
+
+                if (input.equals("y")) {
+                    try {
+                        baseline.writeData(data);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Assertions.fail("Not approved");
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                toApprove.cleanUp();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void callDiffer(File toApprove, File baseline) {
+        String cmd = KDIFF + " " + toApprove.getPath() + " " + baseline.getPath();
         System.out.println("Executing command: " + cmd);
         try {
             Runtime.getRuntime().exec(cmd);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
-        System.out.println("Approve? (y/n)");
-        Scanner scanner = new Scanner(System.in);
-        String input = scanner.next();
-        scanner.close();
-
+    private TextFile createTextFile(String path) {
+        TextFile textFile = new TextFile(path);
         try {
-            out = new PrintWriter(BASELINE);
-            if (input.equals("y")) {
-                for (String name : data) {
-                    out.println(name);
-                }
+            if (textFile.createNewFile()) {
+                System.out.println("Created TextFile " + path);
             } else {
-                Assertions.fail("Not approved");
+                System.out.println("Use existing TextFile " + path);
             }
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (toApprove.delete()) {
-                System.out.println("Deleted toApprove.txt!");
-            } else {
-                System.out.println("toApprove.txt does not exist!");
-            }
-            out.close();
         }
+        return textFile;
     }
 }
