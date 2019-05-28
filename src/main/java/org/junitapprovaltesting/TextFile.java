@@ -1,6 +1,8 @@
 package org.junitapprovaltesting;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,7 +11,9 @@ import java.io.PrintWriter;
 import java.util.List;
 
 public class TextFile extends File {
+
     private static final long serialVersionUID = 3594041246590645171L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(TextFile.class);
 
     public TextFile(String pathname) {
         super(pathname);
@@ -29,7 +33,7 @@ public class TextFile extends File {
 
     public void cleanUp() throws FileNotFoundException {
         if (this.delete()) {
-            System.out.println("Deleted TextFile " + this.getPath());
+            LOGGER.info("Deleted TextFile " + this.getPath());
         } else {
             throw new FileNotFoundException(this.getPath());
         }

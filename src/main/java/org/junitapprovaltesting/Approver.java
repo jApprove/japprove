@@ -1,6 +1,9 @@
 package org.junitapprovaltesting;
 
+
 import org.junit.jupiter.api.Assertions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,6 +15,8 @@ import java.util.Scanner;
  * The {@link Approver} is able to approve data by comparing the data with a baseline.
  */
 public class Approver {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Approver.class);
 
     private static final String KDIFF = "C:\\Program Files (x86)\\KDiff3\\kdiff3";
     private static final String BASELINE = "baseline.txt";
@@ -37,7 +42,7 @@ public class Approver {
             if (!toApprove.equals(baseline)) {
                 this.callDiffer(toApprove, baseline);
 
-                System.out.println("Approve? (y/n)");
+                LOGGER.info("Approve? (y/n)");
                 Scanner scanner = new Scanner(System.in);
                 String input = scanner.next();
                 scanner.close();
@@ -65,7 +70,7 @@ public class Approver {
 
     private void callDiffer(File toApprove, File baseline) {
         String cmd = KDIFF + " " + toApprove.getPath() + " " + baseline.getPath();
-        System.out.println("Executing command: " + cmd);
+        LOGGER.info("Executing command: " + cmd);
         try {
             Runtime.getRuntime().exec(cmd);
         } catch (IOException e) {
@@ -77,9 +82,9 @@ public class Approver {
         TextFile textFile = new TextFile(path);
         try {
             if (textFile.createNewFile()) {
-                System.out.println("Created TextFile " + path);
+                LOGGER.info("Created TextFile " + path);
             } else {
-                System.out.println("Use existing TextFile " + path);
+                LOGGER.info("Use existing TextFile " + path);
             }
         } catch (IOException e) {
             e.printStackTrace();
