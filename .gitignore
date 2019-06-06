@@ -4,8 +4,13 @@
 *.ipr
 .idea/
 
+# Gradle
+.gradle
+/build/
+/out/
+!gradle/wrapper/gradle-wrapper.jar
+
 # Misc
-target/
 *.orig
 *.log
 
