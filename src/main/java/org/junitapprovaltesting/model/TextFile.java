@@ -1,4 +1,4 @@
-package org.junitapprovaltesting;
+package org.junitapprovaltesting.model;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -15,11 +15,12 @@ public class TextFile extends File {
     private static final long serialVersionUID = 3594041246590645171L;
     private static final Logger LOGGER = LoggerFactory.getLogger(TextFile.class);
 
-    public TextFile(String pathname) {
-        super(pathname);
+    public TextFile(String path) {
+        super(path);
     }
 
     public void writeData(List<String> data) throws FileNotFoundException {
+        LOGGER.info("Write Data into " + this.getPath());
         PrintWriter out = new PrintWriter(this);
         for (String name : data) {
             out.println(name);
@@ -28,14 +29,14 @@ public class TextFile extends File {
     }
 
     public boolean equals(TextFile other) throws IOException {
-        return FileUtils.contentEqualsIgnoreEOL(this, other, "utf-8");
-    }
-
-    public void cleanUp() throws FileNotFoundException {
-        if (this.delete()) {
-            LOGGER.info("Deleted TextFile " + this.getPath());
+        LOGGER.info("Compare " + this.getPath() + " to " + other.getPath());
+        if (FileUtils.contentEqualsIgnoreEOL(this, other, "utf-8")) {
+            LOGGER.info(this.getPath() + " is equal to " + other.getPath());
+            return true;
         } else {
-            throw new FileNotFoundException(this.getPath());
+            LOGGER.info(this.getPath() + " is not equal to " + other.getPath());
+            return false;
         }
     }
+
 }

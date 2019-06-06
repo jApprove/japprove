@@ -4,7 +4,6 @@ import org.junitapprovaltesting.Approver;
 import org.junitapprovaltesting.annotations.ApprovalTest;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -13,13 +12,14 @@ import java.util.List;
  */
 public class ApproverTestExamples {
 
+
     @ApprovalTest
     void testSortNames(Approver approver) {
         // arrange
         List<String> names = Arrays.asList("Peter", "Mike", "John");
 
         // act
-        Collections.sort(names);
+        //Collections.sort(names);
 
         // approve
         approver.approve(names);

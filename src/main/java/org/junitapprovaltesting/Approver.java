@@ -2,6 +2,7 @@ package org.junitapprovaltesting;
 
 
 import org.junit.jupiter.api.Assertions;
+import org.junitapprovaltesting.model.TextFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,8 +18,8 @@ import java.util.Scanner;
 public class Approver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Approver.class);
-
-    private static final String KDIFF = "C:\\Program Files (x86)\\KDiff3\\kdiff3";
+    private static final String IDEA_DIFF =
+            "C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2018.3.3\\bin\\idea64 diff";
     private static final String BASELINE = "baseline.txt";
     private static final String TO_APPROVE = "toApprove.txt";
 
@@ -35,46 +36,53 @@ public class Approver {
         try {
             toApprove.writeData(data);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
+            Assertions.fail(e.getMessage());
         }
 
         try {
             if (!toApprove.equals(baseline)) {
                 this.callDiffer(toApprove, baseline);
-
                 LOGGER.info("Approve? (y/n)");
-                Scanner scanner = new Scanner(System.in);
-                String input = scanner.next();
-                scanner.close();
+
+                String input = this.readUserInput();
 
                 if (input.equals("y")) {
                     try {
                         baseline.writeData(data);
                     } catch (FileNotFoundException e) {
-                        e.printStackTrace();
+                        LOGGER.error(e.getMessage());
+                        Assertions.fail(e.getMessage());
                     }
                 } else {
                     Assertions.fail("Not approved");
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
+            Assertions.fail(e.getMessage());
         } finally {
-            try {
-                toApprove.cleanUp();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+            if (toApprove.delete()) {
+                LOGGER.info("Delete " + toApprove.getPath());
             }
         }
     }
 
+    private String readUserInput() {
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.next();
+        scanner.close();
+        return input;
+    }
+
     private void callDiffer(File toApprove, File baseline) {
-        String cmd = KDIFF + " " + toApprove.getPath() + " " + baseline.getPath();
-        LOGGER.info("Executing command: " + cmd);
+        String cmd = IDEA_DIFF + " " + toApprove.getPath() + " " + baseline.getPath();
+        LOGGER.info("Call " + IDEA_DIFF);
         try {
             Runtime.getRuntime().exec(cmd);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
+            Assertions.fail(e.getMessage());
         }
     }
 
@@ -82,12 +90,13 @@ public class Approver {
         TextFile textFile = new TextFile(path);
         try {
             if (textFile.createNewFile()) {
-                LOGGER.info("Created TextFile " + path);
+                LOGGER.info("Create " + path);
             } else {
-                LOGGER.info("Use existing TextFile " + path);
+                LOGGER.info("Use existing " + path);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
+            Assertions.fail(e.getMessage());
         }
         return textFile;
     }
