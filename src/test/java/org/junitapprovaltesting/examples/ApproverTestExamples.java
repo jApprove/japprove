@@ -4,6 +4,7 @@ import org.junitapprovaltesting.Approver;
 import org.junitapprovaltesting.annotations.ApprovalTest;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -19,9 +20,21 @@ public class ApproverTestExamples {
         List<String> names = Arrays.asList("Peter", "Mike", "John");
 
         // act
-        //Collections.sort(names);
+        Collections.sort(names);
 
         // approve
         approver.approve(names);
     }
+
+    //    @ApprovalTest
+    //    void testNamesToLowerCase(Approver approver) {
+    //        // arrange
+    //        List<String> names = Arrays.asList("Peter", "Mike", "John");
+    //
+    //        // act
+    //        names.replaceAll(name -> name.toLowerCase());
+    //
+    //        // approve
+    //        approver.approve(names);
+    //    }
 }

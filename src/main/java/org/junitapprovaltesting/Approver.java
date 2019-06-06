@@ -20,8 +20,18 @@ public class Approver {
     private static final Logger LOGGER = LoggerFactory.getLogger(Approver.class);
     private static final String IDEA_DIFF =
             "C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2018.3.3\\bin\\idea64 diff";
-    private static final String BASELINE = "baseline.txt";
-    private static final String TO_APPROVE = "toApprove.txt";
+    private static final String BASELINE_FILE = "baseline";
+    private static final String BASELINE_DIRECTORY = "baselines\\";
+    private static final String TO_APPROVE_FILE = "toApprove";
+    private static final String TO_APPROVE_DIRECTORY = "build\\approvals\\";
+    private static final String TXT_ENDING = ".txt";
+    private String baselineFileName;
+    private String toApproveFileName;
+
+    public Approver(String testName) {
+        this.baselineFileName = BASELINE_DIRECTORY + BASELINE_FILE + "_" + testName + TXT_ENDING;
+        this.toApproveFileName = TO_APPROVE_DIRECTORY + TO_APPROVE_FILE + "_" + testName + TXT_ENDING;
+    }
 
     /**
      * Approve a list of strings by comparing the data with a baseline.
@@ -30,8 +40,10 @@ public class Approver {
      */
     public void approve(List<String> data) {
 
-        TextFile baseline = this.createTextFile(BASELINE);
-        TextFile toApprove = this.createTextFile(TO_APPROVE);
+        this.createDirectories();
+
+        TextFile baseline = this.createTextFile(baselineFileName);
+        TextFile toApprove = this.createTextFile(toApproveFileName);
 
         try {
             toApprove.writeData(data);
@@ -44,7 +56,6 @@ public class Approver {
             if (!toApprove.equals(baseline)) {
                 this.callDiffer(toApprove, baseline);
                 LOGGER.info("Approve? (y/n)");
-
                 String input = this.readUserInput();
 
                 if (input.equals("y")) {
@@ -66,6 +77,13 @@ public class Approver {
                 LOGGER.info("Delete " + toApprove.getPath());
             }
         }
+    }
+
+    private void createDirectories() {
+        File baselineDirectory = new File(BASELINE_DIRECTORY);
+        baselineDirectory.mkdirs();
+        File toApproveDirectory = new File(TO_APPROVE_DIRECTORY);
+        toApproveDirectory.mkdirs();
     }
 
     private String readUserInput() {

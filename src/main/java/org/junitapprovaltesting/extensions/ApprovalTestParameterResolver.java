@@ -21,8 +21,12 @@ public class ApprovalTestParameterResolver implements ParameterResolver {
             throws ParameterResolutionException {
         Object approver = null;
         if (this.supportsParameter(parameterContext, extensionContext)) {
-            approver = new Approver();
+            approver = new Approver(formatName(extensionContext.getTestMethod().get().toString()));
         }
         return approver;
+    }
+
+    private String formatName(String name) {
+        return name.replace("void ", "").replace(".", "").replace("(", "").replace(")", "");
     }
 }
