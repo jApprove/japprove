@@ -1,7 +1,7 @@
 package org.junitapprovaltesting;
 
 
-import org.junit.jupiter.api.Assertions;
+import org.junitapprovaltesting.errors.VerificationFailedError;
 import org.junitapprovaltesting.model.TextFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +52,7 @@ public class Approver {
 
         try {
             if (!toApprove.equals(baseline)) {
-                Assertions.fail("Found differences");
+                throw new VerificationFailedError("Found differences");
             } else {
                 if (toApprove.delete()) {
                     LOGGER.info("Delete " + toApprove.getPath());
@@ -60,7 +60,7 @@ public class Approver {
             }
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
-            Assertions.fail(e.getMessage());
+            throw new VerificationFailedError(e.getMessage());
         }
     }
 
@@ -81,7 +81,7 @@ public class Approver {
             }
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
-            Assertions.fail(e.getMessage());
+            throw new VerificationFailedError(e.getMessage());
         }
         return textFile;
     }
