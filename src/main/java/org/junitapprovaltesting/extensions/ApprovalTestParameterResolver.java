@@ -27,6 +27,6 @@ public class ApprovalTestParameterResolver implements ParameterResolver {
     }
 
     private String formatName(String name) {
-        return name.replace("void ", "").replace(".", "").replace("(", "").replace(")", "");
+        return name.replace("void ", "_").replace(".", "_").replace("(", "_").replace(")", "");
     }
 }

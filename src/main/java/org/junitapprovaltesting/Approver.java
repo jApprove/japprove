@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * The {@link Approver} is able to approve data by comparing the data with a baseline.
@@ -29,8 +28,8 @@ public class Approver {
     private String toApproveFileName;
 
     public Approver(String testName) {
-        this.baselineFileName = BASELINE_DIRECTORY + BASELINE_FILE + "_" + testName + TXT_ENDING;
-        this.toApproveFileName = TO_APPROVE_DIRECTORY + TO_APPROVE_FILE + "_" + testName + TXT_ENDING;
+        this.baselineFileName = BASELINE_DIRECTORY + BASELINE_FILE + testName + TXT_ENDING;
+        this.toApproveFileName = TO_APPROVE_DIRECTORY + TO_APPROVE_FILE + testName + TXT_ENDING;
     }
 
     /**
@@ -38,7 +37,7 @@ public class Approver {
      *
      * @param data a list of strings
      */
-    public void approve(List<String> data) {
+    public void verify(List<String> data) {
 
         this.createDirectories();
 
@@ -49,33 +48,19 @@ public class Approver {
             toApprove.writeData(data);
         } catch (FileNotFoundException e) {
             LOGGER.error(e.getMessage());
-            Assertions.fail(e.getMessage());
         }
 
         try {
             if (!toApprove.equals(baseline)) {
-                this.callDiffer(toApprove, baseline);
-                LOGGER.info("Approve? (y/n)");
-                String input = this.readUserInput();
-
-                if (input.equals("y")) {
-                    try {
-                        baseline.writeData(data);
-                    } catch (FileNotFoundException e) {
-                        LOGGER.error(e.getMessage());
-                        Assertions.fail(e.getMessage());
-                    }
-                } else {
-                    Assertions.fail("Not approved");
+                Assertions.fail("Found differences");
+            } else {
+                if (toApprove.delete()) {
+                    LOGGER.info("Delete " + toApprove.getPath());
                 }
             }
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
             Assertions.fail(e.getMessage());
-        } finally {
-            if (toApprove.delete()) {
-                LOGGER.info("Delete " + toApprove.getPath());
-            }
         }
     }
 
@@ -84,24 +69,6 @@ public class Approver {
         baselineDirectory.mkdirs();
         File toApproveDirectory = new File(TO_APPROVE_DIRECTORY);
         toApproveDirectory.mkdirs();
-    }
-
-    private String readUserInput() {
-        Scanner scanner = new Scanner(System.in);
-        String input = scanner.next();
-        scanner.close();
-        return input;
-    }
-
-    private void callDiffer(File toApprove, File baseline) {
-        String cmd = IDEA_DIFF + " " + toApprove.getPath() + " " + baseline.getPath();
-        LOGGER.info("Call " + IDEA_DIFF);
-        try {
-            Runtime.getRuntime().exec(cmd);
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage());
-            Assertions.fail(e.getMessage());
-        }
     }
 
     private TextFile createTextFile(String path) {
@@ -118,4 +85,5 @@ public class Approver {
         }
         return textFile;
     }
+
 }

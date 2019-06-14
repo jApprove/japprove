@@ -23,18 +23,18 @@ public class ApproverTestExamples {
         Collections.sort(names);
 
         // approve
-        approver.approve(names);
+        approver.verify(names);
     }
 
-    //    @ApprovalTest
-    //    void testNamesToLowerCase(Approver approver) {
-    //        // arrange
-    //        List<String> names = Arrays.asList("Peter", "Mike", "John");
-    //
-    //        // act
-    //        names.replaceAll(name -> name.toLowerCase());
-    //
-    //        // approve
-    //        approver.approve(names);
-    //    }
+    @ApprovalTest
+    void testNamesToLowerCase(Approver approver) {
+        // arrange
+        List<String> names = Arrays.asList("Peter", "Mike", "John");
+
+        // act
+        names.replaceAll(name -> name.toLowerCase());
+
+        // approve
+        approver.verify(names);
+    }
 }
