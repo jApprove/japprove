@@ -22,7 +22,8 @@ dependencies {
     compile 'org.apache.logging.log4j:log4j-api:2.7'
     compile 'org.apache.logging.log4j:log4j-core:2.7'
     compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.7'
-
+    
+    compile group: 'io.github.java-diff-utils', name: 'java-diff-utils', version: '4.0'
 }
 
 test {

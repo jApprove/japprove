@@ -1,6 +1,10 @@
 package org.junitapprovaltesting;
 
 
+import com.github.difflib.DiffUtils;
+import com.github.difflib.UnifiedDiffUtils;
+import com.github.difflib.algorithm.DiffException;
+import com.github.difflib.patch.Patch;
 import org.junitapprovaltesting.errors.VerificationFailedError;
 import org.junitapprovaltesting.model.TextFile;
 import org.slf4j.Logger;
@@ -9,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 /**
@@ -52,7 +57,26 @@ public class Approver {
 
         try {
             if (!toApprove.equals(baseline)) {
-                throw new VerificationFailedError("Found differences");
+
+                List<String> original = null;
+                List<String> revised = null;
+
+                original = Files.readAllLines(baseline.toPath());
+                revised = Files.readAllLines(toApprove.toPath());
+
+                Patch<String> patch = null;
+                patch = DiffUtils.diff(original, revised);
+
+                List<String> unifiedDiff =
+                        UnifiedDiffUtils.generateUnifiedDiff("Baseline", "toApprove", original, patch, 0);
+                StringBuilder builder = new StringBuilder();
+
+                for (String diff : unifiedDiff) {
+                    builder.append(diff);
+                    builder.append("\n");
+                }
+
+                throw new VerificationFailedError(builder.toString());
             } else {
                 if (toApprove.delete()) {
                     LOGGER.info("Delete " + toApprove.getPath());
@@ -61,6 +85,8 @@ public class Approver {
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
             throw new VerificationFailedError(e.getMessage());
+        } catch (DiffException e) {
+            e.printStackTrace();
         }
     }
 
