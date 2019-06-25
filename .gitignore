@@ -8,6 +8,7 @@
 .gradle
 build/
 out/
+baselines/
 !gradle/wrapper/gradle-wrapper.jar
 buildSrc/.gradle
 buildSrc/build/
@@ -19,4 +20,4 @@ buildSrc/build/
 # Application text files
 baseline.txt
 toApprove.txt
-/baselines/
+
