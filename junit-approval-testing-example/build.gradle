@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.junitapprovaltesting'
+version = '1.0-SNAPSHOT'
+description = 'org.junitapprovaltesting:junit-approval-testing-example'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenLocal()
+}
+
+dependencies {
+    testCompile group: 'org.junitapprovaltesting', name: 'junit-approval-testing', version: '1.0-SNAPSHOT'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}

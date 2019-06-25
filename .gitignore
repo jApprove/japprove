@@ -6,8 +6,8 @@
 
 # Gradle
 .gradle
-/build/
-/out/
+build/
+out/
 !gradle/wrapper/gradle-wrapper.jar
 buildSrc/.gradle
 buildSrc/build/
