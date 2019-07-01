@@ -1,9 +1,6 @@
-plugins {
-    id 'java'
-    id 'maven'
-    id 'org.junitapprovaltesting.differ'
-    id 'org.junitapprovaltesting.approver'
-}
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 group = 'org.junitapprovaltesting'
 version = '1.0-SNAPSHOT'
@@ -11,6 +8,7 @@ description = 'org.junitapprovaltesting:junit-approval-testing'
 sourceCompatibility = '1.8'
 
 repositories {
+    mavenCentral()
     mavenLocal()
 }
 
@@ -31,19 +29,8 @@ test {
     useJUnitPlatform()
 }
 
-showDifferences {
-    doFirst {
-        filename = file
-    }
-}
-
-approve {
-    doFirst {
-        filename = file
-    }
-}
-
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
+
 
