@@ -1,10 +1,10 @@
 buildscript {
     repositories {
-        mavenLocal()
         mavenCentral()
+        mavenLocal()
     }
     dependencies {
-        classpath "org.junitapprovaltesting:ApprovalTestingPlugin:1.0"
+        classpath("org.junitapprovaltesting:ApprovalTestingPlugin:${junitApprovalTestingVersion}")
     }
 }
 
@@ -13,16 +13,17 @@ apply plugin: 'differ-plugin'
 apply plugin: 'approver-plugin'
 
 group = 'org.junitapprovaltesting'
-version = '1.0-SNAPSHOT'
-description = 'org.junitapprovaltesting:junit-approval-testing-example'
-sourceCompatibility = '1.8'
+version = '1.1'
+
+sourceCompatibility = 1.8
 
 repositories {
+    mavenCentral()
     mavenLocal()
 }
 
 dependencies {
-    testCompile group: 'org.junitapprovaltesting', name: 'junit-approval-testing', version: '1.0-SNAPSHOT'
+    testCompile("org.junitapprovaltesting:junit-approval-testing:${junitApprovalTestingVersion}")
 }
 
 test {

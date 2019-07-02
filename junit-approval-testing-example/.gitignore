@@ -9,9 +9,6 @@
 build/
 out/
 baselines/
-!gradle/wrapper/gradle-wrapper.jar
-buildSrc/.gradle
-buildSrc/build/
 
 # Misc
 *.orig

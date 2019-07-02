@@ -3,9 +3,9 @@ apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
 group = 'org.junitapprovaltesting'
-version = '1.0-SNAPSHOT'
-description = 'org.junitapprovaltesting:junit-approval-testing'
-sourceCompatibility = '1.8'
+version = '1.1'
+
+sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -13,16 +13,16 @@ repositories {
 }
 
 dependencies {
-    testCompile 'org.junit.jupiter:junit-jupiter-api:5.3.2'
-    compile 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
+    testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
+    compile("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
 
-    compile group: 'commons-io', name: 'commons-io', version: '2.6'
+    compile("commons-io:commons-io:${commonsIOVersion}")
 
-    compile 'org.apache.logging.log4j:log4j-api:2.7'
-    compile 'org.apache.logging.log4j:log4j-core:2.7'
-    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.7'
+    compile("org.apache.logging.log4j:log4j-api:${log4jVersion}")
+    compile("org.apache.logging.log4j:log4j-core:${log4jVersion}")
+    compile("org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}")
 
-    compile group: 'io.github.java-diff-utils', name: 'java-diff-utils', version: '4.0'
+    compile("io.github.java-diff-utils:java-diff-utils:${javaDiffUtilsVersion}")
 }
 
 test {
@@ -32,5 +32,3 @@ test {
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
-
-
