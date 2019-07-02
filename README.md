@@ -58,6 +58,16 @@ void testSortNames(Approver approver) {
 }
 ```
 
+4. Run the test to check if there are changes. These changes are printed in the error message.
+
+5. To highlight all the changes use for example:
+
+`gradle -Pfile=org_junitapprovaltesting_sorter_StringSorterTest_testSortNames_org_junitapprovaltesting_Approver showDifferences`
+
+6. To approve these changes use for example:
+
+`gradle -Pfile=org_junitapprovaltesting_sorter_StringSorterTest_testSortNames_org_junitapprovaltesting_Approver approve`
+
 ## Components
 
 ### JUnit Approval Testing
