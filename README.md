@@ -44,7 +44,7 @@ task approve(type: org.junitapprovaltesting.approver.ApproverTask) {
 3. Add an Approval Test:
 
 ```
-@ApprovalTest
+@ApprovalTest(baseline="sorting1")
 void testSortNames(Approver approver) {
 	// arrange
 	List<String> names = Arrays.asList("Peter", "Mike", "John");
@@ -62,11 +62,11 @@ void testSortNames(Approver approver) {
 
 5. To highlight all the changes use for example:
 
-`gradle -Pfile=org_junitapprovaltesting_sorter_StringSorterTest_testSortNames_org_junitapprovaltesting_Approver showDifferences`
+`gradle -Pfile=sorting1 diff`
 
 6. To approve these changes use for example:
 
-`gradle -Pfile=org_junitapprovaltesting_sorter_StringSorterTest_testSortNames_org_junitapprovaltesting_Approver approve`
+`gradle -Pfile=sorting1 approve`
 
 ## Components
 

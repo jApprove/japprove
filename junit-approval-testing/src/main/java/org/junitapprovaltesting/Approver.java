@@ -22,19 +22,16 @@ import java.util.List;
 public class Approver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Approver.class);
-    private static final String IDEA_DIFF =
-            "C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2018.3.3\\bin\\idea64 diff";
-    private static final String BASELINE_FILE = "baseline";
     private static final String BASELINE_DIRECTORY = "baselines\\";
-    private static final String TO_APPROVE_FILE = "toApprove";
+    private static final String TO_APPROVE_FILE = "_toApprove";
     private static final String TO_APPROVE_DIRECTORY = "build\\approvals\\";
     private static final String TXT_ENDING = ".txt";
     private String baselineFileName;
     private String toApproveFileName;
 
     public Approver(String testName) {
-        this.baselineFileName = BASELINE_DIRECTORY + BASELINE_FILE + testName + TXT_ENDING;
-        this.toApproveFileName = TO_APPROVE_DIRECTORY + TO_APPROVE_FILE + testName + TXT_ENDING;
+        this.baselineFileName = BASELINE_DIRECTORY + testName + TXT_ENDING;
+        this.toApproveFileName = TO_APPROVE_DIRECTORY + testName + TO_APPROVE_FILE + TXT_ENDING;
     }
 
     /**
@@ -58,14 +55,10 @@ public class Approver {
         try {
             if (!toApprove.equals(baseline)) {
 
-                List<String> original = null;
-                List<String> revised = null;
+                List<String> original = Files.readAllLines(baseline.toPath());
+                List<String> revised = Files.readAllLines(toApprove.toPath());
 
-                original = Files.readAllLines(baseline.toPath());
-                revised = Files.readAllLines(toApprove.toPath());
-
-                Patch<String> patch = null;
-                patch = DiffUtils.diff(original, revised);
+                Patch<String> patch = DiffUtils.diff(original, revised);
 
                 List<String> unifiedDiff =
                         UnifiedDiffUtils.generateUnifiedDiff("Baseline", "toApprove", original, patch, 0);
@@ -75,7 +68,6 @@ public class Approver {
                     builder.append(diff);
                     builder.append("\n");
                 }
-
                 throw new VerificationFailedError(builder.toString());
             } else {
                 if (toApprove.delete()) {

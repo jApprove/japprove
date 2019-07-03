@@ -12,4 +12,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Test
 @ExtendWith(ApprovalTestParameterResolver.class)
 public @interface ApprovalTest {
+    String baseline() default "";
 }

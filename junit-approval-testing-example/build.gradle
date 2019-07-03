@@ -30,7 +30,7 @@ test {
     useJUnitPlatform()
 }
 
-task showDifferences(type: org.junitapprovaltesting.differ.DifferTask) {
+task diff(type: org.junitapprovaltesting.differ.DifferTask) {
     doFirst {
         differPlugin.fileName = file
     }

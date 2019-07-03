@@ -9,7 +9,7 @@ import java.util.List;
 
 public class StringSorterTest {
 
-    @ApprovalTest
+    @ApprovalTest(baseline = "baseline1")
     void testSortNames(Approver approver) {
         // arrange
         List<String> names = Arrays.asList("Peter", "Mike", "John");

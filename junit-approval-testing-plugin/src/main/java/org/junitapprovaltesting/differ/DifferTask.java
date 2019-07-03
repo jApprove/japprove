@@ -10,9 +10,7 @@ import java.io.IOException;
 public class DifferTask extends DefaultTask {
     private static final String IDEA_DIFF =
             "C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2018.3.3\\bin\\idea64 diff";
-    private static final String BASELINE_FILE = "baseline";
     private static final String BASELINE_DIRECTORY = "baselines\\";
-    private static final String TO_APPROVE_FILE = "toApprove";
     private static final String TO_APPROVE_DIRECTORY = "build\\approvals\\";
 
     @TaskAction
@@ -21,8 +19,8 @@ public class DifferTask extends DefaultTask {
             PluginExtension extension = getProject().getExtensions().findByType(PluginExtension.class);
             String filePath = extension.getFileName();
 
-            File baseline = getFile(BASELINE_DIRECTORY, BASELINE_FILE, filePath);
-            File toApprove = getFile(TO_APPROVE_DIRECTORY, TO_APPROVE_FILE, filePath);
+            File baseline = getFile(BASELINE_DIRECTORY, filePath);
+            File toApprove = getFile(TO_APPROVE_DIRECTORY, filePath);
 
             String cmd = IDEA_DIFF + " " + toApprove.getPath() + " " + baseline.getPath();
             Runtime.getRuntime().exec(cmd);
@@ -34,18 +32,18 @@ public class DifferTask extends DefaultTask {
         }
     }
 
-    private File getFile(String directory, String prefix, String filename) {
+    private File getFile(String directory, String filename) {
         for (File file : new File(directory).listFiles()) {
-            if (file.getPath().startsWith(formatFilename(filename, directory, prefix))) {
+            if (file.getPath().startsWith(formatFilename(filename, directory))) {
                 return file;
             }
         }
         return null;
     }
 
-    private String formatFilename(String filename, String directory, String prefix) {
+    private String formatFilename(String filename, String directory) {
         StringBuilder result = new StringBuilder();
-        result.append(directory).append(prefix).append("_").append(filename);
-        return result.toString().replace(".", "_");
+        result.append(directory).append(filename);
+        return result.toString();
     }
 }
