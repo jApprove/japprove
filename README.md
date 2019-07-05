@@ -8,7 +8,7 @@ An extension of JUnit5 that enables approval testing for Java-based software.
 
 ```
 dependencies {
-    testCompile group: 'org.junitapprovaltesting', name: 'junit-approval-testing', version: '1.0-SNAPSHOT'
+    testCompile group: 'org.junitapprovaltesting', name: 'junit-approval-testing', version: '1.0'
 }
 ```
 
