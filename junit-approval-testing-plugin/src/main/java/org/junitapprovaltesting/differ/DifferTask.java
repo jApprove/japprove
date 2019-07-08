@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class DifferTask extends DefaultTask {
     private static final String IDEA_DIFF =
-            "C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2018.3.3\\bin\\idea64 diff";
+            "C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2019.1.3\\bin\\idea64 diff";
     private static final String BASELINE_DIRECTORY = "baselines\\";
     private static final String TO_APPROVE_DIRECTORY = "build\\approvals\\";
 
