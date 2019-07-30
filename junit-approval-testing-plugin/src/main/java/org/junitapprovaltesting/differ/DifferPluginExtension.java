@@ -1,7 +1,7 @@
-package org.junitapprovaltesting;
+package org.junitapprovaltesting.differ;
 
-public class PluginExtension {
-    private String fileName = "";
+public class DifferPluginExtension {
+    private String fileName;
 
     public void setFileName(String fileName) {
         this.fileName = fileName;

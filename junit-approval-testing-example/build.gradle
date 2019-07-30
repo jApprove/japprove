@@ -23,7 +23,8 @@ repositories {
 }
 
 dependencies {
-    testCompile("org.junitapprovaltesting:junit-approval-testing:${junitApprovalTestingVersion}")
+    compile("org.junitapprovaltesting:junit-approval-testing:${junitApprovalTestingVersion}")
+    compile("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
 }
 
 test {

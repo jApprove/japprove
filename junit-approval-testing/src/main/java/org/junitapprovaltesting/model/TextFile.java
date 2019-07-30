@@ -1,5 +1,8 @@
 package org.junitapprovaltesting.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,12 +22,30 @@ public class TextFile extends File {
         super(path);
     }
 
+    public void writeData(String data) throws FileNotFoundException {
+        LOGGER.info("Write Data into " + this.getPath());
+        PrintWriter out = null;
+        out = new PrintWriter(this);
+        out.println(data);
+        out.close();
+    }
+
     public void writeData(List<String> data) throws FileNotFoundException {
         LOGGER.info("Write Data into " + this.getPath());
-        PrintWriter out = new PrintWriter(this);
+        PrintWriter out = null;
+        out = new PrintWriter(this);
         for (String name : data) {
             out.println(name);
         }
+        out.close();
+    }
+
+    public void writeData(JsonNode jsonNode) throws FileNotFoundException, JsonProcessingException {
+        LOGGER.info("Write JSON Data into " + this.getPath());
+        ObjectMapper mapper = new ObjectMapper();
+        PrintWriter out = null;
+        out = new PrintWriter(this);
+        out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode));
         out.close();
     }
 
@@ -36,6 +57,21 @@ public class TextFile extends File {
         } else {
             LOGGER.info(this.getPath() + " is not equal to " + other.getPath());
             return false;
+        }
+    }
+
+    public void create() throws IOException {
+        if (!this.exists()) {
+            File parent = this.getParentFile();
+            if (!parent.exists() && !parent.mkdirs()) {
+                LOGGER.info("Cannot create directory: " + parent);
+                throw new RuntimeException("Cannot create directory: " + parent);
+            }
+            if (this.createNewFile()) {
+                LOGGER.info("Creating file " + this);
+            }
+        } else {
+            LOGGER.info("File " + this + " already exists! Use existing one!");
         }
     }
 

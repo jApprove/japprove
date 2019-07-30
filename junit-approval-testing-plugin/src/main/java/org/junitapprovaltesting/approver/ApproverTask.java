@@ -2,57 +2,47 @@ package org.junitapprovaltesting.approver;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
-import org.gradle.api.tasks.TaskExecutionException;
-import org.junitapprovaltesting.PluginExtension;
+import org.junitapprovaltesting.model.TextFile;
+import org.junitapprovaltesting.util.FileUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class ApproverTask extends DefaultTask {
 
     private static final String BASELINE_DIRECTORY = "baselines\\";
     private static final String TO_APPROVE_DIRECTORY = "build\\approvals\\";
+    private static final String TO_APPROVE_SUFFIX = "_toApprove";
 
     @TaskAction
-    public void samplePluginTasks() throws TaskExecutionException {
+    public void approve() {
+        ApproverPluginExtension extension = getProject().getExtensions().findByType(ApproverPluginExtension.class);
+        String fileName = extension.getFileName();
+
+        TextFile toApprove = FileUtils.getFile(TO_APPROVE_DIRECTORY, fileName);
+        if (toApprove == null) {
+            throw new RuntimeException("Found no unapproved version for passed file " + fileName);
+        }
+        TextFile baseline = FileUtils.getFile(BASELINE_DIRECTORY, fileName);
+        if (baseline == null) {
+            baseline = createBaseline(toApprove);
+        }
         try {
-            PluginExtension extension = getProject().getExtensions().findByType(PluginExtension.class);
-            String filePath = extension.getFileName();
-
-            File baseline = getFile(BASELINE_DIRECTORY, filePath);
-            File toApprove = getFile(TO_APPROVE_DIRECTORY, filePath);
-
-            copy(toApprove, baseline);
+            FileUtils.copyFile(toApprove, baseline);
             toApprove.delete();
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("File not found");
         }
     }
 
-    private void copy(File toApprove, File baseline) throws IOException {
-        FileInputStream inputStream = new FileInputStream(toApprove);
-        FileOutputStream outputStream = new FileOutputStream(baseline);
-        inputStream.getChannel().transferTo(0, toApprove.length(), outputStream.getChannel());
-        inputStream.close();
-        outputStream.close();
-    }
-
-    private File getFile(String directory, String filename) {
-        for (File file : new File(directory).listFiles()) {
-            if (file.getPath().startsWith(formatFilename(filename, directory))) {
-                return file;
-            }
+    private TextFile createBaseline(TextFile toApprove) {
+        TextFile baseline;
+        String baselineName = toApprove.getName().replace(TO_APPROVE_SUFFIX, "");
+        baseline = new TextFile(BASELINE_DIRECTORY + baselineName);
+        try {
+            baseline.create();
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot create baseline");
         }
-        return null;
-    }
-
-    private String formatFilename(String filename, String directory) {
-        StringBuilder result = new StringBuilder();
-        result.append(directory).append(filename);
-        return result.toString();
+        return baseline;
     }
 }
