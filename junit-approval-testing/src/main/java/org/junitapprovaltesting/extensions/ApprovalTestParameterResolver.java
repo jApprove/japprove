@@ -1,33 +1,10 @@
 package org.junitapprovaltesting.extensions;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.ParameterContext;
-import org.junit.jupiter.api.extension.ParameterResolutionException;
-import org.junit.jupiter.api.extension.ParameterResolver;
-import org.junitapprovaltesting.Approver;
 
-/**
- * The ApprovalTestParameterResolver is used to inject the {@link Approver} into the tests annotated with @ApprovalTest.
- */
-public class ApprovalTestParameterResolver implements ParameterResolver {
-    @Override
-    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
-            throws ParameterResolutionException {
-        return parameterContext.getParameter().getType() == Approver.class;
-    }
+public abstract class ApprovalTestParameterResolver {
 
-    @Override
-    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
-            throws ParameterResolutionException {
-        Object approver = null;
-        if (this.supportsParameter(parameterContext, extensionContext)) {
-            String baselineName = getBaselineName(extensionContext);
-            approver = new Approver(baselineName);
-        }
-        return approver;
-    }
-
-    private String getBaselineName(ExtensionContext extensionContext) {
+    String getBaselineName(ExtensionContext extensionContext) {
         String annotationParameter = getAnnotationParameter(extensionContext);
         if (annotationParameter.equals("")) {
             return createBaselineNameByHashCode(extensionContext);

@@ -3,8 +3,9 @@ package org.junitapprovaltesting.sorter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junitapprovaltesting.Approver;
 import org.junitapprovaltesting.annotations.ApprovalTest;
+import org.junitapprovaltesting.verifier.JsonVerifier;
+import org.junitapprovaltesting.verifier.StringVerifier;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -13,32 +14,32 @@ import java.util.List;
 public class StringSorterTest {
 
     @ApprovalTest(baseline = "string1")
-    void testString(Approver approver) {
+    void testString(StringVerifier stringVerifier) {
         // arrange
         String s = "Hello World";
 
         // act
-        s.toLowerCase();
+        s = s.toLowerCase();
 
         // approve
-        approver.verify(s);
+        stringVerifier.verify(s);
     }
 
     @ApprovalTest(baseline = "sortingStrings1")
-    void testSortNames(Approver approver) {
+    void testSortNames(StringVerifier stringVerifier) {
         // arrange
         List<String> names = Arrays.asList("Peter", "Mike", "John");
 
         // act
         StringSorter sorter = new StringSorter();
-        names = sorter.sort(names);
+        //names = sorter.sort(names);
 
         // approve
-        approver.verify(names);
+        stringVerifier.verify(names);
     }
 
     @ApprovalTest(baseline = "sortingJSON1")
-    void testJSON(Approver approver) {
+    void testJSON(JsonVerifier jsonVerifier) {
         // arrange
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = null;
@@ -50,6 +51,6 @@ public class StringSorterTest {
         // act
 
         // approve
-        approver.verify(jsonNode);
+        jsonVerifier.verify(jsonNode);
     }
 }
