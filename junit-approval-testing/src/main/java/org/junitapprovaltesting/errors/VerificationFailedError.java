@@ -7,8 +7,7 @@ import org.opentest4j.AssertionFailedError;
  */
 public class VerificationFailedError extends AssertionFailedError {
 
-    public VerificationFailedError(String diffs) {
-        super("Found differences: \n" + diffs);
+    public VerificationFailedError(String differences) {
+        super("Found differences: \n" + differences);
     }
-
 }

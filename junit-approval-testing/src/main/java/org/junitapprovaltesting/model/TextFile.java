@@ -1,8 +1,9 @@
 package org.junitapprovaltesting.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.difflib.DiffUtils;
+import com.github.difflib.UnifiedDiffUtils;
+import com.github.difflib.algorithm.DiffException;
+import com.github.difflib.patch.Patch;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.util.List;
 
 public class TextFile extends File {
@@ -40,15 +42,6 @@ public class TextFile extends File {
         out.close();
     }
 
-    public void writeData(JsonNode jsonNode) throws FileNotFoundException, JsonProcessingException {
-        LOGGER.info("Write JSON Data into " + this.getPath());
-        ObjectMapper mapper = new ObjectMapper();
-        PrintWriter out = null;
-        out = new PrintWriter(this);
-        out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode));
-        out.close();
-    }
-
     public boolean equals(TextFile other) throws IOException {
         LOGGER.info("Compare " + this.getPath() + " to " + other.getPath());
         if (FileUtils.contentEqualsIgnoreEOL(this, other, "utf-8")) {
@@ -73,6 +66,21 @@ public class TextFile extends File {
         } else {
             LOGGER.info("File " + this + " already exists! Use existing one!");
         }
+    }
+
+    public List<String> computeDifferences(TextFile other) {
+        LOGGER.info("Compute differences of " + this.toPath() + " and " + other.toPath());
+        List<String> original;
+        List<String> revised;
+        Patch<String> patch;
+        try {
+            original = Files.readAllLines(other.toPath());
+            revised = Files.readAllLines(this.toPath());
+            patch = DiffUtils.diff(original, revised);
+        } catch (IOException | DiffException e) {
+            throw new RuntimeException();
+        }
+        return UnifiedDiffUtils.generateUnifiedDiff("Baseline", "toApprove", original, patch, 0);
     }
 
 }
