@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.zjsonpatch.JsonDiff;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,15 +47,36 @@ public class JsonFile extends TextFile {
         out.close();
     }
 
-    public List<String> computeDifferences(JsonFile other) {
+    public List<String> computeDifferences(JsonFile other, List<String> ignoredFields) {
         List<String> differences = new ArrayList<>();
         JsonNode jsonToApprove = readFileToJson(this);
+        jsonToApprove = removeIgnoredFields(jsonToApprove, ignoredFields);
         JsonNode jsonBaseline = readFileToJson(other);
+        jsonBaseline = removeIgnoredFields(jsonBaseline, ignoredFields);
+
         JsonNode changes = JsonDiff.asJson(jsonBaseline, jsonToApprove);
         for (JsonNode change : changes) {
             differences.add(visualizeChange(change, jsonToApprove, jsonBaseline));
         }
         return differences;
+    }
+
+    private JsonNode removeIgnoredFields(JsonNode jsonToApprove, List<String> ignoredFields) {
+        DocumentContext jsonContext = JsonPath.parse(jsonToApprove.toString());
+        for (String ignoredField : ignoredFields) {
+            jsonToApprove = readStringToJson(jsonContext.delete(ignoredField).jsonString());
+        }
+        return jsonToApprove;
+    }
+
+
+    private JsonNode readStringToJson(String jsonString) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readTree(jsonString);
+        } catch (IOException e) {
+            throw new RuntimeException("Error while reading Json String");
+        }
     }
 
     private JsonNode readFileToJson(JsonFile file) {
@@ -69,8 +92,8 @@ public class JsonFile extends TextFile {
         StringBuilder builder = new StringBuilder();
         String path = change.get("path").toString();
         String operation = change.get("op").toString();
-        JsonNode newElement = getRootOfJsonNode(path, jsonToApprove);
-        JsonNode oldElement = getRootOfJsonNode(path, jsonBaseline);
+        JsonNode newElement = getLeafOfJsonNode(path, jsonToApprove);
+        JsonNode oldElement = getLeafOfJsonNode(path, jsonBaseline);
         builder.append("Operation: " + operation + "\n");
         builder.append("Path: " + path + "\n");
         if (operation.equals(REMOVE)) {
@@ -88,7 +111,7 @@ public class JsonFile extends TextFile {
         return builder.toString();
     }
 
-    private JsonNode getRootOfJsonNode(String path, JsonNode jsonNode) {
+    private JsonNode getLeafOfJsonNode(String path, JsonNode jsonNode) {
         for (String pathElement : path.replace("\"", "").substring(1).split("/")) {
             if (isNumeric(pathElement)) {
                 jsonNode = jsonNode.get(Integer.parseInt(pathElement));

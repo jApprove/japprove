@@ -10,11 +10,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JsonVerifier extends Verifier {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonVerifier.class);
+    private List<String> ignoredFields = new ArrayList<>();
 
     public JsonVerifier(String testName) {
         super(testName);
@@ -41,7 +43,7 @@ public class JsonVerifier extends Verifier {
             try {
                 if (!toApprove.equals(baseline)) {
                     LOGGER.info("Version not equal to approved version!");
-                    List<String> differences = toApprove.computeDifferences(baseline);
+                    List<String> differences = toApprove.computeDifferences(baseline, this.ignoredFields);
                     throw new VerificationFailedError(getErrorMessage(differences));
                 }
             } catch (IOException e) {
@@ -51,5 +53,10 @@ public class JsonVerifier extends Verifier {
             LOGGER.info("No approved version existing");
             throw new VersionNotApprovedError(toApprove);
         }
+    }
+
+    public JsonVerifier ignore(String path) {
+        this.ignoredFields.add(path);
+        return this;
     }
 }
