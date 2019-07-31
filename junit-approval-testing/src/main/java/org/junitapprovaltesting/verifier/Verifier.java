@@ -18,7 +18,10 @@ public abstract class Verifier {
 
     String getErrorMessage(List<String> differences) {
         StringBuilder builder = new StringBuilder();
-        differences.forEach(builder::append);
+        for (String difference : differences) {
+            builder.append(difference);
+            builder.append("\n");
+        }
         return builder.toString();
     }
 }
