@@ -4,9 +4,9 @@ import java.util.List;
 
 public abstract class Verifier {
 
-    static final String BASELINE_DIRECTORY = "baselines\\";
+    static final String BASELINE_DIRECTORY = "baselines/";
     static final String TO_APPROVE_FILE = "_toApprove";
-    static final String TO_APPROVE_DIRECTORY = "build\\approvals\\";
+    static final String TO_APPROVE_DIRECTORY = "build/approvals/";
     static final String TXT_ENDING = ".txt";
     String baselineFileName;
     String toApproveFileName;

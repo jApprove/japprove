@@ -41,10 +41,7 @@ public class TextFile extends File {
 
     public void create() throws IOException {
         if (!this.exists()) {
-            File parent = this.getAbsoluteFile().getParentFile();
-            if (parent == null) {
-                throw new RuntimeException(this.toString());
-            }
+            File parent = this.getParentFile();
             if (!parent.exists() && !parent.mkdirs()) {
                 throw new RuntimeException("Cannot create directory: " + parent);
             }

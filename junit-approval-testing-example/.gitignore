@@ -8,13 +8,11 @@
 .gradle
 build/
 out/
-baselines/
 
 # Misc
 *.orig
 *.log
 
 # Application text files
-baseline.txt
 toApprove.txt
 
