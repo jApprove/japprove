@@ -49,7 +49,6 @@ public class FileUtils {
         return baseline;
     }
 
-
     public static void copyFile(TextFile toApprove, TextFile baseline) throws IOException {
         FileInputStream inputStream = new FileInputStream(toApprove);
         FileOutputStream outputStream = new FileOutputStream(baseline);

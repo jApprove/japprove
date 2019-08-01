@@ -7,7 +7,12 @@ import org.junitapprovaltesting.annotations.ApprovalTest;
 import org.junitapprovaltesting.verifier.JsonVerifier;
 import org.junitapprovaltesting.verifier.StringVerifier;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -87,5 +92,30 @@ public class StringSorterTest {
 
         // approve
         jsonVerifier.ignore("$.store.book[*].price").verify(jsonNode);
+    }
+
+    @ApprovalTest(baseline = "restAPI")
+    void testRESTAPI(JsonVerifier jsonVerifier) {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String service = "http://localhost:8080/info?info=test";
+
+        try {
+            URL url = new URL(service);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/json");
+
+            BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+
+            jsonVerifier.ignore("$.id").ignore("$.date").verify(objectMapper.readTree(br.readLine()));
+
+            conn.disconnect();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
