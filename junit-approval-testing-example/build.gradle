@@ -30,6 +30,10 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
 }
 
 task diff(type: org.junitapprovaltesting.differ.DifferTask) {

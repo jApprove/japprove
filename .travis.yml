@@ -5,8 +5,8 @@ jdk:
 
 script:
   - (cd junit-approval-testing && gradle clean build install)
-    && (cd junit-approval-testing-plugin && gradle clean build publishToMavenLocal)
-    && (cd junit-approval-testing-example && gradle clean build)
+  - (cd junit-approval-testing-plugin && gradle clean build publishToMavenLocal)
+  - (cd junit-approval-testing-example && gradle clean build)
 
 cache:
   directories:
