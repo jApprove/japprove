@@ -7,8 +7,6 @@ import com.flipkart.zjsonpatch.JsonDiff;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,7 +21,9 @@ public class JsonFile extends TextFile {
     public static final String ADD = "\"add\"";
     public static final String COPY = "\"copy\"";
     public static final String MOVE = "\"move\"";
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonFile.class);
+    public static final String PATH = "path";
+    public static final String OPERATION = "op";
+    public static final String FROM = "from";
 
     public JsonFile(String path) {
         super(path);
@@ -39,10 +39,8 @@ public class JsonFile extends TextFile {
     }
 
     public void writeData(JsonNode jsonNode) throws FileNotFoundException, JsonProcessingException {
-        LOGGER.info("Write JSON Data into " + this.getPath());
         ObjectMapper mapper = new ObjectMapper();
-        PrintWriter out = null;
-        out = new PrintWriter(this);
+        PrintWriter out = new PrintWriter(this);
         out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode));
         out.close();
     }
@@ -90,8 +88,8 @@ public class JsonFile extends TextFile {
 
     private String visualizeChange(JsonNode change, JsonNode jsonToApprove, JsonNode jsonBaseline) {
         StringBuilder builder = new StringBuilder();
-        String path = change.get("path").toString();
-        String operation = change.get("op").toString();
+        String path = change.get(PATH).toString();
+        String operation = change.get(OPERATION).toString();
         JsonNode newElement = getLeafOfJsonNode(path, jsonToApprove);
         JsonNode oldElement = getLeafOfJsonNode(path, jsonBaseline);
         builder.append("Operation: " + operation + "\n");
@@ -101,7 +99,7 @@ public class JsonFile extends TextFile {
         } else if (operation.equals(ADD) || operation.equals(COPY)) {
             builder.append("+++ " + newElement + " \n");
         } else if (operation.equals(MOVE)) {
-            builder.append("From " + change.get("from").toString() + " \n");
+            builder.append("From " + change.get(FROM).toString() + " \n");
             builder.append("To: " + path + " \n");
             builder.append("+++ " + newElement + " \n");
         } else {
@@ -120,5 +118,9 @@ public class JsonFile extends TextFile {
             }
         }
         return jsonNode;
+    }
+
+    public boolean equals(JsonFile other, List<String> ignoredFields) {
+        return this.computeDifferences(other, ignoredFields).isEmpty();
     }
 }

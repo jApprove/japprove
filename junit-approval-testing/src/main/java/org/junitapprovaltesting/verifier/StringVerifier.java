@@ -43,6 +43,8 @@ public class StringVerifier extends Verifier {
             } catch (IOException e) {
                 throw new RuntimeException("Error while comparing files");
             }
+            LOGGER.info("Version is equal to approved version.");
+            toApprove.delete();
         } else {
             LOGGER.info("No approved version existing");
             throw new VersionNotApprovedError(toApprove);
@@ -74,6 +76,8 @@ public class StringVerifier extends Verifier {
             } catch (IOException e) {
                 throw new RuntimeException("Error while comparing files");
             }
+            LOGGER.info("Version is equal to approved version. Deleting " + toApprove);
+            toApprove.delete();
         } else {
             LOGGER.info("No approved version existing");
             throw new VersionNotApprovedError(toApprove);

@@ -40,15 +40,13 @@ public class JsonVerifier extends Verifier {
         JsonFile baseline = new JsonFile(this.baselineFileName);
         if (baseline.exists()) {
             LOGGER.info("An approved version exists! Comparing...");
-            try {
-                if (!toApprove.equals(baseline)) {
-                    LOGGER.info("Version not equal to approved version!");
-                    List<String> differences = toApprove.computeDifferences(baseline, this.ignoredFields);
-                    throw new VerificationFailedError(getErrorMessage(differences));
-                }
-            } catch (IOException e) {
-                throw new RuntimeException("Error while comparing files");
+            if (!toApprove.equals(baseline, this.ignoredFields)) {
+                LOGGER.info("Version not equal to approved version!");
+                List<String> differences = toApprove.computeDifferences(baseline, this.ignoredFields);
+                throw new VerificationFailedError(getErrorMessage(differences));
             }
+            LOGGER.info("Version is equal to approved version.");
+            toApprove.delete();
         } else {
             LOGGER.info("No approved version existing");
             throw new VersionNotApprovedError(toApprove);
