@@ -1,5 +1,8 @@
 # JUnit Approval Testing
 
+[![Build Status](https://travis-ci.com/kklaeger/junit-approval-testing.svg?branch=master)](https://travis-ci.com/kklaeger/junit-approval-testing)
+![License](https://img.shields.io/badge/License-Apache%20License%202.0-brightgreen.svg)
+
 An extension of JUnit5 that enables approval testing for Java-based software.
 
 ## Usage
