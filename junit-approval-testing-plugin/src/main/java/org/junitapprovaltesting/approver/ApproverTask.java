@@ -9,23 +9,14 @@ import java.io.IOException;
 
 public class ApproverTask extends DefaultTask {
 
-    private static final String BASELINE_DIRECTORY = "baselines\\";
-    private static final String TO_APPROVE_DIRECTORY = "build\\approvals\\";
-    private static final String TO_APPROVE_SUFFIX = "_toApprove";
-
     @TaskAction
     public void approve() {
         ApproverPluginExtension extension = getProject().getExtensions().findByType(ApproverPluginExtension.class);
         String fileName = extension.getFileName();
 
-        TextFile toApprove = FileUtils.getFile(TO_APPROVE_DIRECTORY, fileName);
-        if (toApprove == null) {
-            throw new RuntimeException("Found no unapproved version for passed file " + fileName);
-        }
-        TextFile baseline = FileUtils.getFile(BASELINE_DIRECTORY, fileName);
-        if (baseline == null) {
-            baseline = createBaseline(toApprove);
-        }
+        TextFile toApprove = FileUtils.getToApprove(fileName);
+        TextFile baseline = FileUtils.getBaseline(fileName);
+
         try {
             FileUtils.copyFile(toApprove, baseline);
             toApprove.delete();
@@ -34,15 +25,4 @@ public class ApproverTask extends DefaultTask {
         }
     }
 
-    private TextFile createBaseline(TextFile toApprove) {
-        TextFile baseline;
-        String baselineName = toApprove.getName().replace(TO_APPROVE_SUFFIX, "");
-        baseline = new TextFile(BASELINE_DIRECTORY + baselineName);
-        try {
-            baseline.create();
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot create baseline");
-        }
-        return baseline;
-    }
 }
