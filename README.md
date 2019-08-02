@@ -5,13 +5,23 @@
 
 An extension of JUnit5 that enables approval testing for Java-based software.
 
+## Features:
+
+Currently, this Approval Testing framework contains the following features:
+
+- Approval Testing of Strings and JSON Objects
+- Approval Testing of REST APIs
+- Highlighting differences
+- Approving changes
+
+
 ## Usage
 
 1. Use the Approval Testing Dependency:
 
 ```
 dependencies {
-    testCompile group: 'org.junitapprovaltesting', name: 'junit-approval-testing', version: '1.0'
+    testCompile group: 'org.junitapprovaltesting', name: 'junit-approval-testing', version: '1.1'
 }
 ```
 
@@ -20,28 +30,17 @@ dependencies {
 ```
 buildscript {
     repositories {
-        mavenLocal()
         mavenCentral()
+        mavenLocal()
     }
     dependencies {
-        classpath "org.junitapprovaltesting:ApprovalTestingPlugin:1.0"
+        classpath("org.junitapprovaltesting:approval-testing-plugin:1.1")
     }
 }
 
 apply plugin: 'differ-plugin'
 apply plugin: 'approver-plugin'
 
-task showDifferences(type: org.junitapprovaltesting.differ.DifferTask) {
-    doFirst {
-        differPlugin.fileName = file
-    }
-}
-
-task approve(type: org.junitapprovaltesting.approver.ApproverTask) {
-    doFirst {
-        approverPlugin.fileName = file
-    }
-}
 ```
 
 3. Add an Approval Test:
@@ -65,11 +64,12 @@ void testSortNames(Approver approver) {
 
 5. To highlight all the changes use for example:
 
-`gradle -Pfile=sorting1 diff`
+`gradle diff --file=sorting1`
 
 6. To approve these changes use for example:
 
-`gradle -Pfile=sorting1 approve`
+`gradle approve --file=sorting1`
+
 
 ## Components
 

@@ -6,12 +6,25 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileUtils {
     private static final String BASELINE_DIRECTORY = "baselines\\";
     private static final String TO_APPROVE_DIRECTORY = "build\\approvals\\";
     static final String TO_APPROVE_FILE = "_toApprove";
     static final String TXT_ENDING = ".txt";
+
+    public static List<File> getToApprove() {
+        File directory = new File(TO_APPROVE_DIRECTORY);
+        List<File> files = new ArrayList<>();
+        if (directory.exists() && directory.listFiles() != null) {
+            for (File file : directory.listFiles()) {
+                files.add(file);
+            }
+        }
+        return files;
+    }
 
     public static TextFile getToApprove(String fileName) {
         File directory = new File(TO_APPROVE_DIRECTORY);

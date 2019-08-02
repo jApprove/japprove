@@ -90,7 +90,7 @@ public class TextFile extends File {
             Patch<String> patch = DiffUtils.diff(original, revised);
             return UnifiedDiffUtils.generateUnifiedDiff("Baseline", "toApprove", original, patch, 0);
         } catch (IOException | DiffException e) {
-            throw new RuntimeException();
+            throw new RuntimeException("Cannot compute differences! " + e);
         }
     }
 

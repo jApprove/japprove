@@ -48,7 +48,7 @@ public class StringSorterTest {
                                                      "        \"book\": [\n" +
                                                      "            {\n" +
                                                      "                \"category\": \"reference\",\n" +
-                                                     "                \"author\": \"Nigel gRees\",\n" +
+                                                     "                \"author\": \"Nigel Rees\",\n" +
                                                      "                \"title\": \"Sayings of the Century\"\n" +
                                                      "            },\n" +
                                                      "            {\n" +
@@ -60,7 +60,7 @@ public class StringSorterTest {
                                                      "            {\n" +
                                                      "                \"category\": \"fiction\",\n" +
                                                      "                \"author\": \"Herman Melville\",\n" +
-                                                     "                \"title\": \"Moby Dick\",\n" +
+                                                     "                \"title\": \"Moby Dick 2\",\n" +
                                                      "                \"isbn\": \"0-553-21311-3\",\n" +
                                                      "                \"price\": 19.9556456\n" +
                                                      "            },\n" +

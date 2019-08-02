@@ -4,7 +4,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath("org.junitapprovaltesting:ApprovalTestingPlugin:${junitApprovalTestingVersion}")
+        classpath("org.junitapprovaltesting:approval-testing-plugin:${junitApprovalTestingVersion}")
     }
 }
 
@@ -30,18 +30,6 @@ dependencies {
 
 test {
     useJUnitPlatform()
-}
-
-task diff(type: org.junitapprovaltesting.differ.DifferTask) {
-    doFirst {
-        differPlugin.fileName = file
-    }
-}
-
-task approve(type: org.junitapprovaltesting.approver.ApproverTask) {
-    doFirst {
-        approverPlugin.fileName = file
-    }
 }
 
 tasks.withType(JavaCompile) {
