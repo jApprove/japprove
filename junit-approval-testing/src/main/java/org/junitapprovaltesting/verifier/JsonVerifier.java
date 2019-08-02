@@ -13,6 +13,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The {@code JsonVerifier} provides a method to verify JSON objects within Approval Tests. With its ignore method it
+ * is also possible to ignore specific elements of a JSON object.
+ */
 public class JsonVerifier extends Verifier {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonVerifier.class);
@@ -22,6 +26,16 @@ public class JsonVerifier extends Verifier {
         super(testName);
     }
 
+    /**
+     * Receives a JsonNode that should be verified within an Approval Test.
+     * <p>
+     * Within the verification process, a {@code toApprove} toApprove file is created in the build directory and
+     * compared to a {@code baseline} file (if exists). In the case the versions are equal, the test passes. If no
+     * baseline exists, a {@code VersionNotApprovedError} is thrown. If there is a baseline that is not equal to the
+     * current version, a {@code VerificationFailedError} is thrown.
+     *
+     * @param data The JsonNode that should be verified
+     */
     public void verify(JsonNode data) {
         LOGGER.info("Starting new approval test");
         JsonFile toApprove = new JsonFile(this.toApproveFileName);
@@ -53,6 +67,12 @@ public class JsonVerifier extends Verifier {
         }
     }
 
+    /**
+     * Receives a JSONPath that should be ignored on the verification process.
+     *
+     * @param path a JSONPath that should be ignored on the verification process
+     * @return the JsonVerifier
+     */
     public JsonVerifier ignore(String path) {
         this.ignoredFields.add(path);
         return this;

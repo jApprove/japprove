@@ -10,6 +10,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * The {@code StringVerifier} provides a method to verify String objects within Approval Tests.
+ */
 public class StringVerifier extends Verifier {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StringVerifier.class);
@@ -18,6 +21,16 @@ public class StringVerifier extends Verifier {
         super(testName);
     }
 
+    /**
+     * Receives a String that should be verified within an Approval Test.
+     * <p>
+     * Within the verification process, a {@code toApprove} toApprove file is created in the build directory and
+     * compared to a {@code baseline} file (if exists). In the case the versions are equal, the test passes. If no
+     * baseline exists, a {@code VersionNotApprovedError} is thrown. If there is a baseline that is not equal to the
+     * current version, a {@code VerificationFailedError} is thrown.
+     *
+     * @param data The String that should be verified
+     */
     public void verify(String data) {
         LOGGER.info("Starting new approval test");
         TextFile toApprove = new TextFile(this.toApproveFileName);
@@ -51,6 +64,16 @@ public class StringVerifier extends Verifier {
         }
     }
 
+    /**
+     * Receives a list of Strings that should be verified within an Approval Test.
+     * <p>
+     * Within the verification process, a {@code toApprove} toApprove file is created in the build directory and
+     * compared to a {@code baseline} file (if exists). In the case the versions are equal, the test passes. If no
+     * baseline exists, a {@code VersionNotApprovedError} is thrown. If there is a baseline that is not equal to the
+     * current version, a {@code VerificationFailedError} is thrown.
+     *
+     * @param data The list of Strings that should be verified
+     */
     public void verify(List<String> data) {
         LOGGER.info("Starting new approval test");
         TextFile toApprove = new TextFile(this.toApproveFileName);

@@ -2,6 +2,9 @@ package org.junitapprovaltesting.verifier;
 
 import java.util.List;
 
+/**
+ * The parent class of the verifiers.
+ */
 public abstract class Verifier {
 
     static final String BASELINE_DIRECTORY = "baselines/";

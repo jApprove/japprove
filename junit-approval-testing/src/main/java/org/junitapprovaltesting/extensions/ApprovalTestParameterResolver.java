@@ -1,8 +1,19 @@
 package org.junitapprovaltesting.extensions;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.ParameterResolutionException;
 
+/**
+ * The parent class of the ParameterResolvers.
+ */
 public abstract class ApprovalTestParameterResolver {
+
+    public abstract boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
+            throws ParameterResolutionException;
+
+    public abstract Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
+            throws ParameterResolutionException;
 
     String getBaselineName(ExtensionContext extensionContext) {
         String annotationParameter = getAnnotationParameter(extensionContext);

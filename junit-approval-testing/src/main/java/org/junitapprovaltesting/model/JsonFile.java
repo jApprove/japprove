@@ -38,13 +38,25 @@ public class JsonFile extends TextFile {
         }
     }
 
-    public void writeData(JsonNode jsonNode) throws FileNotFoundException, JsonProcessingException {
+    /**
+     * Stores a JsonNode in the JsonFile
+     *
+     * @param data the JsonNode that should be stored
+     * @throws FileNotFoundException thrown if the file not exists
+     */
+    public void writeData(JsonNode data) throws FileNotFoundException, JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         PrintWriter out = new PrintWriter(this);
-        out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode));
+        out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(data));
         out.close();
     }
 
+    /**
+     * Computes the differences of this and another JsonFile.
+     *
+     * @param other the file this file should be compared to
+     * @return a list of the differences
+     */
     public List<String> computeDifferences(JsonFile other, List<String> ignoredFields) {
         List<String> differences = new ArrayList<>();
         JsonNode jsonToApprove = readFileToJson(this);
@@ -66,7 +78,6 @@ public class JsonFile extends TextFile {
         }
         return jsonToApprove;
     }
-
 
     private JsonNode readStringToJson(String jsonString) {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -96,16 +107,18 @@ public class JsonFile extends TextFile {
         builder.append("Path: " + path + "\n");
         if (operation.equals(REMOVE)) {
             builder.append("--- " + oldElement + " \n");
-        } else if (operation.equals(ADD) || operation.equals(COPY)) {
-            builder.append("+++ " + newElement + " \n");
-        } else if (operation.equals(MOVE)) {
-            builder.append("From " + change.get(FROM).toString() + " \n");
-            builder.append("To: " + path + " \n");
-            builder.append("+++ " + newElement + " \n");
-        } else {
-            builder.append("+++ " + newElement + " \n");
-            builder.append("--- " + oldElement + " \n");
-        }
+        } else
+            if (operation.equals(ADD) || operation.equals(COPY)) {
+                builder.append("+++ " + newElement + " \n");
+            } else
+                if (operation.equals(MOVE)) {
+                    builder.append("From " + change.get(FROM).toString() + " \n");
+                    builder.append("To: " + path + " \n");
+                    builder.append("+++ " + newElement + " \n");
+                } else {
+                    builder.append("+++ " + newElement + " \n");
+                    builder.append("--- " + oldElement + " \n");
+                }
         return builder.toString();
     }
 
@@ -120,6 +133,13 @@ public class JsonFile extends TextFile {
         return jsonNode;
     }
 
+    /**
+     * Checks if two JsonFiles are equal
+     *
+     * @param other the file this file should be compared to
+     * @return true if the files are equal, false otherwise
+     * @throws IOException
+     */
     public boolean equals(JsonFile other, List<String> ignoredFields) {
         return this.computeDifferences(other, ignoredFields).isEmpty();
     }

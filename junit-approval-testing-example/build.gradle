@@ -25,15 +25,11 @@ repositories {
 dependencies {
     compile("org.junitapprovaltesting:junit-approval-testing:${junitApprovalTestingVersion}")
     compile("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
-    compile 'com.jayway.jsonpath:json-path:2.4.0'
+    compile("com.jayway.jsonpath:json-path:${jsonPathVersion}")
 }
 
 test {
     useJUnitPlatform()
-    testLogging {
-        events "passed", "skipped", "failed"
-        exceptionFormat "full"
-    }
 }
 
 task diff(type: org.junitapprovaltesting.differ.DifferTask) {

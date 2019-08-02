@@ -13,6 +13,10 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.util.List;
 
+/**
+ * An extension of a {@link File} that is used to store Strings or list of Strings. It is also possible to compare
+ * such files and list differences.
+ */
 public class TextFile extends File {
 
     private static final long serialVersionUID = 3594041246590645171L;
@@ -21,12 +25,24 @@ public class TextFile extends File {
         super(path);
     }
 
+    /**
+     * Stores a String in the TextFile
+     *
+     * @param data the String that should be stored
+     * @throws FileNotFoundException thrown if the file not exists
+     */
     public void writeData(String data) throws FileNotFoundException {
         PrintWriter out = new PrintWriter(this);
         out.println(data);
         out.close();
     }
 
+    /**
+     * Stores a list of Strings in the TextFile
+     *
+     * @param data the list of Strings that should be stored
+     * @throws FileNotFoundException thrown if the file not exists
+     */
     public void writeData(List<String> data) throws FileNotFoundException {
         PrintWriter out = new PrintWriter(this);
         for (String name : data) {
@@ -35,10 +51,22 @@ public class TextFile extends File {
         out.close();
     }
 
+    /**
+     * Checks if two TextFiles are equal
+     *
+     * @param other the file this file should be compared to
+     * @return true if the files are equal, false otherwise
+     * @throws IOException
+     */
     public boolean equals(TextFile other) throws IOException {
         return FileUtils.contentEqualsIgnoreEOL(this, other, "utf-8");
     }
 
+    /**
+     * Checks if the TextFile already exists and creates a new one if not.
+     *
+     * @throws IOException
+     */
     public void create() throws IOException {
         if (!this.exists()) {
             File parent = this.getParentFile();
@@ -49,6 +77,12 @@ public class TextFile extends File {
         }
     }
 
+    /**
+     * Computes the differences of this and another TextFile.
+     *
+     * @param other the file this file should be compared to
+     * @return a list of the differences
+     */
     public List<String> computeDifferences(TextFile other) {
         try {
             List<String> original = Files.readAllLines(other.toPath());
