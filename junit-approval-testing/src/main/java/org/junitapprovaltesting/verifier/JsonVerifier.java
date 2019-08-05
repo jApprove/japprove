@@ -57,7 +57,7 @@ public class JsonVerifier extends Verifier {
             if (!toApprove.equals(baseline, ignoredFields)) {
                 LOGGER.info("Current version is not equal to approved version.");
                 List<String> differences = toApprove.computeDifferences(baseline, ignoredFields);
-                throw new VerificationFailedError(formatDifferences(differences));
+                throw new VerificationFailedError(toApprove, formatDifferences(differences));
             }
             LOGGER.info("Current version is equal to approved version.");
             toApprove.delete();

@@ -52,7 +52,7 @@ public class StringVerifier extends Verifier {
                 if (!toApprove.equals(baseline)) {
                     LOGGER.info("Current version is not equal to approved version.");
                     List<String> differences = toApprove.computeDifferences(baseline);
-                    throw new VerificationFailedError(formatDifferences(differences));
+                    throw new VerificationFailedError(toApprove, formatDifferences(differences));
                 }
             } catch (IOException e) {
                 throw new RuntimeException("Error while comparing files.");
@@ -95,7 +95,7 @@ public class StringVerifier extends Verifier {
                 if (!toApprove.equals(baseline)) {
                     LOGGER.info("Current version is not equal to approved version.");
                     List<String> differences = toApprove.computeDifferences(baseline);
-                    throw new VerificationFailedError(formatDifferences(differences));
+                    throw new VerificationFailedError(toApprove, formatDifferences(differences));
                 }
             } catch (IOException e) {
                 throw new RuntimeException("Error while comparing files.");

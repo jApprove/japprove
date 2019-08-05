@@ -102,4 +102,13 @@ public class TextFile extends File {
         return result;
     }
 
+    /**
+     * Returns the name of the baseline without path and endings.
+     *
+     * @return the name of the baseline without path and endings
+     */
+    public String getBaselineName() {
+        return this.getName().replace("_toApprove", "").replace(".txt", "");
+    }
+
 }

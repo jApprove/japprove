@@ -72,12 +72,12 @@ public class ApproverTask extends DefaultTask {
         Scanner scanner = new Scanner(System.in);
         for (File file : unapprovedFiles) {
             TextFile toApprove = new TextFile(file.getPath());
-            LOGGER.info("Unapproved file: " + toApprove + ":");
+            LOGGER.info("Unapproved file: " + toApprove.getBaselineName());
             TextFile baseline;
             try {
-                baseline = FileUtils.getBaseline(file.getName().replace("_toApprove.txt", ""));
+                baseline = FileUtils.getBaseline(toApprove.getBaselineName());
             } catch (FileNotFoundException e) {
-                LOGGER.info("No unapproved version exists");
+                LOGGER.info("No approved version exists");
                 LOGGER.info("Approve current version? (y/n)");
                 if (userAcceptsRequest(scanner)) {
                     this.approveFile(toApprove);
@@ -117,17 +117,17 @@ public class ApproverTask extends DefaultTask {
     private void approveFile(TextFile textFile) {
         TextFile baseline;
         try {
-            baseline = FileUtils.getBaseline(textFile.getName().replace("_toApprove.txt", ""));
+            baseline = FileUtils.getBaseline(textFile.getBaselineName());
         } catch (FileNotFoundException e) {
-            baseline = FileUtils.createBaseline(textFile.getName().replace("_toApprove.txt", ""));
+            baseline = FileUtils.createBaseline(textFile.getBaselineName());
         }
         try {
             FileUtils.copyFile(textFile, baseline);
             if(textFile.delete()) {
-                LOGGER.info("Successfully approved file " + textFile.getName());
+                LOGGER.info("Successfully approved file " + textFile.getBaselineName());
             }
         } catch (IOException e) {
-            throw new RuntimeException("File "+ textFile.getName() +" not found");
+            throw new RuntimeException("File "+ textFile.getBaselineName() +" not found");
         }
     }
 
