@@ -66,15 +66,17 @@ void testSortNames(Approver approver) {
 
 `gradle approve`
 
-During a batch process it is possible to see all changes and approve each file.
+During a batch process it is possible to see all changes and approve each file. To approve the changes of all files, use the command:
 
-6. To highlight the changes of a specific file, use for example:
+`gradle approve --all`
 
-`gradle diff --file=sorting1`
-
-7. To approve the changes of a specific file, use for example:
+To approve the changes of a specific file, use for example:
 
 `gradle approve --file=sorting1`
+
+To highlight the changes of a specific file, use for example:
+
+`gradle diff --file=sorting1`
 
 
 ## Components

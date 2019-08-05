@@ -24,17 +24,40 @@ public class ApproverTask extends DefaultTask {
     @Input
     private String fileName;
 
+    @Input
+    private boolean approveAll;
+
     @Option(option = "file", description = "Provides the name of the file that should be approved")
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
 
+    @Option(option = "all", description = "All unapproved files should be approved")
+    public void setApproveAll() {
+        this.approveAll=true;
+    }
+
     @TaskAction
     public void approve() {
-        if (fileName == null) {
-            this.startBatchProcess();
-        } else {
+        if(approveAll) {
+            approveAll();
+        } else if (fileName != null) {
             approveFile(FileUtils.getToApprove(fileName));
+        } else {
+            startBatchProcess();
+        }
+    }
+
+    private void approveAll() {
+        List<File> unapprovedFiles = FileUtils.getToApprove();
+        if(unapprovedFiles.size() == 0) {
+            LOGGER.info("Found no unapproved files");
+            return;
+        }
+        LOGGER.info("Found " + unapprovedFiles.size() + " unapproved files");
+        for (File file : unapprovedFiles) {
+            TextFile toApprove = new TextFile(file.getPath());
+            this.approveFile(toApprove);
         }
     }
 
