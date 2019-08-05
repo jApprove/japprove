@@ -6,11 +6,8 @@ import com.github.difflib.algorithm.DiffException;
 import com.github.difflib.patch.Patch;
 import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -85,13 +82,24 @@ public class TextFile extends File {
      */
     public List<String> computeDifferences(TextFile other) {
         try {
-            List<String> original = Files.readAllLines(other.toPath());
-            List<String> revised = Files.readAllLines(this.toPath());
+            List<String> original = readAllLines(other.getPath());
+            List<String> revised = readAllLines(this.getPath());
             Patch<String> patch = DiffUtils.diff(original, revised);
             return UnifiedDiffUtils.generateUnifiedDiff("Baseline", "toApprove", original, patch, 0);
-        } catch (IOException | DiffException e) {
+        } catch (DiffException | IOException e) {
             throw new RuntimeException("Cannot compute differences! " + e);
         }
+    }
+
+    private List<String> readAllLines(String fileName) throws IOException {
+        List<String> result = new ArrayList<>();
+        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            result.add(line);
+        }
+        reader.close();
+        return result;
     }
 
 }

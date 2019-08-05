@@ -31,7 +31,7 @@ public class StringSorterTest {
         List<String> names = Arrays.asList("Peter", "Mike", "John");
         // act
         StringSorter sorter = new StringSorter();
-        //names = sorter.sort(names);
+        names = sorter.sort(names);
 
         // approve
         stringVerifier.verify(names);

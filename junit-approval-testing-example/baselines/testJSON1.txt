@@ -14,13 +14,12 @@
       "author" : "Herman Melville",
       "title" : "Moby Dick 2",
       "isbn" : "0-553-21311-3",
-      "price" : 84564.99
+      "price" : 19.9556456
     }, {
       "category" : "fiction",
       "author" : "J. R. R. Tolkien",
       "title" : "The Lord of the Rings",
-      "isbn" : "0-395-19395-8",
-      "price" : 22.5499
+      "isbn" : "0-395-19395-8"
     } ],
     "bicycle" : {
       "color" : "red",

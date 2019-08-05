@@ -2,11 +2,11 @@ package org.junitapprovaltesting.verifier;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junitapprovaltesting.errors.VerificationFailedError;
 import org.junitapprovaltesting.errors.VersionNotApprovedError;
 import org.junitapprovaltesting.model.JsonFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class JsonVerifier extends Verifier {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonVerifier.class);
+    private static final Logger LOGGER = LogManager.getLogger(JsonVerifier.class);
     private List<String> ignoredFields = new ArrayList<>();
 
     public JsonVerifier(String testName) {
@@ -37,8 +37,8 @@ public class JsonVerifier extends Verifier {
      * @param data The JsonNode that should be verified
      */
     public void verify(JsonNode data) {
-        LOGGER.info("Starting new approval test");
-        JsonFile toApprove = new JsonFile(this.toApproveFileName);
+        LOGGER.info("Starting new approval test: " + testName);
+        JsonFile toApprove = new JsonFile(TO_APPROVE_DIRECTORY + testName + TO_APPROVE_FILE + TXT_ENDING);
         try {
             toApprove.create();
         } catch (IOException e) {
@@ -47,22 +47,22 @@ public class JsonVerifier extends Verifier {
         try {
             toApprove.writeData(data);
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("File " + toApprove + " not found");
+            throw new RuntimeException("File " + toApprove + " not found.");
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Cannot process JSON file");
         }
-        JsonFile baseline = new JsonFile(this.baselineFileName);
+        JsonFile baseline = new JsonFile(BASELINE_DIRECTORY + testName + TXT_ENDING);
         if (baseline.exists()) {
-            LOGGER.info("An approved version exists! Comparing...");
-            if (!toApprove.equals(baseline, this.ignoredFields)) {
-                LOGGER.info("Version not equal to approved version!");
-                List<String> differences = toApprove.computeDifferences(baseline, this.ignoredFields);
-                throw new VerificationFailedError(getErrorMessage(differences));
+            LOGGER.info("An approved version exists. Comparing...");
+            if (!toApprove.equals(baseline, ignoredFields)) {
+                LOGGER.info("Current version is not equal to approved version.");
+                List<String> differences = toApprove.computeDifferences(baseline, ignoredFields);
+                throw new VerificationFailedError(formatDifferences(differences));
             }
-            LOGGER.info("Version is equal to approved version.");
+            LOGGER.info("Current version is equal to approved version.");
             toApprove.delete();
         } else {
-            LOGGER.info("No approved version existing");
+            LOGGER.info("No approved version exists.");
             throw new VersionNotApprovedError(toApprove);
         }
     }

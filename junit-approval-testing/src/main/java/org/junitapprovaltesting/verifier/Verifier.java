@@ -1,5 +1,6 @@
 package org.junitapprovaltesting.verifier;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -7,19 +8,17 @@ import java.util.List;
  */
 public abstract class Verifier {
 
-    static final String BASELINE_DIRECTORY = "baselines/";
     static final String TO_APPROVE_FILE = "_toApprove";
-    static final String TO_APPROVE_DIRECTORY = "build/approvals/";
     static final String TXT_ENDING = ".txt";
-    String baselineFileName;
-    String toApproveFileName;
+    static final String BASELINE_DIRECTORY = "baselines" + File.separator;
+    static final String TO_APPROVE_DIRECTORY = "build" + File.separator + "approvals" + File.separator;
+    final String testName;
 
     public Verifier(String testName) {
-        this.baselineFileName = BASELINE_DIRECTORY + testName + TXT_ENDING;
-        this.toApproveFileName = TO_APPROVE_DIRECTORY + testName + TO_APPROVE_FILE + TXT_ENDING;
+        this.testName = testName;
     }
 
-    String getErrorMessage(List<String> differences) {
+    String formatDifferences(List<String> differences) {
         StringBuilder builder = new StringBuilder();
         for (String difference : differences) {
             builder.append(difference);

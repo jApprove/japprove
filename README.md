@@ -62,16 +62,24 @@ void testSortNames(Approver approver) {
 
 4. Run the test to check if there are changes. These changes are printed in the error message.
 
-5. To highlight all the changes use for example:
+5. Approve all failing tests with the following command.
+
+`gradle approve`
+
+During a batch process it is possible to see all changes and approve each file.
+
+6. To highlight the changes of a specific file, use for example:
 
 `gradle diff --file=sorting1`
 
-6. To approve these changes use for example:
+7. To approve the changes of a specific file, use for example:
 
 `gradle approve --file=sorting1`
 
 
 ## Components
+
+This project consists of a core library, a gradle plugin and an example that demonstrates the functionality.
 
 ### JUnit Approval Testing
 

@@ -2,16 +2,13 @@ package org.junitapprovaltesting.util;
 
 import org.junitapprovaltesting.model.TextFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileUtils {
-    private static final String BASELINE_DIRECTORY = "baselines\\";
-    private static final String TO_APPROVE_DIRECTORY = "build\\approvals\\";
+    private static final String BASELINE_DIRECTORY = "baselines" + File.separator;
+    private static final String TO_APPROVE_DIRECTORY = "build" + File.separator + "approvals" + File.separator;
     static final String TO_APPROVE_FILE = "_toApprove";
     static final String TXT_ENDING = ".txt";
 
@@ -38,22 +35,20 @@ public class FileUtils {
         throw new RuntimeException("Found no unapproved version for passed file " + fileName);
     }
 
-    public static TextFile getBaseline(String filename) {
+    public static TextFile getBaseline(String fileName) throws FileNotFoundException {
         File directory = new File(BASELINE_DIRECTORY);
         if (directory.exists() && directory.listFiles() != null) {
             for (File file : directory.listFiles()) {
-                if (file.getPath().equals(BASELINE_DIRECTORY + filename + TXT_ENDING)) {
+                if (file.getPath().equals(BASELINE_DIRECTORY + fileName + TXT_ENDING)) {
                     return new TextFile(file.getPath());
                 }
             }
         }
-        return createBaseline(filename);
+        throw new FileNotFoundException("Found no approved version for passed file " + fileName);
     }
 
-    private static TextFile createBaseline(String fileName) {
-        TextFile baseline;
-        String baselineName = fileName + TXT_ENDING;
-        baseline = new TextFile(BASELINE_DIRECTORY + baselineName);
+    public static TextFile createBaseline(String fileName) {
+        TextFile baseline = new TextFile(BASELINE_DIRECTORY + fileName + TXT_ENDING);
         try {
             baseline.create();
         } catch (IOException e) {
