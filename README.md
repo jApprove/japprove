@@ -19,69 +19,69 @@ Currently, this Approval Testing framework contains the following features:
 
 1. Use the Approval Testing Dependency:
 
-```
-dependencies {
-    testCompile group: 'org.junitapprovaltesting', name: 'junit-approval-testing', version: '1.1'
-}
-```
+   ```
+   dependencies {
+       testCompile group: 'org.junitapprovaltesting', name: 'junit-approval-testing', version: '1.1'
+   }
+   ```
 
 2. Use the Approval Testing Gradle Plugin:
 
-```
-buildscript {
-    repositories {
-        mavenCentral()
-        mavenLocal()
-    }
-    dependencies {
-        classpath("org.junitapprovaltesting:approval-testing-plugin:1.1")
-    }
-}
+   ```
+   buildscript {
+       repositories {
+           mavenCentral()
+           mavenLocal()
+       }
+       dependencies {
+           classpath("org.junitapprovaltesting:approval-testing-plugin:1.1")
+       }
+   }
 
-apply plugin: 'differ-plugin'
-apply plugin: 'approver-plugin'
-
-```
+   apply plugin: 'differ-plugin'
+   apply plugin: 'approver-plugin'
+   
+   ```
 
 3. Add an Approval Test:
 
-```
-@ApprovalTest(baseline="sorting1")
-void testSortNames(Approver approver) {
-	// arrange
-	List<String> names = Arrays.asList("Peter", "Mike", "John");
-
-	// act
-	StringSorter sorter = new StringSorter();
-	names = sorter.sort(names);
-
-	// approve
-	approver.verify(names);
-}
-```
+   ```
+   @ApprovalTest(baseline="sorting1")
+   void testSortNames(StringVerifier stringVerifier) {
+	   // arrange
+	   List<String> names = Arrays.asList("Peter", "Mike", "John");
+   
+	   // act
+	   StringSorter sorter = new StringSorter();
+	   names = sorter.sort(names);
+   
+	   // approve
+	   stringVerifier.verify(names);
+   }
+   ```
 
 4. Run the test to check if there are changes. These changes are printed in the error message.
 
-5. Approve all failing tests with the following command.
+5. Approve the failing tests with the following command:  
 
-`gradle approve`
+   `gradle approve`  
+   
+   During a starting batch process it is possible to see all changes and approve each file. To approve the changes of all files at once, use the following command:
 
-During a batch process it is possible to see all changes and approve each file. To approve the changes of all files, use the command:
+   `gradle approve --all`
 
-`gradle approve --all`
+   To approve the changes of a specific file, use for example:
 
-To approve the changes of a specific file, use for example:
+   `gradle approve --file=sorting1`
 
-`gradle approve --file=sorting1`
+   To highlight the changes of a specific file, use for example:
 
-To highlight the changes of a specific file, use for example:
-
-`gradle diff --file=sorting1`
+   `gradle diff --file=sorting1`
 
 
 ## Components
 
-This project consists of a core library, a gradle plugin and an example that demonstrates the functionality.
+This project consists of a core library, a gradle plugin and an example that demonstrates the functionality. Currently, the library and the plugin are not published. Therefore, it is necessary to build them manually.
 
 ### JUnit Approval Testing
 
@@ -89,17 +89,20 @@ The core part of the framework that provides the Approval Testing functionality.
 
 ##### Publish to MavenLocal
 
-`gradle clean build install`
-
+```
+cd junit-approval-testing
+gradle clean build install
+``` 
 
 ### JUnit Approval Testing Plugin
 
 A gradle plugin that automates the "diff" and "approve" steps.
 
 ##### Publish to MavenLocal
-
-`gradle clean build publishToMavenLocal`
-
+```
+cd junit-approval-testing-plugin
+gradle clean build publishToMavenLocal
+``` 
 
 ### JUnit Approval Testing Example
 
