@@ -19,7 +19,7 @@ public class StringSorterTest {
         String s = "Hello World";
 
         // act
-        s = s.toLowerCase();
+        //s = s.toLowerCase();
 
         // approve
         stringVerifier.verify(s);

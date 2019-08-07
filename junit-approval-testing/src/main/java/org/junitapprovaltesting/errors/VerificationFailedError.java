@@ -1,6 +1,5 @@
 package org.junitapprovaltesting.errors;
 
-import org.junitapprovaltesting.model.TextFile;
 import org.opentest4j.AssertionFailedError;
 
 /**
@@ -8,7 +7,7 @@ import org.opentest4j.AssertionFailedError;
  */
 public class VerificationFailedError extends AssertionFailedError {
 
-    public VerificationFailedError(TextFile toApprove, String differences) {
-        super("Found differences in " + toApprove.getBaselineName() + ": \n" + differences);
+    public VerificationFailedError(String differences) {
+        super("Found differences: \n" + differences);
     }
 }

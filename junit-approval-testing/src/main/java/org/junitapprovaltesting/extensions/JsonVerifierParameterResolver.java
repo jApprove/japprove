@@ -33,7 +33,7 @@ public class JsonVerifierParameterResolver extends ApprovalTestParameterResolver
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
             throws ParameterResolutionException {
         Object jsonVerifier = null;
-        if (this.supportsParameter(parameterContext, extensionContext)) {
+        if (supportsParameter(parameterContext, extensionContext)) {
             String baselineName = getBaselineName(extensionContext);
             jsonVerifier = new JsonVerifier(baselineName);
         }

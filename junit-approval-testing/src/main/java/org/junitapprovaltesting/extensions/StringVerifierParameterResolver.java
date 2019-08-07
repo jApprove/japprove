@@ -30,10 +30,9 @@ public class StringVerifierParameterResolver extends ApprovalTestParameterResolv
      * @see ParameterResolver
      */
     @Override
-    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
-            throws ParameterResolutionException {
+    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) {
         Object stringVerifier = null;
-        if (this.supportsParameter(parameterContext, extensionContext)) {
+        if (supportsParameter(parameterContext, extensionContext)) {
             String baselineName = getBaselineName(extensionContext);
             stringVerifier = new StringVerifier(baselineName);
         }

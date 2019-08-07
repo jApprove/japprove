@@ -1,14 +1,16 @@
 package org.junitapprovaltesting.verifier;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flipkart.zjsonpatch.JsonDiff;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junitapprovaltesting.errors.VerificationFailedError;
 import org.junitapprovaltesting.errors.VersionNotApprovedError;
-import org.junitapprovaltesting.model.JsonFile;
+import org.junitapprovaltesting.services.JsonFileService;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +21,28 @@ import java.util.List;
  */
 public class JsonVerifier extends Verifier {
 
+    private static final String REMOVE = "\"remove\"";
+    private static final String ADD = "\"add\"";
+    private static final String COPY = "\"copy\"";
+    private static final String MOVE = "\"move\"";
+    private static final String PATH = "path";
+    private static final String OPERATION = "op";
+    private static final String FROM = "from";
+
     private static final Logger LOGGER = LogManager.getLogger(JsonVerifier.class);
     private List<String> ignoredFields = new ArrayList<>();
+    private JsonFileService jsonFileService;
+    private JsonNode baseline;
 
     public JsonVerifier(String testName) {
         super(testName);
+        jsonFileService = new JsonFileService();
+        try {
+            baseline = jsonFileService.getApprovedJsonFile(testName).readData();
+        } catch (IOException e) {
+            baseline = null;
+        }
+        jsonFileService.removeUnapprovedJsonFile(testName);
     }
 
     /**
@@ -37,34 +56,23 @@ public class JsonVerifier extends Verifier {
      * @param data The JsonNode that should be verified
      */
     public void verify(JsonNode data) {
-        LOGGER.info("Starting new approval test: " + testName);
-        JsonFile toApprove = new JsonFile(TO_APPROVE_DIRECTORY + testName + TO_APPROVE_FILE + TXT_ENDING);
-        try {
-            toApprove.create();
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot create file: " + toApprove);
+        LOGGER.info("Starting new approval test with baseline: " + baselineName);
+        if (baseline == null) {
+            LOGGER.info("No approved version found");
+            LOGGER.info("Creating new unapproved text file");
+            jsonFileService.createUnapprovedTextFile(data, baselineName);
+            throw new VersionNotApprovedError(baselineName);
         }
-        try {
-            toApprove.writeData(data);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("File " + toApprove + " not found.");
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Cannot process JSON file");
+        JsonNode dataWithoutIgnoredFields = removeIgnoredFields(data);
+        JsonNode baselineWithoutIgnoredFields = removeIgnoredFields(baseline);
+        if (!baselineWithoutIgnoredFields.equals(dataWithoutIgnoredFields)) {
+            LOGGER.info("Current version is not equal to approved version");
+            LOGGER.info("Create new unapproved text file");
+            List<String> differences = getDifferences(baselineWithoutIgnoredFields, dataWithoutIgnoredFields);
+            jsonFileService.createUnapprovedTextFile(data, baselineName);
+            throw new VerificationFailedError(formatDifferences(differences));
         }
-        JsonFile baseline = new JsonFile(BASELINE_DIRECTORY + testName + TXT_ENDING);
-        if (baseline.exists()) {
-            LOGGER.info("An approved version exists. Comparing...");
-            if (!toApprove.equals(baseline, ignoredFields)) {
-                LOGGER.info("Current version is not equal to approved version.");
-                List<String> differences = toApprove.computeDifferences(baseline, ignoredFields);
-                throw new VerificationFailedError(toApprove, formatDifferences(differences));
-            }
-            LOGGER.info("Current version is equal to approved version.");
-            toApprove.delete();
-        } else {
-            LOGGER.info("No approved version exists.");
-            throw new VersionNotApprovedError(toApprove);
-        }
+        LOGGER.info("Current version is equal to approved version");
     }
 
     /**
@@ -74,7 +82,80 @@ public class JsonVerifier extends Verifier {
      * @return the JsonVerifier
      */
     public JsonVerifier ignore(String path) {
-        this.ignoredFields.add(path);
+        LOGGER.info("Ignoring Json element in approval test: " + path);
+        ignoredFields.add(path);
         return this;
     }
+
+    private JsonNode removeIgnoredFields(JsonNode jsonToApprove) {
+        DocumentContext jsonContext = JsonPath.parse(jsonToApprove.toString());
+        for (String ignoredField : ignoredFields) {
+            jsonToApprove = stringToJson(jsonContext.delete(ignoredField).jsonString());
+        }
+        return jsonToApprove;
+    }
+
+    private JsonNode stringToJson(String jsonString) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readTree(jsonString);
+        } catch (IOException e) {
+            throw new RuntimeException("Error while reading Json String");
+        }
+    }
+
+    private List<String> getDifferences(JsonNode original, JsonNode revised) {
+        List<String> differences = new ArrayList<>();
+        JsonNode changes = JsonDiff.asJson(original, revised);
+        for (JsonNode change : changes) {
+            differences.add(visualizeChange(change, revised, original));
+        }
+        return differences;
+    }
+
+    private String visualizeChange(JsonNode change, JsonNode revised, JsonNode original) {
+        StringBuilder builder = new StringBuilder();
+        String path = change.get(PATH).toString();
+        String operation = change.get(OPERATION).toString();
+        JsonNode newElement = getLeafOfJsonNode(path, revised);
+        JsonNode oldElement = getLeafOfJsonNode(path, original);
+        builder.append("Operation: " + operation + "\n");
+        builder.append("Path: " + path + "\n");
+        if (operation.equals(REMOVE)) {
+            builder.append("--- " + oldElement + " \n");
+        } else
+            if (operation.equals(ADD) || operation.equals(COPY)) {
+                builder.append("+++ " + newElement + " \n");
+            } else
+                if (operation.equals(MOVE)) {
+                    builder.append("From " + change.get(FROM).toString() + " \n");
+                    builder.append("To: " + path + " \n");
+                    builder.append("+++ " + newElement + " \n");
+                } else {
+                    builder.append("+++ " + newElement + " \n");
+                    builder.append("--- " + oldElement + " \n");
+                }
+        return builder.toString();
+    }
+
+    private JsonNode getLeafOfJsonNode(String path, JsonNode jsonNode) {
+        for (String pathElement : path.replace("\"", "").substring(1).split("/")) {
+            if (isNumeric(pathElement)) {
+                jsonNode = jsonNode.get(Integer.parseInt(pathElement));
+            } else {
+                jsonNode = jsonNode.get(pathElement);
+            }
+        }
+        return jsonNode;
+    }
+
+    private boolean isNumeric(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
 }

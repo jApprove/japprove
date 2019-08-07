@@ -1,68 +1,66 @@
 package org.junitapprovaltesting.verifier;
 
 
+import com.github.difflib.DiffUtils;
+import com.github.difflib.UnifiedDiffUtils;
+import com.github.difflib.algorithm.DiffException;
+import com.github.difflib.patch.Patch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junitapprovaltesting.errors.VerificationFailedError;
 import org.junitapprovaltesting.errors.VersionNotApprovedError;
-import org.junitapprovaltesting.model.TextFile;
+import org.junitapprovaltesting.services.TextFileService;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
- * The {@code StringVerifier} provides a method to verify String objects within Approval Tests.
+ * The {@code StringVerifier} provides methods to verify String objects or String lists within Approval Tests.
  */
 public class StringVerifier extends Verifier {
 
     private static final Logger LOGGER = LogManager.getLogger(StringVerifier.class);
+    private TextFileService textFileService;
+    private List<String> data;
 
-    public StringVerifier(String testName) {
-        super(testName);
+    public StringVerifier(String baselineName) {
+        super(baselineName);
+        textFileService = new TextFileService();
+        try {
+            data = textFileService.getApprovedTextFile(baselineName).readData();
+        } catch (IOException e) {
+            data = null;
+        }
+        textFileService.removeUnapprovedTextFile(baselineName);
     }
 
     /**
      * Receives a String that should be verified within an Approval Test.
      * <p>
-     * Within the verification process, a {@code toApprove} toApprove file is created in the build directory and
-     * compared to a {@code baseline} file (if exists). In the case the versions are equal, the test passes. If no
-     * baseline exists, a {@code VersionNotApprovedError} is thrown. If there is a baseline that is not equal to the
-     * current version, a {@code VerificationFailedError} is thrown.
+     * Within the verification process, the passed data is compared to the data in the corresponding baseline. In the
+     * case the versions are equal, the test passes. If no baseline exists, a {@code VersionNotApprovedError} is
+     * thrown. If there is a baseline that is not equal to the current version, a {@code VerificationFailedError}
+     * is thrown.
      *
      * @param data The String that should be verified
      */
     public void verify(String data) {
-        LOGGER.info("Starting new approval test: " + testName);
-        TextFile toApprove = new TextFile(TO_APPROVE_DIRECTORY + testName + TO_APPROVE_FILE + TXT_ENDING);
-        try {
-            toApprove.create();
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot create file: " + toApprove);
+        LOGGER.info("Starting new approval test with baseline: " + baselineName);
+        if (this.data == null) {
+            LOGGER.info("No approved version found");
+            LOGGER.info("Creating new unapproved text file");
+            textFileService.createUnapprovedTextFile(data, baselineName);
+            throw new VersionNotApprovedError(baselineName);
         }
-        try {
-            toApprove.writeData(data);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("File " + toApprove + " not found.");
+        if (!this.data.equals(Arrays.asList(data))) {
+            LOGGER.info("Current version is not equal to approved version");
+            LOGGER.info("Create new unapproved text file");
+            List<String> differences = getDifferences(this.data, Arrays.asList(data));
+            textFileService.createUnapprovedTextFile(data, baselineName);
+            throw new VerificationFailedError(formatDifferences(differences));
         }
-        TextFile baseline = new TextFile(BASELINE_DIRECTORY + testName + TXT_ENDING);
-        if (baseline.exists()) {
-            LOGGER.info("An approved version exists. Comparing...");
-            try {
-                if (!toApprove.equals(baseline)) {
-                    LOGGER.info("Current version is not equal to approved version.");
-                    List<String> differences = toApprove.computeDifferences(baseline);
-                    throw new VerificationFailedError(toApprove, formatDifferences(differences));
-                }
-            } catch (IOException e) {
-                throw new RuntimeException("Error while comparing files.");
-            }
-            LOGGER.info("Current version is equal to approved version.");
-            toApprove.delete();
-        } else {
-            LOGGER.info("No approved version exists.");
-            throw new VersionNotApprovedError(toApprove);
-        }
+        LOGGER.info("Current version is equal to approved version");
     }
 
     /**
@@ -76,35 +74,29 @@ public class StringVerifier extends Verifier {
      * @param data The list of Strings that should be verified
      */
     public void verify(List<String> data) {
-        LOGGER.info("Starting new approval test: " + testName);
-        TextFile toApprove = new TextFile(TO_APPROVE_DIRECTORY + testName + TO_APPROVE_FILE + TXT_ENDING);
-        try {
-            toApprove.create();
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot create file: " + toApprove);
+        LOGGER.info("Starting new approval test with baseline: " + baselineName);
+        if (this.data == null) {
+            LOGGER.info("No approved version found");
+            LOGGER.info("Creating new unapproved text file");
+            textFileService.createUnapprovedTextFile(data, baselineName);
+            throw new VersionNotApprovedError(baselineName);
         }
-        try {
-            toApprove.writeData(data);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("File " + toApprove + " not found.");
+        if (!this.data.equals(data)) {
+            LOGGER.info("Current version is not equal to approved version");
+            LOGGER.info("Create new unapproved text file");
+            List<String> differences = getDifferences(this.data, data);
+            textFileService.createUnapprovedTextFile(data, baselineName);
+            throw new VerificationFailedError(formatDifferences(differences));
         }
-        TextFile baseline = new TextFile(BASELINE_DIRECTORY + testName + TXT_ENDING);
-        if (baseline.exists()) {
-            LOGGER.info("An approved version exists. Comparing...");
-            try {
-                if (!toApprove.equals(baseline)) {
-                    LOGGER.info("Current version is not equal to approved version.");
-                    List<String> differences = toApprove.computeDifferences(baseline);
-                    throw new VerificationFailedError(toApprove, formatDifferences(differences));
-                }
-            } catch (IOException e) {
-                throw new RuntimeException("Error while comparing files.");
-            }
-            LOGGER.info("Current version is equal to approved version.");
-            toApprove.delete();
-        } else {
-            LOGGER.info("No approved version exists.");
-            throw new VersionNotApprovedError(toApprove);
+        LOGGER.info("Current version is equal to approved version");
+    }
+
+    private List<String> getDifferences(List<String> original, List<String> revised) {
+        try {
+            Patch<String> patch = DiffUtils.diff(original, revised);
+            return UnifiedDiffUtils.generateUnifiedDiff("Baseline", "toApprove", original, patch, 0);
+        } catch (DiffException e) {
+            throw new RuntimeException("Cannot compute differences! " + e);
         }
     }
 }
