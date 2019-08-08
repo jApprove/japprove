@@ -7,9 +7,7 @@ import java.util.List;
 /**
  * An extension of an {@link ApprovableFile} that provides functionality to read and write data of {@link TextFile}.
  */
-public abstract class TextFile extends ApprovableFile {
-
-    static final String TXT_ENDING = ".txt";
+public class TextFile extends ApprovableFile {
 
     public TextFile(String path) {
         super(path);

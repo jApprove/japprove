@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junitapprovaltesting.errors.VerificationFailedError;
 import org.junitapprovaltesting.errors.VersionNotApprovedError;
-import org.junitapprovaltesting.services.TextFileService;
+import org.junitapprovaltesting.services.FileService;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -21,18 +21,18 @@ import java.util.List;
 public class StringVerifier extends Verifier {
 
     private static final Logger LOGGER = LogManager.getLogger(StringVerifier.class);
-    private TextFileService textFileService;
+    private FileService fileService;
     private List<String> data;
 
     public StringVerifier(String baselineName) {
         super(baselineName);
-        textFileService = new TextFileService();
+        fileService = new FileService();
         try {
-            data = textFileService.getApprovedTextFile(baselineName).readData();
+            data = fileService.getTextBaseline(baselineName).readData();
         } catch (IOException e) {
             data = null;
         }
-        textFileService.removeUnapprovedTextFile(baselineName);
+        fileService.removeUnapprovedFile(baselineName);
     }
 
     /**
@@ -50,14 +50,14 @@ public class StringVerifier extends Verifier {
         if (this.data == null) {
             LOGGER.info("No approved version found");
             LOGGER.info("Creating new unapproved text file");
-            textFileService.createUnapprovedTextFile(data, baselineName);
+            fileService.createUnapprovedFile(data, baselineName);
             throw new VersionNotApprovedError(baselineName);
         }
         if (!this.data.equals(Arrays.asList(data))) {
             LOGGER.info("Current version is not equal to approved version");
             LOGGER.info("Create new unapproved text file");
             List<String> differences = getDifferences(this.data, Arrays.asList(data));
-            textFileService.createUnapprovedTextFile(data, baselineName);
+            fileService.createUnapprovedFile(data, baselineName);
             throw new VerificationFailedError(formatDifferences(differences));
         }
         LOGGER.info("Current version is equal to approved version");
@@ -78,14 +78,14 @@ public class StringVerifier extends Verifier {
         if (this.data == null) {
             LOGGER.info("No approved version found");
             LOGGER.info("Creating new unapproved text file");
-            textFileService.createUnapprovedTextFile(data, baselineName);
+            fileService.createUnapprovedFile(data, baselineName);
             throw new VersionNotApprovedError(baselineName);
         }
         if (!this.data.equals(data)) {
             LOGGER.info("Current version is not equal to approved version");
             LOGGER.info("Create new unapproved text file");
             List<String> differences = getDifferences(this.data, data);
-            textFileService.createUnapprovedTextFile(data, baselineName);
+            fileService.createUnapprovedFile(data, baselineName);
             throw new VerificationFailedError(formatDifferences(differences));
         }
         LOGGER.info("Current version is equal to approved version");

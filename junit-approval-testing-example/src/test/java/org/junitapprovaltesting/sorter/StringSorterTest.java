@@ -19,7 +19,7 @@ public class StringSorterTest {
         String s = "Hello World";
 
         // act
-        //s = s.toLowerCase();
+        s = s.toLowerCase();
 
         // approve
         stringVerifier.verify(s);
@@ -49,7 +49,7 @@ public class StringSorterTest {
                                                      "            {\n" +
                                                      "                \"category\": \"reference\",\n" +
                                                      "                \"author\": \"Nigel Rees\",\n" +
-                                                     "                \"title\": \"Sayings of the Century\"\n" +
+                                                     "                \"title\": \"Sayings of the Century 2\"\n" +
                                                      "            },\n" +
                                                      "            {\n" +
                                                      "                \"category\": \"fiction\",\n" +

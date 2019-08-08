@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junitapprovaltesting.errors.VerificationFailedError;
 import org.junitapprovaltesting.errors.VersionNotApprovedError;
-import org.junitapprovaltesting.services.JsonFileService;
+import org.junitapprovaltesting.services.FileService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,18 +31,18 @@ public class JsonVerifier extends Verifier {
 
     private static final Logger LOGGER = LogManager.getLogger(JsonVerifier.class);
     private List<String> ignoredFields = new ArrayList<>();
-    private JsonFileService jsonFileService;
+    private FileService fileService;
     private JsonNode baseline;
 
     public JsonVerifier(String testName) {
         super(testName);
-        jsonFileService = new JsonFileService();
+        fileService = new FileService();
         try {
-            baseline = jsonFileService.getApprovedJsonFile(testName).readData();
+            baseline = fileService.getJsonBaseline(testName).readData();
         } catch (IOException e) {
             baseline = null;
         }
-        jsonFileService.removeUnapprovedJsonFile(testName);
+        fileService.removeUnapprovedFile(testName);
     }
 
     /**
@@ -60,7 +60,7 @@ public class JsonVerifier extends Verifier {
         if (baseline == null) {
             LOGGER.info("No approved version found");
             LOGGER.info("Creating new unapproved text file");
-            jsonFileService.createUnapprovedTextFile(data, baselineName);
+            fileService.createUnapprovedFile(data, baselineName);
             throw new VersionNotApprovedError(baselineName);
         }
         JsonNode dataWithoutIgnoredFields = removeIgnoredFields(data);
@@ -69,7 +69,7 @@ public class JsonVerifier extends Verifier {
             LOGGER.info("Current version is not equal to approved version");
             LOGGER.info("Create new unapproved text file");
             List<String> differences = getDifferences(baselineWithoutIgnoredFields, dataWithoutIgnoredFields);
-            jsonFileService.createUnapprovedTextFile(data, baselineName);
+            fileService.createUnapprovedFile(data, baselineName);
             throw new VerificationFailedError(formatDifferences(differences));
         }
         LOGGER.info("Current version is equal to approved version");

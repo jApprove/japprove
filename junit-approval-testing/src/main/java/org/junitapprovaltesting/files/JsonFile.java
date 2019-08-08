@@ -13,9 +13,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * An extension of an {@link ApprovableFile} that provides functionality to read and write data of {@link JsonFile}s.
  */
-public abstract class JsonFile extends ApprovableFile {
-
-    static final String JSON_ENDING = ".json";
+public class JsonFile extends ApprovableFile {
 
     public JsonFile(String path) {
         super(path);
