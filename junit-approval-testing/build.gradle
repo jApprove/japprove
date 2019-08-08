@@ -27,15 +27,10 @@ dependencies {
     compile("com.flipkart.zjsonpatch:zjsonpatch:${zjsonpatchVersion}")
 
     compile("com.jayway.jsonpath:json-path:${jsonPathVersion}")
-
 }
 
 test {
     useJUnitPlatform()
-    testLogging {
-        events "passed", "skipped", "failed"
-        exceptionFormat "full"
-    }
 }
 
 tasks.withType(JavaCompile) {
