@@ -11,6 +11,7 @@ import org.junitapprovaltesting.errors.VerificationFailedError;
 import org.junitapprovaltesting.errors.VersionNotApprovedError;
 import org.junitapprovaltesting.services.FileService;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +30,8 @@ public class StringVerifier extends Verifier {
         fileService = new FileService();
         try {
             data = fileService.getTextBaseline(baselineName).readData();
+        } catch (FileNotFoundException e) {
+            data = null;
         } catch (IOException e) {
             data = null;
         }

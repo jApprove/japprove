@@ -4,6 +4,8 @@ import com.github.difflib.DiffUtils;
 import com.github.difflib.UnifiedDiffUtils;
 import com.github.difflib.algorithm.DiffException;
 import com.github.difflib.patch.Patch;
+import org.junitapprovaltesting.exceptions.DiffingFailedException;
+import org.junitapprovaltesting.exceptions.FileCreationFailedException;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,14 +32,14 @@ public class ApprovableFile extends File {
         if (!exists()) {
             File parent = getParentFile();
             if (!parent.exists() && !parent.mkdirs()) {
-                throw new RuntimeException("Cannot create directory: " + parent);
+                throw new FileCreationFailedException(parent.getName());
             }
             createNewFile();
         }
     }
 
     /**
-     * Computes the differences of this and another TextFile.
+     * Computes the differences of this and another {@link ApprovableFile}.
      *
      * @param other the file this file should be compared to
      * @return a list of the differences
@@ -49,7 +51,7 @@ public class ApprovableFile extends File {
             Patch<String> patch = DiffUtils.diff(original, revised);
             return UnifiedDiffUtils.generateUnifiedDiff("Baseline", "toApprove", original, patch, 0);
         } catch (DiffException | IOException e) {
-            throw new RuntimeException("Cannot compute differences! " + e);
+            throw new DiffingFailedException("Cannot compute differences! " + e);
         }
     }
 

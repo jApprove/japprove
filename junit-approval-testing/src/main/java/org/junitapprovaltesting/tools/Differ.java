@@ -1,6 +1,9 @@
 package org.junitapprovaltesting.tools;
 
 import org.apache.commons.io.FilenameUtils;
+import org.junitapprovaltesting.exceptions.ApprovedFileNotFoundException;
+import org.junitapprovaltesting.exceptions.DiffingFailedException;
+import org.junitapprovaltesting.exceptions.UnapprovedFileNotFoundException;
 import org.junitapprovaltesting.files.ApprovableFile;
 import org.junitapprovaltesting.services.FileService;
 
@@ -27,20 +30,20 @@ public class Differ {
         try {
             unapprovedFile = fileService.getUnapprovedFile(baselineName);
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("Found no unapproved version for passed file " + baselineName);
+            throw new UnapprovedFileNotFoundException(baselineName);
         }
         ApprovableFile baseline;
         try {
             baseline = fileService
                     .getBaseline(FilenameUtils.getBaseName(unapprovedFile.getPath()).replace("_toApprove", ""));
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("Found no approved version for passed file " + baselineName);
+            throw new ApprovedFileNotFoundException(baselineName);
         }
         String cmd = IDEA_DIFF + " " + unapprovedFile.getPath() + " " + baseline.getPath();
         try {
             Runtime.getRuntime().exec(cmd);
         } catch (IOException e) {
-            throw new RuntimeException("Diff tool " + IDEA_DIFF + " not found!");
+            throw new DiffingFailedException("Diff tool " + IDEA_DIFF + " not found!");
         }
     }
 }

@@ -11,6 +11,7 @@ import org.junitapprovaltesting.errors.VerificationFailedError;
 import org.junitapprovaltesting.errors.VersionNotApprovedError;
 import org.junitapprovaltesting.services.FileService;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class JsonVerifier extends Verifier {
         fileService = new FileService();
         try {
             baseline = fileService.getJsonBaseline(testName).readData();
-        } catch (IOException e) {
+        } catch (FileNotFoundException e) {
             baseline = null;
         }
         fileService.removeUnapprovedFile(testName);

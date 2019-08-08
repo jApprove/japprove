@@ -3,6 +3,8 @@ package org.junitapprovaltesting.tools;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junitapprovaltesting.exceptions.ApprovingFailedException;
+import org.junitapprovaltesting.exceptions.UnapprovedFileNotFoundException;
 import org.junitapprovaltesting.files.ApprovableFile;
 import org.junitapprovaltesting.services.FileService;
 
@@ -32,7 +34,7 @@ public class Approver {
         try {
             unapprovedFile = fileService.getUnapprovedFile(filename);
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("File not found " + filename);
+            throw new UnapprovedFileNotFoundException(filename);
         }
         approveFile(unapprovedFile);
     }
@@ -45,6 +47,7 @@ public class Approver {
     public void approveFile(ApprovableFile unapprovedFile) {
         String baselineName = FilenameUtils.getBaseName(unapprovedFile.getPath()).replace("_toApprove", "");
         ApprovableFile baseline;
+        System.out.println(baselineName);
         try {
             baseline = fileService.getBaseline(baselineName);
         } catch (FileNotFoundException e) {
@@ -56,7 +59,7 @@ public class Approver {
                 LOGGER.info("Successfully approved file " + unapprovedFile.getName());
             }
         } catch (IOException e) {
-            throw new RuntimeException("Not able to approve file " + baselineName);
+            throw new ApprovingFailedException(baselineName);
         }
     }
 

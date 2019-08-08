@@ -1,8 +1,8 @@
 package org.junitapprovaltesting.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.junitapprovaltesting.errors.ApprovedFileNotFoundException;
+import org.junitapprovaltesting.exceptions.ApprovedFileNotFoundException;
+import org.junitapprovaltesting.exceptions.FileCreationFailedException;
 import org.junitapprovaltesting.files.ApprovableFile;
 import org.junitapprovaltesting.files.JsonFile;
 import org.junitapprovaltesting.files.TextFile;
@@ -28,17 +28,12 @@ public class FileService {
      * @return the created {@link TextFile}
      */
     public TextFile createUnapprovedFile(String data, String baselineName) {
-        TextFile toApprove =
-                new TextFile(TO_APPROVE_DIRECTORY + baselineName + TO_APPROVE_FILE + TXT_ENDING);
+        TextFile toApprove = new TextFile(TO_APPROVE_DIRECTORY + baselineName + TO_APPROVE_FILE + TXT_ENDING);
         try {
             toApprove.create();
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot create file: " + toApprove);
-        }
-        try {
             toApprove.writeData(data);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("File " + toApprove + " not found.");
+        } catch (IOException e) {
+            throw new FileCreationFailedException(toApprove.getName());
         }
         return toApprove;
     }
@@ -54,13 +49,9 @@ public class FileService {
         TextFile toApprove = new TextFile(TO_APPROVE_DIRECTORY + baselineName + TO_APPROVE_FILE + TXT_ENDING);
         try {
             toApprove.create();
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot create file: " + toApprove);
-        }
-        try {
             toApprove.writeData(data);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("File " + toApprove + " not found.");
+        } catch (IOException e) {
+            throw new FileCreationFailedException(toApprove.getName());
         }
         return toApprove;
     }
@@ -76,13 +67,9 @@ public class FileService {
         JsonFile toApprove = new JsonFile(TO_APPROVE_DIRECTORY + baselineName + TO_APPROVE_FILE + TXT_ENDING);
         try {
             toApprove.create();
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot create file: " + toApprove);
-        }
-        try {
             toApprove.writeData(data);
-        } catch (FileNotFoundException | JsonProcessingException e) {
-            throw new RuntimeException("File " + toApprove + " not found.");
+        } catch (IOException e) {
+            throw new FileCreationFailedException(toApprove.getName());
         }
         return toApprove;
     }
@@ -115,7 +102,7 @@ public class FileService {
                 }
             }
         }
-        throw new FileNotFoundException("Found no unapproved version for passed file " + filename);
+        throw new FileNotFoundException(filename);
     }
 
     /**
@@ -141,10 +128,10 @@ public class FileService {
      * @return the {@link TextFile} if exists
      * @throws ApprovedFileNotFoundException if the {@link TextFile} not exists
      */
-    public TextFile getTextBaseline(String baselineName) throws ApprovedFileNotFoundException {
+    public TextFile getTextBaseline(String baselineName) throws FileNotFoundException {
         TextFile baseline = new TextFile(BASELINE_DIRECTORY + baselineName + TXT_ENDING);
         if (!baseline.exists()) {
-            throw new ApprovedFileNotFoundException("Baseline does not exist");
+            throw new FileNotFoundException("Baseline does not exist");
         }
         return baseline;
     }
@@ -156,10 +143,10 @@ public class FileService {
      * @return the {@link JsonFile} if exists
      * @throws ApprovedFileNotFoundException if the {@link JsonFile} not exists
      */
-    public JsonFile getJsonBaseline(String baselineName) throws ApprovedFileNotFoundException {
+    public JsonFile getJsonBaseline(String baselineName) throws FileNotFoundException {
         JsonFile baseline = new JsonFile(BASELINE_DIRECTORY + baselineName + TXT_ENDING);
         if (!baseline.exists()) {
-            throw new ApprovedFileNotFoundException("Baseline does not exist");
+            throw new FileNotFoundException("Baseline does not exist");
         }
         return baseline;
     }
@@ -190,11 +177,11 @@ public class FileService {
      * @return the created {@link ApprovableFile}
      */
     public ApprovableFile createBaseline(String baselineName) {
-        ApprovableFile baseline = new ApprovableFile(baselineName);
+        ApprovableFile baseline = new ApprovableFile(BASELINE_DIRECTORY + baselineName + TXT_ENDING);
         try {
             baseline.create();
         } catch (IOException e) {
-            throw new RuntimeException("Cannot create file: " + baseline);
+            throw new FileCreationFailedException(baseline.getName());
         }
         return baseline;
     }
