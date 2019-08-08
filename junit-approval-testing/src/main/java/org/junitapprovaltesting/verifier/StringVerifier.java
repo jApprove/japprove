@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junitapprovaltesting.errors.VerificationFailedError;
 import org.junitapprovaltesting.errors.VersionNotApprovedError;
-import org.junitapprovaltesting.services.FileService;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,12 +21,10 @@ import java.util.List;
 public class StringVerifier extends Verifier {
 
     private static final Logger LOGGER = LogManager.getLogger(StringVerifier.class);
-    private FileService fileService;
     private List<String> data;
 
     public StringVerifier(String baselineName) {
         super(baselineName);
-        fileService = new FileService();
         try {
             data = fileService.getTextBaseline(baselineName).readData();
         } catch (FileNotFoundException e) {

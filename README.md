@@ -79,6 +79,29 @@ Currently, this Approval Testing framework contains the following features:
    `gradle diff --file=sorting1`
 
 
+6. Customize approval testing properties (optional):
+
+	Create a "approvaltesting.properties" file in the "src/main/resources" directory. In this file it is possible to specify the following values:
+	
+	- The directory of the baseline
+	- The temporary directory of the unapproved files
+	- A custom diff tool
+	- A custom file ending
+	- A custom extension for unapproved files
+	
+	For example, the properties file could look like the following one:
+	
+	```
+	baselineDirectory=baselines\\
+	toApproveDirectory=build\\approvals\\
+	diffTdool=C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2019.1.3\\bin\\idea64 diff
+	fileEnding=.txt
+	toApproveExtension=_toApprove
+	```
+	
+	The properties of the file above are the default properties.
+	
+  
 ## Components
 
 This project consists of a core library, a gradle plugin and an example that demonstrates the functionality. Currently, the library and the plugin are not published. Therefore, it is necessary to build them manually.

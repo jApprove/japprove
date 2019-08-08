@@ -5,5 +5,5 @@ package org.junitapprovaltesting.exceptions;
  */
 public class DiffingFailedException extends RuntimeException {
 
-    public DiffingFailedException(String filename) {super("Error while approving " + filename);}
+    public DiffingFailedException(String message) {super(message);}
 }

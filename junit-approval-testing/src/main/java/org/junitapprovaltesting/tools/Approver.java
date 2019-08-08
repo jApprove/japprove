@@ -3,6 +3,7 @@ package org.junitapprovaltesting.tools;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
 import org.junitapprovaltesting.exceptions.ApprovingFailedException;
 import org.junitapprovaltesting.exceptions.UnapprovedFileNotFoundException;
 import org.junitapprovaltesting.files.ApprovableFile;
@@ -19,9 +20,11 @@ public class Approver {
 
     private static Logger LOGGER = LogManager.getLogger(Approver.class);
     private FileService fileService;
+    private ApprovalTestingConfiguration config;
 
-    public Approver() {
-        fileService = new FileService();
+    public Approver(ApprovalTestingConfiguration config) {
+        this.config = config;
+        fileService = new FileService(config);
     }
 
     /**
@@ -45,9 +48,9 @@ public class Approver {
      * @param unapprovedFile the {@link ApprovableFile} that should be approved
      */
     public void approveFile(ApprovableFile unapprovedFile) {
-        String baselineName = FilenameUtils.getBaseName(unapprovedFile.getPath()).replace("_toApprove", "");
+        String baselineName =
+                FilenameUtils.getBaseName(unapprovedFile.getPath()).replace(config.getToApproveExtension(), "");
         ApprovableFile baseline;
-        System.out.println(baselineName);
         try {
             baseline = fileService.getBaseline(baselineName);
         } catch (FileNotFoundException e) {
@@ -73,9 +76,8 @@ public class Approver {
             return;
         }
         LOGGER.info("Found " + unapprovedFiles.size() + " unapproved files");
-        Approver approver = new Approver();
         for (ApprovableFile file : unapprovedFiles) {
-            approver.approveFile(file);
+            approveFile(file);
         }
     }
 
@@ -91,10 +93,11 @@ public class Approver {
         LOGGER.info("Found " + unapprovedFiles.size() + " unapproved files");
         LOGGER.info("Starting batch process ..");
         Scanner scanner = new Scanner(System.in);
-        Differ differ = new Differ();
+        Differ differ = new Differ(config);
         for (ApprovableFile unapprovedFile : unapprovedFiles) {
             LOGGER.info("Unapproved file: " + unapprovedFile.getName());
-            String baselineName = FilenameUtils.getBaseName(unapprovedFile.getPath()).replace("_toApprove", "");
+            String baselineName =
+                    FilenameUtils.getBaseName(unapprovedFile.getPath()).replace(config.getToApproveExtension(), "");
             ApprovableFile baseline;
             try {
                 baseline = fileService.getBaseline(baselineName);

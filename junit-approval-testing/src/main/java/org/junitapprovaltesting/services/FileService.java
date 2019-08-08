@@ -1,6 +1,7 @@
 package org.junitapprovaltesting.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
 import org.junitapprovaltesting.exceptions.ApprovedFileNotFoundException;
 import org.junitapprovaltesting.exceptions.FileCreationFailedException;
 import org.junitapprovaltesting.files.ApprovableFile;
@@ -15,10 +16,17 @@ import java.util.List;
 
 public class FileService {
 
-    private static final String BASELINE_DIRECTORY = "baselines" + File.separator;
-    private static final String TO_APPROVE_FILE = "_toApprove";
-    private static final String TXT_ENDING = ".txt";
-    private static final String TO_APPROVE_DIRECTORY = "build" + File.separator + "approvals" + File.separator;
+    private String baselineDirectory;
+    private String toApproveDirectory;
+    private String toApproveExtension;
+    private String fileEnding;
+
+    public FileService(ApprovalTestingConfiguration config) {
+        baselineDirectory = config.getBaselineDirectory();
+        toApproveDirectory = config.getToApproveDirectory();
+        toApproveExtension = config.getToApproveExtension();
+        fileEnding = config.getFileEnding();
+    }
 
     /**
      * Creates a new {@link TextFile} and writes the data into this file.
@@ -28,7 +36,7 @@ public class FileService {
      * @return the created {@link TextFile}
      */
     public TextFile createUnapprovedFile(String data, String baselineName) {
-        TextFile toApprove = new TextFile(TO_APPROVE_DIRECTORY + baselineName + TO_APPROVE_FILE + TXT_ENDING);
+        TextFile toApprove = new TextFile(toApproveDirectory + baselineName + toApproveExtension + fileEnding);
         try {
             toApprove.create();
             toApprove.writeData(data);
@@ -46,7 +54,7 @@ public class FileService {
      * @return the created {@link TextFile}
      */
     public TextFile createUnapprovedFile(List<String> data, String baselineName) {
-        TextFile toApprove = new TextFile(TO_APPROVE_DIRECTORY + baselineName + TO_APPROVE_FILE + TXT_ENDING);
+        TextFile toApprove = new TextFile(toApproveDirectory + baselineName + toApproveExtension + fileEnding);
         try {
             toApprove.create();
             toApprove.writeData(data);
@@ -64,7 +72,7 @@ public class FileService {
      * @return the created {@link JsonFile}
      */
     public JsonFile createUnapprovedFile(JsonNode data, String baselineName) {
-        JsonFile toApprove = new JsonFile(TO_APPROVE_DIRECTORY + baselineName + TO_APPROVE_FILE + TXT_ENDING);
+        JsonFile toApprove = new JsonFile(toApproveDirectory + baselineName + toApproveExtension + fileEnding);
         try {
             toApprove.create();
             toApprove.writeData(data);
@@ -82,7 +90,7 @@ public class FileService {
      */
     public boolean removeUnapprovedFile(String filename) {
         ApprovableFile unapprovedFile =
-                new ApprovableFile(TO_APPROVE_DIRECTORY + filename + TO_APPROVE_FILE + TXT_ENDING);
+                new ApprovableFile(toApproveDirectory + filename + toApproveExtension + fileEnding);
         return unapprovedFile.delete();
     }
 
@@ -94,10 +102,10 @@ public class FileService {
      * @throws FileNotFoundException if no {@link ApprovableFile} has been found
      */
     public ApprovableFile getUnapprovedFile(String filename) throws FileNotFoundException {
-        File directory = new File(TO_APPROVE_DIRECTORY);
+        File directory = new File(toApproveDirectory);
         if (directory.exists() && directory.listFiles() != null) {
             for (File file : directory.listFiles()) {
-                if (file.getPath().equals(TO_APPROVE_DIRECTORY + filename + TO_APPROVE_FILE + TXT_ENDING)) {
+                if (file.getPath().equals(toApproveDirectory + filename + toApproveExtension + fileEnding)) {
                     return new ApprovableFile(file.getPath());
                 }
             }
@@ -111,7 +119,7 @@ public class FileService {
      * @return a list of all {@link ApprovableFile}s
      */
     public List<ApprovableFile> getUnapprovedFiles() {
-        File directory = new File(TO_APPROVE_DIRECTORY);
+        File directory = new File(toApproveDirectory);
         List<ApprovableFile> files = new ArrayList<>();
         if (directory.exists() && directory.listFiles() != null) {
             for (File file : directory.listFiles()) {
@@ -129,7 +137,7 @@ public class FileService {
      * @throws ApprovedFileNotFoundException if the {@link TextFile} not exists
      */
     public TextFile getTextBaseline(String baselineName) throws FileNotFoundException {
-        TextFile baseline = new TextFile(BASELINE_DIRECTORY + baselineName + TXT_ENDING);
+        TextFile baseline = new TextFile(baselineDirectory + baselineName + fileEnding);
         if (!baseline.exists()) {
             throw new FileNotFoundException("Baseline does not exist");
         }
@@ -144,7 +152,7 @@ public class FileService {
      * @throws ApprovedFileNotFoundException if the {@link JsonFile} not exists
      */
     public JsonFile getJsonBaseline(String baselineName) throws FileNotFoundException {
-        JsonFile baseline = new JsonFile(BASELINE_DIRECTORY + baselineName + TXT_ENDING);
+        JsonFile baseline = new JsonFile(baselineDirectory + baselineName + fileEnding);
         if (!baseline.exists()) {
             throw new FileNotFoundException("Baseline does not exist");
         }
@@ -159,10 +167,10 @@ public class FileService {
      * @throws ApprovedFileNotFoundException if the {@link ApprovableFile}not exists
      */
     public ApprovableFile getBaseline(String baselineName) throws FileNotFoundException {
-        File directory = new File(BASELINE_DIRECTORY);
+        File directory = new File(baselineDirectory);
         if (directory.exists() && directory.listFiles() != null) {
             for (File file : directory.listFiles()) {
-                if (file.getPath().equals(BASELINE_DIRECTORY + baselineName + TXT_ENDING)) {
+                if (file.getPath().equals(baselineDirectory + baselineName + fileEnding)) {
                     return new ApprovableFile(file.getPath());
                 }
             }
@@ -177,7 +185,7 @@ public class FileService {
      * @return the created {@link ApprovableFile}
      */
     public ApprovableFile createBaseline(String baselineName) {
-        ApprovableFile baseline = new ApprovableFile(BASELINE_DIRECTORY + baselineName + TXT_ENDING);
+        ApprovableFile baseline = new ApprovableFile(baselineDirectory + baselineName + fileEnding);
         try {
             baseline.create();
         } catch (IOException e) {
@@ -185,4 +193,5 @@ public class FileService {
         }
         return baseline;
     }
+
 }

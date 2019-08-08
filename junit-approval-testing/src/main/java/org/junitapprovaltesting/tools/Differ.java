@@ -1,6 +1,7 @@
 package org.junitapprovaltesting.tools;
 
 import org.apache.commons.io.FilenameUtils;
+import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
 import org.junitapprovaltesting.exceptions.ApprovedFileNotFoundException;
 import org.junitapprovaltesting.exceptions.DiffingFailedException;
 import org.junitapprovaltesting.exceptions.UnapprovedFileNotFoundException;
@@ -12,12 +13,12 @@ import java.io.IOException;
 
 public class Differ {
 
-    private static final String IDEA_DIFF =
-            "C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2019.1.3\\bin\\idea64 diff";
+    private ApprovalTestingConfiguration config;
     private FileService fileService;
 
-    public Differ() {
-        fileService = new FileService();
+    public Differ(ApprovalTestingConfiguration config) {
+        this.config = config;
+        fileService = new FileService(config);
     }
 
     /**
@@ -35,15 +36,17 @@ public class Differ {
         ApprovableFile baseline;
         try {
             baseline = fileService
-                    .getBaseline(FilenameUtils.getBaseName(unapprovedFile.getPath()).replace("_toApprove", ""));
+                    .getBaseline(FilenameUtils.getBaseName(unapprovedFile.getPath())
+                                              .replace(config.getToApproveExtension(), ""));
         } catch (FileNotFoundException e) {
             throw new ApprovedFileNotFoundException(baselineName);
         }
-        String cmd = IDEA_DIFF + " " + unapprovedFile.getPath() + " " + baseline.getPath();
+        String diffTool = config.getDiffTool();
+        String cmd = diffTool + " " + unapprovedFile.getPath() + " " + baseline.getPath();
         try {
             Runtime.getRuntime().exec(cmd);
         } catch (IOException e) {
-            throw new DiffingFailedException("Diff tool " + IDEA_DIFF + " not found!");
+            throw new DiffingFailedException("Diff tool " + diffTool + " not found!");
         }
     }
 }

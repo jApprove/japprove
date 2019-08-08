@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junitapprovaltesting.errors.VerificationFailedError;
 import org.junitapprovaltesting.errors.VersionNotApprovedError;
-import org.junitapprovaltesting.services.FileService;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -32,12 +31,10 @@ public class JsonVerifier extends Verifier {
 
     private static final Logger LOGGER = LogManager.getLogger(JsonVerifier.class);
     private List<String> ignoredFields = new ArrayList<>();
-    private FileService fileService;
     private JsonNode baseline;
 
     public JsonVerifier(String testName) {
         super(testName);
-        fileService = new FileService();
         try {
             baseline = fileService.getJsonBaseline(testName).readData();
         } catch (FileNotFoundException e) {

@@ -4,6 +4,7 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.options.Option;
+import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
 import org.junitapprovaltesting.tools.Approver;
 
 public class ApproverTask extends DefaultTask {
@@ -26,7 +27,8 @@ public class ApproverTask extends DefaultTask {
 
     @TaskAction
     public void approve() {
-        Approver approver = new Approver();
+        ApprovalTestingConfiguration config = new ApprovalTestingConfiguration();
+        Approver approver = new Approver(config);
         if(approveAll) {
             approver.approveAllFiles();
         } else if (fileName != null) {
