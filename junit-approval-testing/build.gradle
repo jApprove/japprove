@@ -19,6 +19,7 @@ dependencies {
     compile("commons-io:commons-io:${commonsIOVersion}")
 
     compile("org.apache.logging.log4j:log4j-core:${log4jVersion}")
+    compile("org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}")
 
     compile("io.github.java-diff-utils:java-diff-utils:${javaDiffUtilsVersion}")
 
