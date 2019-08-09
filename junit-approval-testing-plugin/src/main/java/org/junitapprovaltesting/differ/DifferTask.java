@@ -1,6 +1,5 @@
 package org.junitapprovaltesting.differ;
 
-
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
@@ -9,9 +8,6 @@ import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
 import org.junitapprovaltesting.tools.Differ;
 
 public class DifferTask extends DefaultTask {
-
-    private static final String IDEA_DIFF =
-            "C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2019.1.3\\bin\\idea64 diff";
 
     @Input
     private String fileName;

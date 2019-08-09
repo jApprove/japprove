@@ -62,7 +62,7 @@ public class StringSorterTest {
                                                      "                \"author\": \"Herman Melville\",\n" +
                                                      "                \"title\": \"Moby Dick 2\",\n" +
                                                      "                \"isbn\": \"0-553-21311-3\",\n" +
-                                                     "                \"price\": 19.9556456\n" +
+                                                     "                \"price\": 19.95\n" +
                                                      "            },\n" +
                                                      "            {\n" +
                                                      "                \"category\": \"fiction\",\n" +

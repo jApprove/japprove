@@ -21,16 +21,16 @@ import java.util.List;
 public class StringVerifier extends Verifier {
 
     private static final Logger LOGGER = LogManager.getLogger(StringVerifier.class);
-    private List<String> data;
+    private List<String> baseline;
 
     public StringVerifier(String baselineName) {
         super(baselineName);
         try {
-            data = fileService.getTextBaseline(baselineName).readData();
+            baseline = fileService.getTextBaseline(baselineName).readData();
         } catch (FileNotFoundException e) {
-            data = null;
+            baseline = null;
         } catch (IOException e) {
-            data = null;
+            baseline = null;
         }
         fileService.removeUnapprovedFile(baselineName);
     }
@@ -47,16 +47,16 @@ public class StringVerifier extends Verifier {
      */
     public void verify(String data) {
         LOGGER.info("Starting new approval test with baseline: " + baselineName);
-        if (this.data == null) {
+        if (this.baseline == null) {
             LOGGER.info("No approved version found");
             LOGGER.info("Creating new unapproved text file");
             fileService.createUnapprovedFile(data, baselineName);
             throw new VersionNotApprovedError(baselineName);
         }
-        if (!this.data.equals(Arrays.asList(data))) {
+        if (!this.baseline.equals(Arrays.asList(data))) {
             LOGGER.info("Current version is not equal to approved version");
             LOGGER.info("Create new unapproved text file");
-            List<String> differences = getDifferences(this.data, Arrays.asList(data));
+            List<String> differences = getDifferences(this.baseline, Arrays.asList(data));
             fileService.createUnapprovedFile(data, baselineName);
             throw new VerificationFailedError(formatDifferences(differences));
         }
@@ -75,16 +75,16 @@ public class StringVerifier extends Verifier {
      */
     public void verify(List<String> data) {
         LOGGER.info("Starting new approval test with baseline: " + baselineName);
-        if (this.data == null) {
+        if (this.baseline == null) {
             LOGGER.info("No approved version found");
             LOGGER.info("Creating new unapproved text file");
             fileService.createUnapprovedFile(data, baselineName);
             throw new VersionNotApprovedError(baselineName);
         }
-        if (!this.data.equals(data)) {
+        if (!this.baseline.equals(data)) {
             LOGGER.info("Current version is not equal to approved version");
             LOGGER.info("Create new unapproved text file");
-            List<String> differences = getDifferences(this.data, data);
+            List<String> differences = getDifferences(this.baseline, data);
             fileService.createUnapprovedFile(data, baselineName);
             throw new VerificationFailedError(formatDifferences(differences));
         }
