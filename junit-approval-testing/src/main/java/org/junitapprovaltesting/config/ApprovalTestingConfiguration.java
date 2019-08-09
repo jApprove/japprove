@@ -11,7 +11,7 @@ import java.util.Properties;
  */
 public class ApprovalTestingConfiguration {
 
-    private static final String APPROVAL_TESTING_PROPERTIES = "src" + File.separator + "main" + File.separator +
+    private static final String APPROVAL_TESTING_PROPERTIES = "src" + File.separator + "test" + File.separator +
             "resources" + File.separator + "approvaltesting.properties";
     private static final String DEFAULT_IDEA_DIFF =
             "C:" + File.separator + "Program Files" + File.separator + "JetBrains" + File.separator +
@@ -20,7 +20,7 @@ public class ApprovalTestingConfiguration {
     private static final String DEFAULT_BASELINE_DIRECTORY = "baselines" + File.separator;
     private static final String DEFAULT_TO_APPROVE_DIRECTORY = "build" + File.separator + "approvals" + File.separator;
     private static final String DEFAULT_TO_APPROVE_EXTENSION = "_toApprove";
-    private static final String DEFAULT_FILE_ENDING = ".txt";
+    private static final String DEFAULT_FILE_ENDING = "txt";
     private String baselineDirectory;
     private String toApproveDirectory;
     private String diffTool;
@@ -53,9 +53,9 @@ public class ApprovalTestingConfiguration {
                 diffTool = prop.getProperty("diffTool").replace("\\", File.separator).replace("/", File.separator);
             }
             if (prop.getProperty("fileEnding") == null) {
-                fileEnding = DEFAULT_FILE_ENDING;
+                fileEnding = "." + DEFAULT_FILE_ENDING;
             } else {
-                fileEnding = prop.getProperty("fileEnding");
+                fileEnding = "." + prop.getProperty("fileEnding");
             }
             if (prop.getProperty("toApproveExtension") == null) {
                 toApproveExtension = DEFAULT_TO_APPROVE_EXTENSION;
@@ -66,7 +66,7 @@ public class ApprovalTestingConfiguration {
             baselineDirectory = DEFAULT_BASELINE_DIRECTORY;
             toApproveDirectory = DEFAULT_TO_APPROVE_DIRECTORY;
             diffTool = DEFAULT_IDEA_DIFF;
-            fileEnding = DEFAULT_FILE_ENDING;
+            fileEnding = "." + DEFAULT_FILE_ENDING;
             toApproveExtension = DEFAULT_TO_APPROVE_EXTENSION;
         }
     }
