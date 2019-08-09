@@ -1,5 +1,9 @@
 package org.junitapprovaltesting.config;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junitapprovaltesting.verifier.StringVerifier;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,6 +34,8 @@ public class ApprovalTestingConfiguration {
     public ApprovalTestingConfiguration() {
         loadProperties();
     }
+
+    private static final Logger LOGGER = LogManager.getLogger(ApprovalTestingConfiguration.class);
 
     private void loadProperties() {
         Properties prop = new Properties();
@@ -62,12 +68,14 @@ public class ApprovalTestingConfiguration {
             } else {
                 toApproveExtension = prop.getProperty("toApproveExtension");
             }
+            LOGGER.info("Loading properties from: " + APPROVAL_TESTING_PROPERTIES);
         } catch (IOException e) {
             baselineDirectory = DEFAULT_BASELINE_DIRECTORY;
             toApproveDirectory = DEFAULT_TO_APPROVE_DIRECTORY;
             diffTool = DEFAULT_IDEA_DIFF;
             fileEnding = "." + DEFAULT_FILE_ENDING;
             toApproveExtension = DEFAULT_TO_APPROVE_EXTENSION;
+            LOGGER.info("Using default properties");
         }
     }
 

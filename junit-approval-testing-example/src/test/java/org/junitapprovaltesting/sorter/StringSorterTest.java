@@ -49,7 +49,7 @@ public class StringSorterTest {
                                                      "            {\n" +
                                                      "                \"category\": \"reference\",\n" +
                                                      "                \"author\": \"Nigel Rees\",\n" +
-                                                     "                \"title\": \"Sayings of the Century 2\"\n" +
+                                                     "                \"title\": \"Sayings of the Century\"\n" +
                                                      "            },\n" +
                                                      "            {\n" +
                                                      "                \"category\": \"fiction\",\n" +

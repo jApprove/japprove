@@ -7,8 +7,8 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junitapprovaltesting.errors.VerificationFailedError;
-import org.junitapprovaltesting.errors.VersionNotApprovedError;
+import org.junitapprovaltesting.exceptions.errors.VerificationFailedError;
+import org.junitapprovaltesting.exceptions.errors.VersionNotApprovedError;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

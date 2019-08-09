@@ -1,4 +1,4 @@
-package org.junitapprovaltesting.errors;
+package org.junitapprovaltesting.exceptions.errors;
 
 import org.opentest4j.AssertionFailedError;
 
