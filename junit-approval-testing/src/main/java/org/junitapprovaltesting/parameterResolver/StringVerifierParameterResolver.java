@@ -1,4 +1,4 @@
-package org.junitapprovaltesting.extensions;
+package org.junitapprovaltesting.parameterResolver;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;

@@ -32,7 +32,6 @@ public class StringVerifier extends Verifier {
         } catch (IOException e) {
             baseline = null;
         }
-        fileService.removeUnapprovedFile(baselineName);
     }
 
     /**
@@ -61,6 +60,7 @@ public class StringVerifier extends Verifier {
             throw new VerificationFailedError(formatDifferences(differences));
         }
         LOGGER.info("Current version is equal to approved version");
+        fileService.removeUnapprovedFile(baselineName);
     }
 
     /**
@@ -89,6 +89,7 @@ public class StringVerifier extends Verifier {
             throw new VerificationFailedError(formatDifferences(differences));
         }
         LOGGER.info("Current version is equal to approved version");
+        fileService.removeUnapprovedFile(baselineName);
     }
 
     private List<String> getDifferences(List<String> original, List<String> revised) {

@@ -2,8 +2,8 @@ package org.junitapprovaltesting.annotations;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junitapprovaltesting.extensions.JsonVerifierParameterResolver;
-import org.junitapprovaltesting.extensions.StringVerifierParameterResolver;
+import org.junitapprovaltesting.parameterResolver.JsonVerifierParameterResolver;
+import org.junitapprovaltesting.parameterResolver.StringVerifierParameterResolver;
 
 import java.lang.annotation.Retention;
 

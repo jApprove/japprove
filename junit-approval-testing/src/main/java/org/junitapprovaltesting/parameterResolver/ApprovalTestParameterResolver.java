@@ -1,4 +1,4 @@
-package org.junitapprovaltesting.extensions;
+package org.junitapprovaltesting.parameterResolver;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -9,6 +9,9 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
  */
 public abstract class ApprovalTestParameterResolver {
 
+    private static final String EMPTY_STRING = "";
+    private static final String BACKSLASH = "\"";;
+
     public abstract boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
             throws ParameterResolutionException;
 
@@ -17,7 +20,7 @@ public abstract class ApprovalTestParameterResolver {
 
     String getBaselineName(ExtensionContext extensionContext) {
         String annotationParameter = getAnnotationParameter(extensionContext);
-        if (annotationParameter.equals("")) {
+        if (annotationParameter.equals(EMPTY_STRING)) {
             return createBaselineNameByHashCode(extensionContext);
         } else {
             return annotationParameter;
@@ -26,8 +29,8 @@ public abstract class ApprovalTestParameterResolver {
 
     private String getAnnotationParameter(ExtensionContext extensionContext) {
         String declaredAnnotation = extensionContext.getTestMethod().get().getDeclaredAnnotations()[0].toString();
-        declaredAnnotation = declaredAnnotation.substring(declaredAnnotation.indexOf("\"") + 1);
-        declaredAnnotation = declaredAnnotation.substring(0, declaredAnnotation.indexOf("\""));
+        declaredAnnotation = declaredAnnotation.substring(declaredAnnotation.indexOf(BACKSLASH) + 1);
+        declaredAnnotation = declaredAnnotation.substring(0, declaredAnnotation.indexOf(BACKSLASH));
         return declaredAnnotation;
     }
 

@@ -33,14 +33,13 @@ public class JsonVerifier extends Verifier {
     private List<String> ignoredFields = new ArrayList<>();
     private JsonNode baseline;
 
-    public JsonVerifier(String testName) {
-        super(testName);
+    public JsonVerifier(String baselineName) {
+        super(baselineName);
         try {
-            baseline = fileService.getJsonBaseline(testName).readData();
+            baseline = fileService.getJsonBaseline(baselineName).readData();
         } catch (FileNotFoundException e) {
             baseline = null;
         }
-        fileService.removeUnapprovedFile(testName);
     }
 
     /**
@@ -71,6 +70,7 @@ public class JsonVerifier extends Verifier {
             throw new VerificationFailedError(formatDifferences(differences));
         }
         LOGGER.info("Current version is equal to approved version");
+        fileService.removeUnapprovedFile(baselineName);
     }
 
     /**
