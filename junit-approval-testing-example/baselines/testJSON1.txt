@@ -14,7 +14,7 @@
       "author" : "Herman Melville",
       "title" : "Moby Dick 2",
       "isbn" : "0-553-21311-3",
-      "price" : 19.9556456
+      "price" : 19.95
     }, {
       "category" : "fiction",
       "author" : "J. R. R. Tolkien",

@@ -6,6 +6,6 @@ package org.junitapprovaltesting.exceptions;
 public class ApprovedFileNotFoundException extends RuntimeException {
 
     public ApprovedFileNotFoundException(String filename) {
-        super(filename + " cannot be found");
+        super("Unapproved file " + filename + " cannot be found");
     }
 }

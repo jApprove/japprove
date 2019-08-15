@@ -1,4 +1,4 @@
-package org.junitapprovaltesting.tools;
+package org.junitapprovaltesting.approver;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
@@ -8,6 +8,7 @@ import org.junitapprovaltesting.exceptions.ApprovingFailedException;
 import org.junitapprovaltesting.exceptions.UnapprovedFileNotFoundException;
 import org.junitapprovaltesting.files.ApprovableFile;
 import org.junitapprovaltesting.services.FileService;
+import org.junitapprovaltesting.differ.Differ;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

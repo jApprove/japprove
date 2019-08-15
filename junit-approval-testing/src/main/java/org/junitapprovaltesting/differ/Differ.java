@@ -1,4 +1,4 @@
-package org.junitapprovaltesting.tools;
+package org.junitapprovaltesting.differ;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
