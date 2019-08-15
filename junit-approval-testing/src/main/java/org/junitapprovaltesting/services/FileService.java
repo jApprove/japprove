@@ -110,6 +110,9 @@ public class FileService {
      * @throws FileNotFoundException if no {@link ApprovableFile} has been found
      */
     public ApprovableFile getUnapprovedFile(String filename) throws FileNotFoundException {
+        if (FilenameUtils.getExtension(filename).isEmpty()) {
+            filename += ".txt";
+        }
         File directory = new File(toApproveDirectory);
         if (directory.exists() && directory.listFiles() != null) {
             for (File file : directory.listFiles()) {
@@ -145,6 +148,9 @@ public class FileService {
      * @throws ApprovedFileNotFoundException if the {@link TextFile} not exists
      */
     public TextFile getTextBaseline(String baselineName) throws FileNotFoundException {
+        if (FilenameUtils.getExtension(baselineName).isEmpty()) {
+            baselineName += ".txt";
+        }
         TextFile baseline = new TextFile(baselineDirectory + baselineName);
         if (!baseline.exists()) {
             throw new FileNotFoundException("Baseline does not exist");
@@ -160,6 +166,9 @@ public class FileService {
      * @throws ApprovedFileNotFoundException if the {@link JsonFile} not exists
      */
     public JsonFile getJsonBaseline(String baselineName) throws FileNotFoundException {
+        if (FilenameUtils.getExtension(baselineName).isEmpty()) {
+            baselineName += ".txt";
+        }
         JsonFile baseline = new JsonFile(baselineDirectory + baselineName);
         if (!baseline.exists()) {
             throw new FileNotFoundException("Baseline does not exist");
@@ -175,6 +184,9 @@ public class FileService {
      * @throws ApprovedFileNotFoundException if the {@link ApprovableFile}not exists
      */
     public ApprovableFile getBaseline(String baselineName) throws FileNotFoundException {
+        if (FilenameUtils.getExtension(baselineName).isEmpty()) {
+            baselineName += ".txt";
+        }
         File directory = new File(baselineDirectory);
         if (directory.exists() && directory.listFiles() != null) {
             for (File file : directory.listFiles()) {
