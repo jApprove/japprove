@@ -21,7 +21,7 @@ Currently, this Approval Testing framework contains the following features:
 
    ```
    dependencies {
-       testCompile group: 'org.junitapprovaltesting', name: 'junit-approval-testing', version: '1.1'
+       compile("org.junitapprovaltesting:junit-approval-testing:1.1")
    }
    ```
 
