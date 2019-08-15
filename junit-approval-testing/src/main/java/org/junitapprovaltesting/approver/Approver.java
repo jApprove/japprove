@@ -1,14 +1,13 @@
 package org.junitapprovaltesting.approver;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
+import org.junitapprovaltesting.differ.Differ;
 import org.junitapprovaltesting.exceptions.ApprovingFailedException;
 import org.junitapprovaltesting.exceptions.UnapprovedFileNotFoundException;
 import org.junitapprovaltesting.files.ApprovableFile;
 import org.junitapprovaltesting.services.FileService;
-import org.junitapprovaltesting.differ.Differ;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,7 +33,7 @@ public class Approver {
      * @param filename the name of the file
      */
     public void approveFile(String filename) {
-        ApprovableFile unapprovedFile = null;
+        ApprovableFile unapprovedFile;
         try {
             unapprovedFile = fileService.getUnapprovedFile(filename);
         } catch (FileNotFoundException e) {
@@ -49,13 +48,11 @@ public class Approver {
      * @param unapprovedFile the {@link ApprovableFile} that should be approved
      */
     public void approveFile(ApprovableFile unapprovedFile) {
-        String baselineName =
-                FilenameUtils.getBaseName(unapprovedFile.getPath()).replace(config.getToApproveExtension(), "");
         ApprovableFile baseline;
         try {
-            baseline = fileService.getBaseline(baselineName);
+            baseline = fileService.getBaseline(unapprovedFile.getName());
         } catch (FileNotFoundException e) {
-            baseline = fileService.createBaseline(baselineName);
+            baseline = fileService.createBaseline(unapprovedFile.getName());
         }
         try {
             copyFile(unapprovedFile, baseline);
@@ -63,7 +60,7 @@ public class Approver {
                 LOGGER.info("Successfully approved file " + unapprovedFile.getName());
             }
         } catch (IOException e) {
-            throw new ApprovingFailedException(baselineName);
+            throw new ApprovingFailedException(unapprovedFile.getName());
         }
     }
 
@@ -97,11 +94,9 @@ public class Approver {
         Differ differ = new Differ(config);
         for (ApprovableFile unapprovedFile : unapprovedFiles) {
             LOGGER.info("Unapproved file: " + unapprovedFile.getName());
-            String baselineName =
-                    FilenameUtils.getBaseName(unapprovedFile.getPath()).replace(config.getToApproveExtension(), "");
             ApprovableFile baseline;
             try {
-                baseline = fileService.getBaseline(baselineName);
+                baseline = fileService.getBaseline(unapprovedFile.getName());
             } catch (FileNotFoundException e) {
                 LOGGER.info("No approved version exists");
                 LOGGER.info("Approve current version? (y/n)");
@@ -113,7 +108,7 @@ public class Approver {
             LOGGER.info("Differences:\n" + formatDifferences(unapprovedFile.computeDifferences(baseline)));
             LOGGER.info("Show entire diff? (y/n)");
             if (userAcceptsRequest(scanner)) {
-                differ.diff(baselineName);
+                differ.diff(unapprovedFile.getName());
             }
             LOGGER.info("Approve current version? (y/n)");
             if (userAcceptsRequest(scanner)) {

@@ -1,6 +1,5 @@
 package org.junitapprovaltesting.differ;
 
-import org.apache.commons.io.FilenameUtils;
 import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
 import org.junitapprovaltesting.exceptions.ApprovedFileNotFoundException;
 import org.junitapprovaltesting.exceptions.DiffingFailedException;
@@ -35,9 +34,7 @@ public class Differ {
         }
         ApprovableFile baseline;
         try {
-            baseline = fileService
-                    .getBaseline(FilenameUtils.getBaseName(unapprovedFile.getPath())
-                                              .replace(config.getToApproveExtension(), ""));
+            baseline = fileService.getBaseline(unapprovedFile.getName());
         } catch (FileNotFoundException e) {
             throw new ApprovedFileNotFoundException(baselineName);
         }

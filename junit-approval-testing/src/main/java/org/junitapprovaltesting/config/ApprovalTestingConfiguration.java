@@ -23,13 +23,10 @@ public class ApprovalTestingConfiguration {
                     "idea64 diff";
     private static final String DEFAULT_BASELINE_DIRECTORY = "baselines" + File.separator;
     private static final String DEFAULT_TO_APPROVE_DIRECTORY = "build" + File.separator + "approvals" + File.separator;
-    private static final String DEFAULT_TO_APPROVE_EXTENSION = "_toApprove";
-    private static final String DEFAULT_FILE_ENDING = "txt";
     private String baselineDirectory;
     private String toApproveDirectory;
     private String diffTool;
-    private String fileEnding;
-    private String toApproveExtension;
+
 
     public ApprovalTestingConfiguration() {
         loadProperties();
@@ -58,23 +55,11 @@ public class ApprovalTestingConfiguration {
             } else {
                 diffTool = prop.getProperty("diffTool").replace("\\", File.separator).replace("/", File.separator);
             }
-            if (prop.getProperty("fileEnding") == null) {
-                fileEnding = "." + DEFAULT_FILE_ENDING;
-            } else {
-                fileEnding = "." + prop.getProperty("fileEnding");
-            }
-            if (prop.getProperty("toApproveExtension") == null) {
-                toApproveExtension = DEFAULT_TO_APPROVE_EXTENSION;
-            } else {
-                toApproveExtension = prop.getProperty("toApproveExtension");
-            }
             LOGGER.info("Loading properties from: " + APPROVAL_TESTING_PROPERTIES);
         } catch (IOException e) {
             baselineDirectory = DEFAULT_BASELINE_DIRECTORY;
             toApproveDirectory = DEFAULT_TO_APPROVE_DIRECTORY;
             diffTool = DEFAULT_IDEA_DIFF;
-            fileEnding = "." + DEFAULT_FILE_ENDING;
-            toApproveExtension = DEFAULT_TO_APPROVE_EXTENSION;
             LOGGER.info("Using default properties");
         }
     }
@@ -106,21 +91,4 @@ public class ApprovalTestingConfiguration {
         return diffTool;
     }
 
-    /**
-     * Returns the ending of the stored files.
-     *
-     * @return the ending of the stored files.
-     */
-    public String getFileEnding() {
-        return fileEnding;
-    }
-
-    /**
-     * Returns the toApprove extension.
-     *
-     * @return the toApprove extension.
-     */
-    public String getToApproveExtension() {
-        return toApproveExtension;
-    }
 }

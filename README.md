@@ -86,8 +86,6 @@ Currently, this Approval Testing framework contains the following features:
 	- The directory of the baseline
 	- The temporary directory of the unapproved files
 	- A custom diff tool
-	- A custom file ending
-	- A custom extension for unapproved files
 	
 	For example, the properties file could look like the following one:
 	
@@ -95,8 +93,6 @@ Currently, this Approval Testing framework contains the following features:
 	baselineDirectory=baselines\\
 	toApproveDirectory=build\\approvals\\
 	diffTdool=C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2019.1.3\\bin\\idea64 diff
-	fileEnding=txt
-	toApproveExtension=_toApprove
 	```
 	
 	The properties of the file above are the default properties.

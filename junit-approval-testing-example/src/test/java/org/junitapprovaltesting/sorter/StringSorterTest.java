@@ -37,7 +37,7 @@ public class StringSorterTest {
         stringVerifier.verify(names);
     }
 
-    @ApprovalTest(baseline = "testJSON1")
+    @ApprovalTest(baseline = "testJSON1.json")
     void testJSON(JsonVerifier jsonVerifier) {
         // arrange
         ObjectMapper objectMapper = new ObjectMapper();
