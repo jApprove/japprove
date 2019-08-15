@@ -21,6 +21,9 @@ import java.util.List;
  */
 public class JsonVerifier extends Verifier {
 
+    private static final String BACKSLASH = "\"";
+    private static final String EMPTY_STRING = "";
+    private static final String SLASH = "/";
     private static final String REMOVE = "\"remove\"";
     private static final String ADD = "\"add\"";
     private static final String COPY = "\"copy\"";
@@ -28,17 +31,16 @@ public class JsonVerifier extends Verifier {
     private static final String PATH = "path";
     private static final String OPERATION = "op";
     private static final String FROM = "from";
-
     private static final Logger LOGGER = LogManager.getLogger(JsonVerifier.class);
     private List<String> ignoredFields = new ArrayList<>();
-    private JsonNode baseline;
+    private JsonNode baselineData;
 
-    public JsonVerifier(String baselineName) {
-        super(baselineName);
+    public JsonVerifier(String baseline) {
+        super(baseline);
         try {
-            baseline = fileService.getJsonBaseline(baselineName).readData();
+            baselineData = fileService.getJsonBaseline(baseline).readData();
         } catch (FileNotFoundException e) {
-            baseline = null;
+            baselineData = null;
         }
     }
 
@@ -53,35 +55,35 @@ public class JsonVerifier extends Verifier {
      * @param data The JsonNode that should be verified
      */
     public void verify(JsonNode data) {
-        LOGGER.info("Starting new approval test with baseline: " + baselineName);
-        if (baseline == null) {
+        LOGGER.info("Starting new approval test with baseline: " + baseline);
+        if (baselineData == null) {
             LOGGER.info("No approved version found");
             LOGGER.info("Creating new unapproved text file");
-            fileService.createUnapprovedFile(data, baselineName);
-            throw new VersionNotApprovedError(baselineName);
+            fileService.createUnapprovedFile(data, baseline);
+            throw new VersionNotApprovedError(baseline);
         }
         JsonNode dataWithoutIgnoredFields = removeIgnoredFields(data);
-        JsonNode baselineWithoutIgnoredFields = removeIgnoredFields(baseline);
+        JsonNode baselineWithoutIgnoredFields = removeIgnoredFields(baselineData);
         if (!baselineWithoutIgnoredFields.equals(dataWithoutIgnoredFields)) {
             LOGGER.info("Current version is not equal to approved version");
             LOGGER.info("Create new unapproved text file");
             List<String> differences = getDifferences(baselineWithoutIgnoredFields, dataWithoutIgnoredFields);
-            fileService.createUnapprovedFile(data, baselineName);
+            fileService.createUnapprovedFile(data, baseline);
             throw new VerificationFailedError(formatDifferences(differences));
         }
         LOGGER.info("Current version is equal to approved version");
-        fileService.removeUnapprovedFile(baselineName);
+        fileService.removeUnapprovedFile(baseline);
     }
 
     /**
      * Receives a JSONPath that should be ignored on the verification process.
      *
-     * @param path a JSONPath that should be ignored on the verification process
+     * @param jsonPath a JSONPath that should be ignored on the verification process
      * @return the JsonVerifier
      */
-    public JsonVerifier ignore(String path) {
-        LOGGER.info("Ignoring Json element in approval test: " + path);
-        ignoredFields.add(path);
+    public JsonVerifier ignore(String jsonPath) {
+        LOGGER.info("Ignoring Json element in approval test: " + jsonPath);
+        ignoredFields.add(jsonPath);
         return this;
     }
 
@@ -137,7 +139,7 @@ public class JsonVerifier extends Verifier {
     }
 
     private JsonNode getLeafOfJsonNode(String path, JsonNode jsonNode) {
-        for (String pathElement : path.replace("\"", "").substring(1).split("/")) {
+        for (String pathElement : path.replace(BACKSLASH, EMPTY_STRING).substring(1).split(SLASH)) {
             if (isNumeric(pathElement)) {
                 jsonNode = jsonNode.get(Integer.parseInt(pathElement));
             } else {

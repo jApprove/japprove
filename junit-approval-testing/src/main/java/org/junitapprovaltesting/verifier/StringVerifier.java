@@ -21,16 +21,16 @@ import java.util.List;
 public class StringVerifier extends Verifier {
 
     private static final Logger LOGGER = LogManager.getLogger(StringVerifier.class);
-    private List<String> baseline;
+    private List<String> baselineData;
 
-    public StringVerifier(String baselineName) {
-        super(baselineName);
+    public StringVerifier(String baseline) {
+        super(baseline);
         try {
-            baseline = fileService.getTextBaseline(baselineName).readData();
+            baselineData = fileService.getTextBaseline(baseline).readData();
         } catch (FileNotFoundException e) {
-            baseline = null;
+            baselineData = null;
         } catch (IOException e) {
-            baseline = null;
+            baselineData = null;
         }
     }
 
@@ -45,22 +45,22 @@ public class StringVerifier extends Verifier {
      * @param data The String that should be verified
      */
     public void verify(String data) {
-        LOGGER.info("Starting new approval test with baseline: " + baselineName);
-        if (this.baseline == null) {
+        LOGGER.info("Starting new approval test with baseline: " + baseline);
+        if (this.baselineData == null) {
             LOGGER.info("No approved version found");
             LOGGER.info("Creating new unapproved text file");
-            fileService.createUnapprovedFile(data, baselineName);
-            throw new VersionNotApprovedError(baselineName);
+            fileService.createUnapprovedFile(data, baseline);
+            throw new VersionNotApprovedError(baseline);
         }
-        if (!this.baseline.equals(Arrays.asList(data))) {
+        if (!this.baselineData.equals(Arrays.asList(data))) {
             LOGGER.info("Current version is not equal to approved version");
             LOGGER.info("Create new unapproved text file");
-            List<String> differences = getDifferences(this.baseline, Arrays.asList(data));
-            fileService.createUnapprovedFile(data, baselineName);
+            List<String> differences = getDifferences(this.baselineData, Arrays.asList(data));
+            fileService.createUnapprovedFile(data, baseline);
             throw new VerificationFailedError(formatDifferences(differences));
         }
         LOGGER.info("Current version is equal to approved version");
-        fileService.removeUnapprovedFile(baselineName);
+        fileService.removeUnapprovedFile(baseline);
     }
 
     /**
@@ -74,22 +74,22 @@ public class StringVerifier extends Verifier {
      * @param data The list of Strings that should be verified
      */
     public void verify(List<String> data) {
-        LOGGER.info("Starting new approval test with baseline: " + baselineName);
-        if (this.baseline == null) {
+        LOGGER.info("Starting new approval test with baseline: " + baseline);
+        if (this.baselineData == null) {
             LOGGER.info("No approved version found");
             LOGGER.info("Creating new unapproved text file");
-            fileService.createUnapprovedFile(data, baselineName);
-            throw new VersionNotApprovedError(baselineName);
+            fileService.createUnapprovedFile(data, baseline);
+            throw new VersionNotApprovedError(baseline);
         }
-        if (!this.baseline.equals(data)) {
+        if (!this.baselineData.equals(data)) {
             LOGGER.info("Current version is not equal to approved version");
             LOGGER.info("Create new unapproved text file");
-            List<String> differences = getDifferences(this.baseline, data);
-            fileService.createUnapprovedFile(data, baselineName);
+            List<String> differences = getDifferences(this.baselineData, data);
+            fileService.createUnapprovedFile(data, baseline);
             throw new VerificationFailedError(formatDifferences(differences));
         }
         LOGGER.info("Current version is equal to approved version");
-        fileService.removeUnapprovedFile(baselineName);
+        fileService.removeUnapprovedFile(baseline);
     }
 
     private List<String> getDifferences(List<String> original, List<String> revised) {

@@ -46,7 +46,7 @@ Currently, this Approval Testing framework contains the following features:
 3. Add an Approval Test:
 
    ```
-   @ApprovalTest(baseline="sorting1")
+   @ApprovalTest(baseline="sorting1.txt")
    void testSortNames(StringVerifier stringVerifier) {
 	   // arrange
 	   List<String> names = Arrays.asList("Peter", "Mike", "John");

@@ -10,13 +10,12 @@ import java.util.List;
  */
 public abstract class Verifier {
 
-    final String baselineName;
+    String baseline;
     FileService fileService;
 
-    public Verifier(String baselineName) {
-        this.baselineName = baselineName;
-        ApprovalTestingConfiguration config = new ApprovalTestingConfiguration();
-        fileService = new FileService(config);
+    public Verifier(String baseline) {
+        this.baseline = baseline;
+        fileService = new FileService(new ApprovalTestingConfiguration());
     }
 
     String formatDifferences(List<String> differences) {

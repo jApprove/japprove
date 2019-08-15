@@ -9,12 +9,13 @@ import org.junitapprovaltesting.verifier.StringVerifier;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class StringSorterTest {
+public class ApprovalTestingExample {
 
     @ApprovalTest(baseline = "strings1")
-    void testString(StringVerifier stringVerifier) {
+    void simpleStringExample(StringVerifier stringVerifier) {
         // arrange
         String s = "Hello World";
 
@@ -25,20 +26,19 @@ public class StringSorterTest {
         stringVerifier.verify(s);
     }
 
-    @ApprovalTest(baseline = "sortingStrings1")
-    void testSortNames(StringVerifier stringVerifier) {
+    @ApprovalTest(baseline = "sortingStrings1.txt")
+    void listOfStringsExample(StringVerifier stringVerifier) {
         // arrange
         List<String> names = Arrays.asList("Peter", "Mike", "John");
         // act
-        StringSorter sorter = new StringSorter();
-        names = sorter.sort(names);
+        Collections.sort(names);
 
         // approve
         stringVerifier.verify(names);
     }
 
     @ApprovalTest(baseline = "testJSON1.json")
-    void testJSON(JsonVerifier jsonVerifier) {
+    void jsonExample(JsonVerifier jsonVerifier) {
         // arrange
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = null;
@@ -85,9 +85,9 @@ public class StringSorterTest {
         // approve
         jsonVerifier.ignore("$.store.book[*].price").verify(jsonNode);
     }
-//
+
 //    @ApprovalTest(baseline = "restAPI")
-//    void testRESTAPI(JsonVerifier jsonVerifier) {
+//    void restApiTest(JsonVerifier jsonVerifier) {
 //
 //        ObjectMapper objectMapper = new ObjectMapper();
 //
