@@ -95,11 +95,12 @@ public class FileService {
      * @return true if the {@link ApprovableFile} has successfully been removed, false otherwise.
      */
     public boolean removeUnapprovedFile(String filename) {
-        if (FilenameUtils.getExtension(filename).isEmpty()) {
-            filename += ".txt";
+        try {
+            ApprovableFile unapprovedFile = getUnapprovedFile(filename);
+            return unapprovedFile.delete();
+        } catch (FileNotFoundException e) {
+            return false;
         }
-        ApprovableFile unapprovedFile = new ApprovableFile(toApproveDirectory + filename);
-        return unapprovedFile.delete();
     }
 
     /**
@@ -110,13 +111,12 @@ public class FileService {
      * @throws FileNotFoundException if no {@link ApprovableFile} has been found
      */
     public ApprovableFile getUnapprovedFile(String filename) throws FileNotFoundException {
-        if (FilenameUtils.getExtension(filename).isEmpty()) {
-            filename += ".txt";
-        }
+        String searchedFilename = toApproveDirectory + FilenameUtils.removeExtension(filename);
         File directory = new File(toApproveDirectory);
         if (directory.exists() && directory.listFiles() != null) {
             for (File file : directory.listFiles()) {
-                if (file.getPath().equals(toApproveDirectory + filename)) {
+                String currentFilename = FilenameUtils.removeExtension(file.getPath());
+                if (currentFilename.equals(searchedFilename)) {
                     return new ApprovableFile(file.getPath());
                 }
             }
@@ -184,13 +184,12 @@ public class FileService {
      * @throws ApprovedFileNotFoundException if the {@link ApprovableFile}not exists
      */
     public ApprovableFile getBaseline(String baselineName) throws FileNotFoundException {
-        if (FilenameUtils.getExtension(baselineName).isEmpty()) {
-            baselineName += ".txt";
-        }
+        String searchedFilename = baselineDirectory + FilenameUtils.removeExtension(baselineName);
         File directory = new File(baselineDirectory);
         if (directory.exists() && directory.listFiles() != null) {
             for (File file : directory.listFiles()) {
-                if (file.getPath().equals(baselineDirectory + baselineName)) {
+                String currentFilename = FilenameUtils.removeExtension(file.getPath());
+                if (currentFilename.equals(searchedFilename)) {
                     return new ApprovableFile(file.getPath());
                 }
             }
