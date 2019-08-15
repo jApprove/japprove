@@ -22,8 +22,8 @@ public class Approver {
     private FileService fileService;
     private ApprovalTestingConfiguration config;
 
-    public Approver(ApprovalTestingConfiguration config) {
-        this.config = config;
+    public Approver() {
+        config = new ApprovalTestingConfiguration();
         fileService = new FileService(config);
     }
 
@@ -91,7 +91,7 @@ public class Approver {
         LOGGER.info("Found " + unapprovedFiles.size() + " unapproved files");
         LOGGER.info("Starting batch process ..");
         Scanner scanner = new Scanner(System.in);
-        Differ differ = new Differ(config);
+        Differ differ = new Differ();
         for (ApprovableFile unapprovedFile : unapprovedFiles) {
             LOGGER.info("Unapproved file: " + unapprovedFile.getName());
             ApprovableFile baseline;

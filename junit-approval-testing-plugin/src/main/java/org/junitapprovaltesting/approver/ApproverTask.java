@@ -26,8 +26,7 @@ public class ApproverTask extends DefaultTask {
 
     @TaskAction
     public void approve() {
-        ApprovalTestingConfiguration config = new ApprovalTestingConfiguration();
-        Approver approver = new Approver(config);
+        Approver approver = new Approver();
         if(approveAll) {
             approver.approveAllFiles();
         } else if (fileName != null) {

@@ -21,8 +21,7 @@ public class DifferTask extends DefaultTask {
         if (fileName == null) {
             throw new RuntimeException("A specific file is required! Use \"gradle diff --file=... \"");
         }
-        ApprovalTestingConfiguration config = new ApprovalTestingConfiguration();
-        Differ differ = new Differ(config);
+        Differ differ = new Differ();
         differ.diff(fileName);
     }
 

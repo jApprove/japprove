@@ -15,8 +15,8 @@ public class Differ {
     private ApprovalTestingConfiguration config;
     private FileService fileService;
 
-    public Differ(ApprovalTestingConfiguration config) {
-        this.config = config;
+    public Differ() {
+        config = new ApprovalTestingConfiguration();
         fileService = new FileService(config);
     }
 
