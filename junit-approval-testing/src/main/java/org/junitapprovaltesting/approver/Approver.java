@@ -6,8 +6,8 @@ import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
 import org.junitapprovaltesting.differ.Differ;
 import org.junitapprovaltesting.exceptions.ApprovingFailedException;
 import org.junitapprovaltesting.exceptions.BaselineCandidateNotFoundException;
-import org.junitapprovaltesting.files.ApprovableFile;
-import org.junitapprovaltesting.services.BaselineRepository;
+import org.junitapprovaltesting.files.TextFile;
+import org.junitapprovaltesting.repositories.BaselineRepository;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,7 +33,7 @@ public class Approver {
      * @param filename the name of the file
      */
     public void approveFile(String filename) {
-        ApprovableFile baselineCandidate;
+        TextFile baselineCandidate;
         try {
             baselineCandidate = baselineRepository.getBaselineCandidate(filename);
         } catch (FileNotFoundException e) {
@@ -43,12 +43,12 @@ public class Approver {
     }
 
     /**
-     * Approves a passed {@link ApprovableFile}.
+     * Approves a passed {@link TextFile}.
      *
-     * @param baselineCandidate the {@link ApprovableFile} that should be approved
+     * @param baselineCandidate the {@link TextFile} that should be approved
      */
-    public void approveFile(ApprovableFile baselineCandidate) {
-        ApprovableFile baseline;
+    public void approveFile(TextFile baselineCandidate) {
+        TextFile baseline;
         try {
             baseline = baselineRepository.getBaseline(baselineCandidate.getName());
         } catch (FileNotFoundException e) {
@@ -68,13 +68,13 @@ public class Approver {
      * Approves all files in the baselineCandidate directory.
      */
     public void approveAllFiles() {
-        List<ApprovableFile> baselineCandidates = baselineRepository.getBaselineCandidates();
+        List<TextFile> baselineCandidates = baselineRepository.getBaselineCandidates();
         if (baselineCandidates.size() == 0) {
             LOGGER.info("Found no baseline candidates");
             return;
         }
         LOGGER.info("Found " + baselineCandidates.size() + " baseline candidates");
-        for (ApprovableFile file : baselineCandidates) {
+        for (TextFile file : baselineCandidates) {
             approveFile(file);
         }
     }
@@ -83,7 +83,7 @@ public class Approver {
      * Starts a batch process to approve or diff all files step by step.
      */
     public void startApprovingBatchProcess() {
-        List<ApprovableFile> baselineCandidates = baselineRepository.getBaselineCandidates();
+        List<TextFile> baselineCandidates = baselineRepository.getBaselineCandidates();
         if (baselineCandidates.size() == 0) {
             LOGGER.info("Found no baseline candidates");
             return;
@@ -92,9 +92,9 @@ public class Approver {
         LOGGER.info("Starting batch process ..");
         Scanner scanner = new Scanner(System.in);
         Differ differ = new Differ();
-        for (ApprovableFile baselineCandidate : baselineCandidates) {
+        for (TextFile baselineCandidate : baselineCandidates) {
             LOGGER.info("Baseline candidate: " + baselineCandidate.getName());
-            ApprovableFile baseline;
+            TextFile baseline;
             try {
                 baseline = baselineRepository.getBaseline(baselineCandidate.getName());
             } catch (FileNotFoundException e) {
@@ -118,7 +118,7 @@ public class Approver {
         scanner.close();
     }
 
-    private void copyToBaseline(ApprovableFile toApprove, ApprovableFile baseline) throws IOException {
+    private void copyToBaseline(TextFile toApprove, TextFile baseline) throws IOException {
         FileInputStream inputStream = new FileInputStream(toApprove);
         FileOutputStream outputStream = new FileOutputStream(baseline);
         inputStream.getChannel().transferTo(0, toApprove.length(), outputStream.getChannel());

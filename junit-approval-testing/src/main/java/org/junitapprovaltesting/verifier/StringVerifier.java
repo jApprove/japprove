@@ -21,7 +21,7 @@ import java.util.List;
 public class StringVerifier extends Verifier {
 
     private static final Logger LOGGER = LogManager.getLogger(StringVerifier.class);
-    private List<String> baselineData;
+    private String baselineData;
 
     public StringVerifier(String baseline) {
         super(baseline);
@@ -52,10 +52,10 @@ public class StringVerifier extends Verifier {
             baselineRepository.createBaselineCandidate(data, baseline);
             throw new VersionNotApprovedError(baseline);
         }
-        if (!this.baselineData.equals(Arrays.asList(data))) {
+        if (!this.baselineData.equals(data)) {
             LOGGER.info("Current version is not equal to approved version");
             LOGGER.info("Create new baseline candidate");
-            List<String> differences = getDifferences(this.baselineData, Arrays.asList(data));
+            List<String> differences = getDifferences(this.baselineData, data);
             baselineRepository.createBaselineCandidate(data, baseline);
             throw new VerificationFailedError(formatDifferences(differences));
         }
@@ -74,28 +74,14 @@ public class StringVerifier extends Verifier {
      * @param data The String that should be verified
      */
     public void verify(List<String> data) {
-        LOGGER.info("Starting new approval test with baseline: " + baseline);
-        if (this.baselineData == null) {
-            LOGGER.info("No approved version found");
-            LOGGER.info("Creating new baseline candidate");
-            baselineRepository.createBaselineCandidate(data, baseline);
-            throw new VersionNotApprovedError(baseline);
-        }
-        if (!this.baselineData.equals(data)) {
-            LOGGER.info("Current version is not equal to approved version");
-            LOGGER.info("Create baseline candidate");
-            List<String> differences = getDifferences(this.baselineData, data);
-            baselineRepository.createBaselineCandidate(data, baseline);
-            throw new VerificationFailedError(formatDifferences(differences));
-        }
-        LOGGER.info("Current version is equal to approved version");
-        baselineRepository.removeBaselineCandidate(baseline);
+        verify(String.join("\n", data));
     }
 
-    private List<String> getDifferences(List<String> original, List<String> revised) {
+    private List<String> getDifferences(String original, String revised) {
         try {
-            Patch<String> patch = DiffUtils.diff(original, revised);
-            return UnifiedDiffUtils.generateUnifiedDiff("Baseline", "Baseline Candidate", original, patch, 0);
+            Patch<String> patch = DiffUtils.diff(Arrays.asList(original), Arrays.asList(revised));
+            return UnifiedDiffUtils
+                    .generateUnifiedDiff("Baseline", "Baseline Candidate", Arrays.asList(original), patch, 0);
         } catch (DiffException e) {
             throw new RuntimeException("Cannot compute differences! " + e);
         }

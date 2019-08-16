@@ -4,8 +4,8 @@ import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
 import org.junitapprovaltesting.exceptions.BaselineCandidateNotFoundException;
 import org.junitapprovaltesting.exceptions.BaselineNotFoundException;
 import org.junitapprovaltesting.exceptions.DiffingFailedException;
-import org.junitapprovaltesting.files.ApprovableFile;
-import org.junitapprovaltesting.services.BaselineRepository;
+import org.junitapprovaltesting.files.TextFile;
+import org.junitapprovaltesting.repositories.BaselineRepository;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -21,18 +21,18 @@ public class Differ {
     }
 
     /**
-     * Computes the differences of two {@link ApprovableFile}s by the baselineName.
+     * Computes the differences of two {@link TextFile}s by the baselineName.
      *
      * @param baselineName the name of the baseline for which the differences should be computed
      */
     public void diff(String baselineName) {
-        ApprovableFile baselineCandidate;
+        TextFile baselineCandidate;
         try {
             baselineCandidate = baselineRepository.getBaselineCandidate(baselineName);
         } catch (FileNotFoundException e) {
             throw new BaselineCandidateNotFoundException(baselineName);
         }
-        ApprovableFile baseline;
+        TextFile baseline;
         try {
             baseline = baselineRepository.getBaseline(baselineCandidate.getName());
         } catch (FileNotFoundException e) {

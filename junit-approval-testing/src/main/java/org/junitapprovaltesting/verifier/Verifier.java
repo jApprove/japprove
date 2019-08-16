@@ -1,7 +1,7 @@
 package org.junitapprovaltesting.verifier;
 
 import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
-import org.junitapprovaltesting.services.BaselineRepository;
+import org.junitapprovaltesting.repositories.BaselineRepository;
 
 import java.util.List;
 

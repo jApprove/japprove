@@ -37,7 +37,7 @@ public class ApprovalTestingExample {
         stringVerifier.verify(names);
     }
 
-    @ApprovalTest(baseline = "testJSON1.json")
+    @ApprovalTest(baseline = "testJSON1.txt")
     void jsonExample(JsonVerifier jsonVerifier) {
         // arrange
         ObjectMapper objectMapper = new ObjectMapper();
