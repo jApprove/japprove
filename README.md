@@ -91,8 +91,9 @@ Currently, this Approval Testing framework contains the following features:
 	
 	```
 	baselineDirectory=baselines\\
-	toApproveDirectory=build\\approvals\\
-	diffTdool=C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2019.1.3\\bin\\idea64 diff
+	baselineCandidateDirectory=build\\baselineCandidates\\
+	diffTool=C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2019.1.3\\bin\\idea64 diff
+
 	```
 	
 	The properties of the file above are the default properties.
