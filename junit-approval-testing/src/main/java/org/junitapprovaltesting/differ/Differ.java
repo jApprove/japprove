@@ -1,11 +1,11 @@
 package org.junitapprovaltesting.differ;
 
 import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
-import org.junitapprovaltesting.exceptions.ApprovedFileNotFoundException;
+import org.junitapprovaltesting.exceptions.BaselineCandidateNotFoundException;
+import org.junitapprovaltesting.exceptions.BaselineNotFoundException;
 import org.junitapprovaltesting.exceptions.DiffingFailedException;
-import org.junitapprovaltesting.exceptions.UnapprovedFileNotFoundException;
 import org.junitapprovaltesting.files.ApprovableFile;
-import org.junitapprovaltesting.services.FileService;
+import org.junitapprovaltesting.services.BaselineRepository;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,11 +13,11 @@ import java.io.IOException;
 public class Differ {
 
     private ApprovalTestingConfiguration config;
-    private FileService fileService;
+    private BaselineRepository baselineRepository;
 
     public Differ() {
         config = new ApprovalTestingConfiguration();
-        fileService = new FileService(config);
+        baselineRepository = new BaselineRepository(config);
     }
 
     /**
@@ -26,20 +26,20 @@ public class Differ {
      * @param baselineName the name of the baseline for which the differences should be computed
      */
     public void diff(String baselineName) {
-        ApprovableFile unapprovedFile;
+        ApprovableFile baselineCandidate;
         try {
-            unapprovedFile = fileService.getUnapprovedFile(baselineName);
+            baselineCandidate = baselineRepository.getBaselineCandidate(baselineName);
         } catch (FileNotFoundException e) {
-            throw new UnapprovedFileNotFoundException(baselineName);
+            throw new BaselineCandidateNotFoundException(baselineName);
         }
         ApprovableFile baseline;
         try {
-            baseline = fileService.getBaseline(unapprovedFile.getName());
+            baseline = baselineRepository.getBaseline(baselineCandidate.getName());
         } catch (FileNotFoundException e) {
-            throw new ApprovedFileNotFoundException(baselineName);
+            throw new BaselineNotFoundException(baselineName);
         }
         String diffTool = config.getDiffTool();
-        String cmd = diffTool + " " + unapprovedFile.getPath() + " " + baseline.getPath();
+        String cmd = diffTool + " " + baselineCandidate.getPath() + " " + baseline.getPath();
         try {
             Runtime.getRuntime().exec(cmd);
         } catch (IOException e) {

@@ -2,7 +2,6 @@ package org.junitapprovaltesting.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
-import org.junitapprovaltesting.exceptions.ApprovedFileNotFoundException;
 import org.junitapprovaltesting.exceptions.FileCreationFailedException;
 import org.junitapprovaltesting.files.ApprovableFile;
 import org.junitapprovaltesting.files.JsonFile;
@@ -17,14 +16,14 @@ import java.util.List;
 /**
  * A central administration of the files.
  */
-public class FileService {
+public class BaselineRepository {
 
     private String baselineDirectory;
-    private String toApproveDirectory;
+    private String baselineCandidateDirectory;
 
-    public FileService(ApprovalTestingConfiguration config) {
+    public BaselineRepository(ApprovalTestingConfiguration config) {
         baselineDirectory = config.getBaselineDirectory();
-        toApproveDirectory = config.getToApproveDirectory();
+        baselineCandidateDirectory = config.getBaselineCandidateDirectory();
     }
 
     /**
@@ -34,15 +33,15 @@ public class FileService {
      * @param baselineName The name of the current baseline
      * @return the created {@link TextFile}
      */
-    public TextFile createUnapprovedFile(String data, String baselineName) {
-        TextFile unapprovedTextFile = new TextFile(toApproveDirectory + baselineName);
+    public TextFile createBaselineCandidate(String data, String baselineName) {
+        TextFile baselineCandidate = new TextFile(baselineCandidateDirectory + baselineName);
         try {
-            unapprovedTextFile.create();
-            unapprovedTextFile.writeData(data);
+            baselineCandidate.create();
+            baselineCandidate.writeData(data);
         } catch (IOException e) {
-            throw new FileCreationFailedException(unapprovedTextFile.getName());
+            throw new FileCreationFailedException(baselineCandidate.getName());
         }
-        return unapprovedTextFile;
+        return baselineCandidate;
     }
 
     /**
@@ -52,15 +51,15 @@ public class FileService {
      * @param baselineName The name of the current baseline
      * @return the created {@link TextFile}
      */
-    public TextFile createUnapprovedFile(List<String> data, String baselineName) {
-        TextFile unapprovedTextFile = new TextFile(toApproveDirectory + baselineName);
+    public TextFile createBaselineCandidate(List<String> data, String baselineName) {
+        TextFile baselineCandidate = new TextFile(baselineCandidateDirectory + baselineName);
         try {
-            unapprovedTextFile.create();
-            unapprovedTextFile.writeData(data);
+            baselineCandidate.create();
+            baselineCandidate.writeData(data);
         } catch (IOException e) {
-            throw new FileCreationFailedException(unapprovedTextFile.getName());
+            throw new FileCreationFailedException(baselineCandidate.getName());
         }
-        return unapprovedTextFile;
+        return baselineCandidate;
     }
 
     /**
@@ -70,15 +69,15 @@ public class FileService {
      * @param baselineName The name of the current baseline
      * @return the created {@link JsonFile}
      */
-    public JsonFile createUnapprovedFile(JsonNode data, String baselineName) {
-        JsonFile unapprovedJsonFile = new JsonFile(toApproveDirectory + baselineName);
+    public JsonFile createBaselineCandidate(JsonNode data, String baselineName) {
+        JsonFile baselineCandidate = new JsonFile(baselineCandidateDirectory + baselineName);
         try {
-            unapprovedJsonFile.create();
-            unapprovedJsonFile.writeData(data);
+            baselineCandidate.create();
+            baselineCandidate.writeData(data);
         } catch (IOException e) {
-            throw new FileCreationFailedException(unapprovedJsonFile.getName());
+            throw new FileCreationFailedException(baselineCandidate.getName());
         }
-        return unapprovedJsonFile;
+        return baselineCandidate;
     }
 
     /**
@@ -87,10 +86,10 @@ public class FileService {
      * @param filename the name of the file that should be removed
      * @return true if the {@link ApprovableFile} has successfully been removed, false otherwise.
      */
-    public boolean removeUnapprovedFile(String filename) {
+    public boolean removeBaselineCandidate(String filename) {
         try {
-            ApprovableFile unapprovedFile = getUnapprovedFile(filename);
-            return unapprovedFile.delete();
+            ApprovableFile baselineCandidate = getBaselineCandidate(filename);
+            return baselineCandidate.delete();
         } catch (FileNotFoundException e) {
             return false;
         }
@@ -103,11 +102,11 @@ public class FileService {
      * @return the {@link ApprovableFile} by its name
      * @throws FileNotFoundException if no {@link ApprovableFile} has been found
      */
-    public ApprovableFile getUnapprovedFile(String filename) throws FileNotFoundException {
-        File directory = new File(toApproveDirectory);
+    public ApprovableFile getBaselineCandidate(String filename) throws FileNotFoundException {
+        File directory = new File(baselineCandidateDirectory);
         if (directory.exists() && directory.listFiles() != null) {
             for (File file : directory.listFiles()) {
-                if (file.getPath().equals(toApproveDirectory + filename)) {
+                if (file.getPath().equals(baselineCandidateDirectory + filename)) {
                     return new ApprovableFile(file.getPath());
                 }
             }
@@ -120,8 +119,8 @@ public class FileService {
      *
      * @return a list of all {@link ApprovableFile}s
      */
-    public List<ApprovableFile> getUnapprovedFiles() {
-        File directory = new File(toApproveDirectory);
+    public List<ApprovableFile> getBaselineCandidates() {
+        File directory = new File(baselineCandidateDirectory);
         List<ApprovableFile> files = new ArrayList<>();
         if (directory.exists() && directory.listFiles() != null) {
             for (File file : directory.listFiles()) {
@@ -136,7 +135,7 @@ public class FileService {
      *
      * @param baselineName the name of the baseline
      * @return the {@link TextFile} if exists
-     * @throws ApprovedFileNotFoundException if the {@link TextFile} not exists
+     * @throws FileNotFoundException if the {@link TextFile} not exists
      */
     public TextFile getTextBaseline(String baselineName) throws FileNotFoundException {
         TextFile baseline = new TextFile(baselineDirectory + baselineName);
@@ -151,7 +150,7 @@ public class FileService {
      *
      * @param baselineName the name of the baseline
      * @return the {@link JsonFile} if exists
-     * @throws ApprovedFileNotFoundException if the {@link JsonFile} not exists
+     * @throws FileNotFoundException if the {@link JsonFile} not exists
      */
     public JsonFile getJsonBaseline(String baselineName) throws FileNotFoundException {
         JsonFile baseline = new JsonFile(baselineDirectory + baselineName);
@@ -166,7 +165,7 @@ public class FileService {
      *
      * @param baselineName the name of the baseline
      * @return the {@link ApprovableFile} if exists
-     * @throws ApprovedFileNotFoundException if the {@link ApprovableFile}not exists
+     * @throws FileNotFoundException if the {@link ApprovableFile}not exists
      */
     public ApprovableFile getBaseline(String baselineName) throws FileNotFoundException {
         File directory = new File(baselineDirectory);

@@ -5,9 +5,9 @@ import org.apache.logging.log4j.Logger;
 import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
 import org.junitapprovaltesting.differ.Differ;
 import org.junitapprovaltesting.exceptions.ApprovingFailedException;
-import org.junitapprovaltesting.exceptions.UnapprovedFileNotFoundException;
+import org.junitapprovaltesting.exceptions.BaselineCandidateNotFoundException;
 import org.junitapprovaltesting.files.ApprovableFile;
-import org.junitapprovaltesting.services.FileService;
+import org.junitapprovaltesting.services.BaselineRepository;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,12 +19,12 @@ import java.util.Scanner;
 public class Approver {
 
     private static Logger LOGGER = LogManager.getLogger(Approver.class);
-    private FileService fileService;
+    private BaselineRepository baselineRepository;
     private ApprovalTestingConfiguration config;
 
     public Approver() {
         config = new ApprovalTestingConfiguration();
-        fileService = new FileService(config);
+        baselineRepository = new BaselineRepository(config);
     }
 
     /**
@@ -33,48 +33,48 @@ public class Approver {
      * @param filename the name of the file
      */
     public void approveFile(String filename) {
-        ApprovableFile unapprovedFile;
+        ApprovableFile baselineCandidate;
         try {
-            unapprovedFile = fileService.getUnapprovedFile(filename);
+            baselineCandidate = baselineRepository.getBaselineCandidate(filename);
         } catch (FileNotFoundException e) {
-            throw new UnapprovedFileNotFoundException(filename);
+            throw new BaselineCandidateNotFoundException(filename);
         }
-        approveFile(unapprovedFile);
+        approveFile(baselineCandidate);
     }
 
     /**
      * Approves a passed {@link ApprovableFile}.
      *
-     * @param unapprovedFile the {@link ApprovableFile} that should be approved
+     * @param baselineCandidate the {@link ApprovableFile} that should be approved
      */
-    public void approveFile(ApprovableFile unapprovedFile) {
+    public void approveFile(ApprovableFile baselineCandidate) {
         ApprovableFile baseline;
         try {
-            baseline = fileService.getBaseline(unapprovedFile.getName());
+            baseline = baselineRepository.getBaseline(baselineCandidate.getName());
         } catch (FileNotFoundException e) {
-            baseline = fileService.createBaseline(unapprovedFile.getName());
+            baseline = baselineRepository.createBaseline(baselineCandidate.getName());
         }
         try {
-            copyFile(unapprovedFile, baseline);
-            if (unapprovedFile.delete()) {
-                LOGGER.info("Successfully approved file " + unapprovedFile.getName());
+            copyToBaseline(baselineCandidate, baseline);
+            if (baselineCandidate.delete()) {
+                LOGGER.info("Successfully approved file " + baselineCandidate.getName());
             }
         } catch (IOException e) {
-            throw new ApprovingFailedException(unapprovedFile.getName());
+            throw new ApprovingFailedException(baselineCandidate.getName());
         }
     }
 
     /**
-     * Approves all files in the toApprove directory.
+     * Approves all files in the baselineCandidate directory.
      */
     public void approveAllFiles() {
-        List<ApprovableFile> unapprovedFiles = fileService.getUnapprovedFiles();
-        if (unapprovedFiles.size() == 0) {
-            LOGGER.info("Found no unapproved files");
+        List<ApprovableFile> baselineCandidates = baselineRepository.getBaselineCandidates();
+        if (baselineCandidates.size() == 0) {
+            LOGGER.info("Found no baseline candidates");
             return;
         }
-        LOGGER.info("Found " + unapprovedFiles.size() + " unapproved files");
-        for (ApprovableFile file : unapprovedFiles) {
+        LOGGER.info("Found " + baselineCandidates.size() + " baseline candidates");
+        for (ApprovableFile file : baselineCandidates) {
             approveFile(file);
         }
     }
@@ -83,42 +83,42 @@ public class Approver {
      * Starts a batch process to approve or diff all files step by step.
      */
     public void startApprovingBatchProcess() {
-        List<ApprovableFile> unapprovedFiles = fileService.getUnapprovedFiles();
-        if (unapprovedFiles.size() == 0) {
-            LOGGER.info("Found no unapproved files");
+        List<ApprovableFile> baselineCandidates = baselineRepository.getBaselineCandidates();
+        if (baselineCandidates.size() == 0) {
+            LOGGER.info("Found no baseline candidates");
             return;
         }
-        LOGGER.info("Found " + unapprovedFiles.size() + " unapproved files");
+        LOGGER.info("Found " + baselineCandidates.size() + " baseline candidates");
         LOGGER.info("Starting batch process ..");
         Scanner scanner = new Scanner(System.in);
         Differ differ = new Differ();
-        for (ApprovableFile unapprovedFile : unapprovedFiles) {
-            LOGGER.info("Unapproved file: " + unapprovedFile.getName());
+        for (ApprovableFile baselineCandidate : baselineCandidates) {
+            LOGGER.info("Baseline candidate: " + baselineCandidate.getName());
             ApprovableFile baseline;
             try {
-                baseline = fileService.getBaseline(unapprovedFile.getName());
+                baseline = baselineRepository.getBaseline(baselineCandidate.getName());
             } catch (FileNotFoundException e) {
-                LOGGER.info("No approved version exists");
+                LOGGER.info("No baseline exists");
                 LOGGER.info("Approve current version? (y/n)");
                 if (userAcceptsRequest(scanner)) {
-                    approveFile(unapprovedFile);
+                    approveFile(baselineCandidate);
                 }
                 continue;
             }
-            LOGGER.info("Differences:\n" + formatDifferences(unapprovedFile.computeDifferences(baseline)));
+            LOGGER.info("Differences:\n" + formatDifferences(baselineCandidate.computeDifferences(baseline)));
             LOGGER.info("Show entire diff? (y/n)");
             if (userAcceptsRequest(scanner)) {
-                differ.diff(unapprovedFile.getName());
+                differ.diff(baselineCandidate.getName());
             }
             LOGGER.info("Approve current version? (y/n)");
             if (userAcceptsRequest(scanner)) {
-                approveFile(unapprovedFile);
+                approveFile(baselineCandidate);
             }
         }
         scanner.close();
     }
 
-    private void copyFile(ApprovableFile toApprove, ApprovableFile baseline) throws IOException {
+    private void copyToBaseline(ApprovableFile toApprove, ApprovableFile baseline) throws IOException {
         FileInputStream inputStream = new FileInputStream(toApprove);
         FileOutputStream outputStream = new FileOutputStream(baseline);
         inputStream.getChannel().transferTo(0, toApprove.length(), outputStream.getChannel());

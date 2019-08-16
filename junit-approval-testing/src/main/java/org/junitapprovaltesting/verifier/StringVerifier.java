@@ -26,7 +26,7 @@ public class StringVerifier extends Verifier {
     public StringVerifier(String baseline) {
         super(baseline);
         try {
-            baselineData = fileService.getTextBaseline(baseline).readData();
+            baselineData = baselineRepository.getTextBaseline(baseline).readData();
         } catch (FileNotFoundException e) {
             baselineData = null;
         } catch (IOException e) {
@@ -48,54 +48,54 @@ public class StringVerifier extends Verifier {
         LOGGER.info("Starting new approval test with baseline: " + baseline);
         if (this.baselineData == null) {
             LOGGER.info("No approved version found");
-            LOGGER.info("Creating new unapproved text file");
-            fileService.createUnapprovedFile(data, baseline);
+            LOGGER.info("Creating new baseline candidate");
+            baselineRepository.createBaselineCandidate(data, baseline);
             throw new VersionNotApprovedError(baseline);
         }
         if (!this.baselineData.equals(Arrays.asList(data))) {
             LOGGER.info("Current version is not equal to approved version");
-            LOGGER.info("Create new unapproved text file");
+            LOGGER.info("Create new baseline candidate");
             List<String> differences = getDifferences(this.baselineData, Arrays.asList(data));
-            fileService.createUnapprovedFile(data, baseline);
+            baselineRepository.createBaselineCandidate(data, baseline);
             throw new VerificationFailedError(formatDifferences(differences));
         }
         LOGGER.info("Current version is equal to approved version");
-        fileService.removeUnapprovedFile(baseline);
+        baselineRepository.removeBaselineCandidate(baseline);
     }
 
     /**
-     * Receives a list of Strings that should be verified within an Approval Test.
+     * Receives a List of Strings that should be verified within an Approval Test.
      * <p>
-     * Within the verification process, a {@code toApprove} toApprove file is created in the build directory and
-     * compared to a {@code baseline} file (if exists). In the case the versions are equal, the test passes. If no
-     * baseline exists, a {@code VersionNotApprovedError} is thrown. If there is a baseline that is not equal to the
-     * current version, a {@code VerificationFailedError} is thrown.
+     * Within the verification process, the passed data is compared to the data in the corresponding baseline. In the
+     * case the versions are equal, the test passes. If no baseline exists, a {@code VersionNotApprovedError} is
+     * thrown. If there is a baseline that is not equal to the current version, a {@code VerificationFailedError}
+     * is thrown.
      *
-     * @param data The list of Strings that should be verified
+     * @param data The String that should be verified
      */
     public void verify(List<String> data) {
         LOGGER.info("Starting new approval test with baseline: " + baseline);
         if (this.baselineData == null) {
             LOGGER.info("No approved version found");
-            LOGGER.info("Creating new unapproved text file");
-            fileService.createUnapprovedFile(data, baseline);
+            LOGGER.info("Creating new baseline candidate");
+            baselineRepository.createBaselineCandidate(data, baseline);
             throw new VersionNotApprovedError(baseline);
         }
         if (!this.baselineData.equals(data)) {
             LOGGER.info("Current version is not equal to approved version");
-            LOGGER.info("Create new unapproved text file");
+            LOGGER.info("Create baseline candidate");
             List<String> differences = getDifferences(this.baselineData, data);
-            fileService.createUnapprovedFile(data, baseline);
+            baselineRepository.createBaselineCandidate(data, baseline);
             throw new VerificationFailedError(formatDifferences(differences));
         }
         LOGGER.info("Current version is equal to approved version");
-        fileService.removeUnapprovedFile(baseline);
+        baselineRepository.removeBaselineCandidate(baseline);
     }
 
     private List<String> getDifferences(List<String> original, List<String> revised) {
         try {
             Patch<String> patch = DiffUtils.diff(original, revised);
-            return UnifiedDiffUtils.generateUnifiedDiff("Baseline", "toApprove", original, patch, 0);
+            return UnifiedDiffUtils.generateUnifiedDiff("Baseline", "Baseline Candidate", original, patch, 0);
         } catch (DiffException e) {
             throw new RuntimeException("Cannot compute differences! " + e);
         }

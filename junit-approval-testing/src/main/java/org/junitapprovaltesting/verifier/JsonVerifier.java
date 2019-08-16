@@ -38,7 +38,7 @@ public class JsonVerifier extends Verifier {
     public JsonVerifier(String baseline) {
         super(baseline);
         try {
-            baselineData = fileService.getJsonBaseline(baseline).readData();
+            baselineData = baselineRepository.getJsonBaseline(baseline).readData();
         } catch (FileNotFoundException e) {
             baselineData = null;
         }
@@ -47,8 +47,8 @@ public class JsonVerifier extends Verifier {
     /**
      * Receives a JsonNode that should be verified within an Approval Test.
      * <p>
-     * Within the verification process, a {@code toApprove} toApprove file is created in the build directory and
-     * compared to a {@code baseline} file (if exists). In the case the versions are equal, the test passes. If no
+     * Within the verification process, a baseline candidate is created in the baseline candidate's directory and
+     * compared to a {@code baseline} (if exists). In the case the versions are equal, the test passes. If no
      * baseline exists, a {@code VersionNotApprovedError} is thrown. If there is a baseline that is not equal to the
      * current version, a {@code VerificationFailedError} is thrown.
      *
@@ -58,21 +58,21 @@ public class JsonVerifier extends Verifier {
         LOGGER.info("Starting new approval test with baseline: " + baseline);
         if (baselineData == null) {
             LOGGER.info("No approved version found");
-            LOGGER.info("Creating new unapproved text file");
-            fileService.createUnapprovedFile(data, baseline);
+            LOGGER.info("Creating new baseline candidate");
+            baselineRepository.createBaselineCandidate(data, baseline);
             throw new VersionNotApprovedError(baseline);
         }
         JsonNode dataWithoutIgnoredFields = removeIgnoredFields(data);
         JsonNode baselineWithoutIgnoredFields = removeIgnoredFields(baselineData);
         if (!baselineWithoutIgnoredFields.equals(dataWithoutIgnoredFields)) {
             LOGGER.info("Current version is not equal to approved version");
-            LOGGER.info("Create new unapproved text file");
+            LOGGER.info("Create new baseline candidate");
             List<String> differences = getDifferences(baselineWithoutIgnoredFields, dataWithoutIgnoredFields);
-            fileService.createUnapprovedFile(data, baseline);
+            baselineRepository.createBaselineCandidate(data, baseline);
             throw new VerificationFailedError(formatDifferences(differences));
         }
         LOGGER.info("Current version is equal to approved version");
-        fileService.removeUnapprovedFile(baseline);
+        baselineRepository.removeBaselineCandidate(baseline);
     }
 
     /**

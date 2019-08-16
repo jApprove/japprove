@@ -1,7 +1,7 @@
 package org.junitapprovaltesting.verifier;
 
 import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
-import org.junitapprovaltesting.services.FileService;
+import org.junitapprovaltesting.services.BaselineRepository;
 
 import java.util.List;
 
@@ -11,11 +11,11 @@ import java.util.List;
 public abstract class Verifier {
 
     String baseline;
-    FileService fileService;
+    BaselineRepository baselineRepository;
 
     public Verifier(String baseline) {
         this.baseline = baseline;
-        fileService = new FileService(new ApprovalTestingConfiguration());
+        baselineRepository = new BaselineRepository(new ApprovalTestingConfiguration());
     }
 
     String formatDifferences(List<String> differences) {

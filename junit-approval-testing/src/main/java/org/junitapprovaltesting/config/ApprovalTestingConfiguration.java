@@ -2,7 +2,6 @@ package org.junitapprovaltesting.config;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junitapprovaltesting.verifier.StringVerifier;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,17 +21,16 @@ public class ApprovalTestingConfiguration {
                     "IntelliJ IDEA Community Edition 2019.1.3" + File.separator + "bin" + File.separator +
                     "idea64 diff";
     private static final String DEFAULT_BASELINE_DIRECTORY = "baselines" + File.separator;
-    private static final String DEFAULT_TO_APPROVE_DIRECTORY = "build" + File.separator + "approvals" + File.separator;
+    private static final String DEFAULT_BASELINE_CANDIDATE_DIRECTORY =
+            "build" + File.separator + "baselineCandidates" + File.separator;
+    private static final Logger LOGGER = LogManager.getLogger(ApprovalTestingConfiguration.class);
     private String baselineDirectory;
-    private String toApproveDirectory;
+    private String baselineCandidateDirectory;
     private String diffTool;
-
 
     public ApprovalTestingConfiguration() {
         loadProperties();
     }
-
-    private static final Logger LOGGER = LogManager.getLogger(ApprovalTestingConfiguration.class);
 
     private void loadProperties() {
         Properties prop = new Properties();
@@ -45,10 +43,11 @@ public class ApprovalTestingConfiguration {
                                         .replace("\\", File.separator);
             }
             if (prop.getProperty("toApproveDirectory") == null) {
-                toApproveDirectory = DEFAULT_TO_APPROVE_DIRECTORY;
+                baselineCandidateDirectory = DEFAULT_BASELINE_CANDIDATE_DIRECTORY;
             } else {
-                toApproveDirectory = prop.getProperty("toApproveDirectory").replace("\\", File.separator)
-                                         .replace("/", File.separator);
+                baselineCandidateDirectory =
+                        prop.getProperty("baselineCandidateDirectory").replace("\\", File.separator)
+                            .replace("/", File.separator);
             }
             if (prop.getProperty("diffTool") == null) {
                 diffTool = DEFAULT_IDEA_DIFF;
@@ -58,7 +57,7 @@ public class ApprovalTestingConfiguration {
             LOGGER.info("Loading properties from: " + APPROVAL_TESTING_PROPERTIES);
         } catch (IOException e) {
             baselineDirectory = DEFAULT_BASELINE_DIRECTORY;
-            toApproveDirectory = DEFAULT_TO_APPROVE_DIRECTORY;
+            baselineCandidateDirectory = DEFAULT_BASELINE_CANDIDATE_DIRECTORY;
             diffTool = DEFAULT_IDEA_DIFF;
             LOGGER.info("Using default properties");
         }
@@ -74,12 +73,12 @@ public class ApprovalTestingConfiguration {
     }
 
     /**
-     * Returns the path to the toApprove directory.
+     * Returns the path to the baselineCandidate directory.
      *
-     * @return the path to the toApprove directory.
+     * @return the path to the baselineCandidate directory.
      */
-    public String getToApproveDirectory() {
-        return toApproveDirectory;
+    public String getBaselineCandidateDirectory() {
+        return baselineCandidateDirectory;
     }
 
     /**
