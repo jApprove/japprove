@@ -1,42 +1,39 @@
 package org.junitapprovaltesting.differ;
 
 import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
-import org.junitapprovaltesting.exceptions.BaselineCandidateNotFoundException;
-import org.junitapprovaltesting.exceptions.BaselineNotFoundException;
 import org.junitapprovaltesting.exceptions.DiffingFailedException;
-import org.junitapprovaltesting.files.TextFile;
-import org.junitapprovaltesting.repositories.BaselineRepository;
+import org.junitapprovaltesting.repositories.BaselineRepositoryImpl;
 
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.IOException;
 
 public class Differ {
 
     private ApprovalTestingConfiguration config;
-    private BaselineRepository baselineRepository;
+    private BaselineRepositoryImpl baselineRepository;
 
     public Differ() {
         config = new ApprovalTestingConfiguration();
-        baselineRepository = new BaselineRepository(config);
+        baselineRepository = new BaselineRepositoryImpl(config);
     }
 
     /**
-     * Computes the differences of two {@link TextFile}s by the baselineName.
+     * Computes the differences of the baseline candidate and the baseline.
      *
-     * @param baselineName the name of the baseline for which the differences should be computed
+     * @param baselineCandidateName the name of the baseline candidate for which the differences should be computed
      */
-    public void diff(String baselineName) {
-        TextFile baselineCandidate;
+    public void diff(String baselineCandidateName) {
+        File baselineCandidate;
         try {
-            baselineCandidate = baselineRepository.getBaselineCandidate(baselineName);
-        } catch (FileNotFoundException e) {
-            throw new BaselineCandidateNotFoundException(baselineName);
+            baselineCandidate = baselineRepository.getBaselineCandidateAsFile(baselineCandidateName);
+        } catch (IOException e) {
+            throw new DiffingFailedException("Baseline candidate " + baselineCandidateName + " not found!");
         }
-        TextFile baseline;
+        File baseline;
         try {
-            baseline = baselineRepository.getBaseline(baselineCandidate.getName());
-        } catch (FileNotFoundException e) {
-            throw new BaselineNotFoundException(baselineName);
+            baseline = baselineRepository.getBaselineAsFile(baselineCandidateName);
+        } catch (IOException e) {
+            throw new DiffingFailedException("Baseline " + baselineCandidateName + " not found!");
         }
         String diffTool = config.getDiffTool();
         String cmd = diffTool + " " + baselineCandidate.getPath() + " " + baseline.getPath();

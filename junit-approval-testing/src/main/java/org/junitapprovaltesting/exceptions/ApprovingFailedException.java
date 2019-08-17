@@ -5,5 +5,5 @@ package org.junitapprovaltesting.exceptions;
  */
 public class ApprovingFailedException extends RuntimeException {
 
-    public ApprovingFailedException(String filename) {super("Error while approving " + filename);}
+    public ApprovingFailedException(String message) {super(message);}
 }

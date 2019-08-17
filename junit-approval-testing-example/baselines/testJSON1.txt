@@ -8,7 +8,7 @@
       "category" : "fiction",
       "author" : "Evelyn Waugh",
       "title" : "Sword of Honour",
-      "price" : 15456.99
+      "price" : 9.99
     }, {
       "category" : "fiction",
       "author" : "Herman Melville",

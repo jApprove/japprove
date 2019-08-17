@@ -7,10 +7,12 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junitapprovaltesting.exceptions.BaselineCandidateCreationFailedException;
+import org.junitapprovaltesting.exceptions.BaselineNotFoundException;
+import org.junitapprovaltesting.exceptions.VerificationFailedException;
 import org.junitapprovaltesting.exceptions.errors.VerificationFailedError;
 import org.junitapprovaltesting.exceptions.errors.VersionNotApprovedError;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +40,8 @@ public class JsonVerifier extends Verifier {
     public JsonVerifier(String baseline) {
         super(baseline);
         try {
-            baselineData = baselineRepository.getJsonBaseline(baseline).readData();
-        } catch (FileNotFoundException e) {
+            baselineData = baselineRepository.getContentOfJsonBaseline(baseline);
+        } catch (BaselineNotFoundException e) {
             baselineData = null;
         }
     }
@@ -59,7 +61,11 @@ public class JsonVerifier extends Verifier {
         if (baselineData == null) {
             LOGGER.info("No approved version found");
             LOGGER.info("Creating new baseline candidate");
-            baselineRepository.createBaselineCandidate(data, baseline);
+            try {
+                baselineRepository.createBaselineCandidate(data, baseline);
+            } catch (BaselineCandidateCreationFailedException e) {
+                throw new VerificationFailedException("Internal error while creating baseline");
+            }
             throw new VersionNotApprovedError(baseline);
         }
         JsonNode dataWithoutIgnoredFields = removeIgnoredFields(data);
@@ -68,7 +74,11 @@ public class JsonVerifier extends Verifier {
             LOGGER.info("Current version is not equal to approved version");
             LOGGER.info("Create new baseline candidate");
             List<String> differences = getDifferences(baselineWithoutIgnoredFields, dataWithoutIgnoredFields);
-            baselineRepository.createBaselineCandidate(data, baseline);
+            try {
+                baselineRepository.createBaselineCandidate(data, baseline);
+            } catch (BaselineCandidateCreationFailedException e) {
+                throw new VerificationFailedException("Internal error while creating baseline");
+            }
             throw new VerificationFailedError(formatDifferences(differences));
         }
         LOGGER.info("Current version is equal to approved version");

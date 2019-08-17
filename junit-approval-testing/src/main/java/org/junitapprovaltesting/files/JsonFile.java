@@ -3,6 +3,7 @@ package org.junitapprovaltesting.files;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junitapprovaltesting.exceptions.FileCreationFailedException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -50,7 +51,7 @@ public class JsonFile {
      *
      * @throws IOException thrown if the file cannot be created
      */
-    public void create() throws IOException {
+    public void create() throws FileCreationFailedException {
         this.textFile.create();
     }
 

@@ -4,33 +4,32 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.options.Option;
-import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
 
 public class ApproverTask extends DefaultTask {
 
     @Input
-    private String fileName;
+    private String baseline;
 
     @Input
     private boolean approveAll;
 
-    @Option(option = "file", description = "Provides the name of the file that should be approved")
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    @Option(option = "baseline", description = "Provides the name of the baseline candidate that should be approved")
+    public void setBaseline(String baseline) {
+        this.baseline = baseline;
     }
 
-    @Option(option = "all", description = "All unapproved files should be approved")
+    @Option(option = "all", description = "All unapproved baseline candidates should be approved")
     public void setApproveAll() {
-        this.approveAll=true;
+        this.approveAll = true;
     }
 
     @TaskAction
     public void approve() {
         Approver approver = new Approver();
         if(approveAll) {
-            approver.approveAllFiles();
-        } else if (fileName != null) {
-            approver.approveFile(fileName);
+            approver.approveAllBaselineCandidates();
+        } else if (baseline != null) {
+            approver.approveBaselineCandidate(baseline);
         } else {
             approver.startApprovingBatchProcess();
         }

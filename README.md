@@ -46,7 +46,7 @@ Currently, this Approval Testing framework contains the following features:
 3. Add an Approval Test:
 
    ```
-   @ApprovalTest(baseline="sorting1.txt")
+   @ApprovalTest(baseline="sorting1")
    void testSortNames(StringVerifier stringVerifier) {
 	   // arrange
 	   List<String> names = Arrays.asList("Peter", "Mike", "John");
@@ -66,17 +66,17 @@ Currently, this Approval Testing framework contains the following features:
 
    `gradle approve`  
    
-   During a starting batch process it is possible to see all changes and approve each file. To approve the changes of all files at once, use the following command:
+   During a starting batch process it is possible to see all changes and approve each failing test. To approve the changes of all failing test at once, use the following command:
 
    `gradle approve --all`
 
-   To approve the changes of a specific file, use for example:
+   To approve the changes of a specific failing test, use for example:
 
-   `gradle approve --file=sorting1`
+   `gradle approve --baseline=sorting1`
 
-   To highlight the changes of a specific file, use for example:
+   To highlight the changes of a specific failing test, use for example:
 
-   `gradle diff --file=sorting1`
+   `gradle diff --baseline=sorting1`
 
 
 6. Customize approval testing properties (optional):

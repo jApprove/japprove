@@ -4,25 +4,24 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.options.Option;
-import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
 
 public class DifferTask extends DefaultTask {
 
     @Input
-    private String fileName;
+    private String baseline;
 
-    @Option(option = "file", description = "Provides the name of the file that should be diffed")
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    @Option(option = "baseline", description = "Provides the name of the baseline that should be diffed")
+    public void setBaseline(String baseline) {
+        this.baseline = baseline;
     }
 
     @TaskAction
     public void differ() {
-        if (fileName == null) {
-            throw new RuntimeException("A specific file is required! Use \"gradle diff --file=... \"");
+        if (baseline == null) {
+            throw new RuntimeException("A specific baseline is required! Use \"gradle diff --baseline=... \"");
         }
         Differ differ = new Differ();
-        differ.diff(fileName);
+        differ.diff(baseline);
     }
 
 }

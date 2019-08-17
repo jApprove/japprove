@@ -14,7 +14,7 @@ import java.util.List;
 
 public class ApprovalTestingExample {
 
-    @ApprovalTest(baseline = "strings1.txt")
+    @ApprovalTest(baseline = "strings1")
     void simpleStringExample(StringVerifier stringVerifier) {
         // arrange
         String s = "Hello World";
@@ -26,10 +26,11 @@ public class ApprovalTestingExample {
         stringVerifier.verify(s);
     }
 
-    @ApprovalTest(baseline = "sortingStrings1.txt")
+    @ApprovalTest(baseline = "sortingStrings1")
     void listOfStringsExample(StringVerifier stringVerifier) {
         // arrange
         List<String> names = Arrays.asList("Peter", "Mike", "John");
+
         // act
         Collections.sort(names);
 
@@ -37,7 +38,7 @@ public class ApprovalTestingExample {
         stringVerifier.verify(names);
     }
 
-    @ApprovalTest(baseline = "testJSON1.txt")
+    @ApprovalTest(baseline = "testJSON1")
     void jsonExample(JsonVerifier jsonVerifier) {
         // arrange
         ObjectMapper objectMapper = new ObjectMapper();
@@ -55,7 +56,7 @@ public class ApprovalTestingExample {
                                                      "                \"category\": \"fiction\",\n" +
                                                      "                \"author\": \"Evelyn Waugh\",\n" +
                                                      "                \"title\": \"Sword of Honour\",\n" +
-                                                     "                \"price\": 15456.99\n" +
+                                                     "                \"price\": 9.99\n" +
                                                      "            },\n" +
                                                      "            {\n" +
                                                      "                \"category\": \"fiction\",\n" +

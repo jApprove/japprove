@@ -10,7 +10,8 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 public abstract class ApprovalTestParameterResolver {
 
     private static final String EMPTY_STRING = "";
-    private static final String BACKSLASH = "\"";;
+    private static final String BACKSLASH = "\"";
+    ;
 
     public abstract boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
             throws ParameterResolutionException;
@@ -36,7 +37,8 @@ public abstract class ApprovalTestParameterResolver {
 
     private String createBaselineNameByHashCode(ExtensionContext extensionContext) {
         long hashCode = Math.abs(extensionContext.getTestMethod().get().hashCode());
-        return Long.toString(hashCode);
+        String filename = Long.toString(hashCode);
+        return filename;
     }
 
 }

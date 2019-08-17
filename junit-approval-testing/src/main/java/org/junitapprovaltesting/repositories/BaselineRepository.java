@@ -1,179 +1,116 @@
 package org.junitapprovaltesting.repositories;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
-import org.junitapprovaltesting.exceptions.FileCreationFailedException;
+import org.junitapprovaltesting.exceptions.*;
 import org.junitapprovaltesting.files.JsonFile;
 import org.junitapprovaltesting.files.TextFile;
+import org.junitapprovaltesting.model.BaselineCandidate;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A central administration of the files.
+ * A central administration point for the baselines and the baseline candidates.
  */
-public class BaselineRepository {
-
-    private String baselineDirectory;
-    private String baselineCandidateDirectory;
-
-    public BaselineRepository(ApprovalTestingConfiguration config) {
-        baselineDirectory = config.getBaselineDirectory();
-        baselineCandidateDirectory = config.getBaselineCandidateDirectory();
-    }
-
+public interface BaselineRepository {
     /**
      * Creates a new {@link TextFile} and writes the data into this file.
      *
-     * @param data         The data that should be stored in the {@link TextFile}
-     * @param baselineName The name of the current baseline
-     * @return the created {@link TextFile}
+     * @param data The data that should be stored in the {@link TextFile}
+     * @param name The name of the current baseline
+     * @throws BaselineCandidateCreationFailedException if the baseline candidate cannot be created
      */
-    public TextFile createBaselineCandidate(String data, String baselineName) {
-        TextFile baselineCandidate = new TextFile(baselineCandidateDirectory + baselineName);
-        try {
-            baselineCandidate.create();
-            baselineCandidate.writeData(data);
-        } catch (IOException e) {
-            throw new FileCreationFailedException(baselineCandidate.getName());
-        }
-        return baselineCandidate;
-    }
+    void createBaselineCandidate(String data, String name) throws BaselineCandidateCreationFailedException;
 
     /**
      * Creates a new {@link JsonFile} and writes the data into this file.
      *
-     * @param data         The data that should be stored in the {@link JsonFile}
-     * @param baselineName The name of the current baseline
-     * @return the created {@link JsonFile}
+     * @param data The data that should be stored in the {@link JsonFile}
+     * @param name The name of the current baseline
+     * @throws BaselineCandidateCreationFailedException if the baseline candidate cannot be created
      */
-    public JsonFile createBaselineCandidate(JsonNode data, String baselineName) {
-        JsonFile baselineCandidate = new JsonFile(baselineCandidateDirectory + baselineName);
-        try {
-            baselineCandidate.create();
-            baselineCandidate.writeData(data);
-        } catch (IOException e) {
-            throw new FileCreationFailedException(baselineCandidate.getName());
-        }
-        return baselineCandidate;
-    }
+    void createBaselineCandidate(JsonNode data, String name) throws BaselineCandidateCreationFailedException;
 
     /**
-     * Removes an {@link TextFile} by its name
+     * Removes an baseline candidate by its name.
      *
-     * @param filename the name of the file that should be removed
-     * @return true if the {@link TextFile} has successfully been removed, false otherwise.
+     * @param name the name of the baseline candidate that should be removed
+     * @return true if the baseline candidate has successfully been removed, false otherwise.
      */
-    public boolean removeBaselineCandidate(String filename) {
-        try {
-            TextFile baselineCandidate = getBaselineCandidate(filename);
-            return baselineCandidate.delete();
-        } catch (FileNotFoundException e) {
-            return false;
-        }
-    }
+    boolean removeBaselineCandidate(String name);
 
     /**
-     * Returns an {@link TextFile} by its name
+     * Returns a list of all {@link BaselineCandidate}s.
      *
-     * @param filename the filename
-     * @return the {@link TextFile} by its name
-     * @throws FileNotFoundException if no {@link TextFile} has been found
+     * @return a list of all {@link BaselineCandidate}s
      */
-    public TextFile getBaselineCandidate(String filename) throws FileNotFoundException {
-        File directory = new File(baselineCandidateDirectory);
-        if (directory.exists() && directory.listFiles() != null) {
-            for (File file : directory.listFiles()) {
-                if (file.getPath().equals(baselineCandidateDirectory + filename)) {
-                    return new TextFile(file.getPath());
-                }
-            }
-        }
-        throw new FileNotFoundException(filename);
-    }
+    List<BaselineCandidate> getBaselineCandidates();
 
     /**
-     * Returns a list of all {@link TextFile}s
+     * Returns the content of the requested baseline.
      *
-     * @return a list of all {@link TextFile}s
+     * @param baseline the baseline for which the content should be returned
+     * @return the content of the baseline
+     * @throws BaselineNotFoundException if the baseline cannot be found
      */
-    public List<TextFile> getBaselineCandidates() {
-        File directory = new File(baselineCandidateDirectory);
-        List<TextFile> files = new ArrayList<>();
-        if (directory.exists() && directory.listFiles() != null) {
-            for (File file : directory.listFiles()) {
-                files.add(new TextFile(file.getPath()));
-            }
-        }
-        return files;
-    }
+    JsonNode getContentOfJsonBaseline(String baseline) throws BaselineNotFoundException;
 
     /**
-     * Returns a {@link TextFile} for a baseline name.
+     * Returns the content of the requested baseline.
      *
-     * @param baselineName the name of the baseline
-     * @return the {@link TextFile} if exists
-     * @throws FileNotFoundException if the {@link TextFile} not exists
+     * @param baseline the baseline for which the content should be returned
+     * @return the content of the baseline
+     * @throws BaselineNotFoundException if the baseline cannot be found
      */
-    public TextFile getTextBaseline(String baselineName) throws FileNotFoundException {
-        TextFile baseline = new TextFile(baselineDirectory + baselineName);
-        if (!baseline.exists()) {
-            throw new FileNotFoundException("Baseline does not exist");
-        }
-        return baseline;
-    }
+    String getContentOfTextBaseline(String baseline) throws BaselineNotFoundException;
 
     /**
-     * Returns a {@link JsonFile} for a baseline name.
+     * Copies the content of the baseline candidate to the baseline.
      *
-     * @param baselineName the name of the baseline
-     * @return the {@link JsonFile} if exists
-     * @throws FileNotFoundException if the {@link JsonFile} not exists
+     * @param baselineCandidateName the name of the baseline candidate
+     * @throws BaselineCandidateNotFoundException if the candidate of the baseline cannot be found
+     * @throws BaselineCreationFailedException    if the baseline cannot be created
+     * @throws CopyingFailedException             in the case the content of the baseline candidate cannot be copied
+     *                                            to the baseline
      */
-    public JsonFile getJsonBaseline(String baselineName) throws FileNotFoundException {
-        JsonFile baseline = new JsonFile(baselineDirectory + baselineName);
-        if (!baseline.exists()) {
-            throw new FileNotFoundException("Baseline does not exist");
-        }
-        return baseline;
-    }
+    void copyBaselineCandidateToBaseline(String baselineCandidateName)
+            throws BaselineCandidateNotFoundException, BaselineCreationFailedException, CopyingFailedException;
 
     /**
-     * Returns an {@link TextFile} for a baseline name.
+     * Computes differences of the baseline candidate and the baseline.
      *
-     * @param baselineName the name of the baseline
-     * @return the {@link TextFile} if exists
-     * @throws FileNotFoundException if the {@link TextFile}not exists
+     * @param baselineCandidate the baseline candidate
+     * @return a string with the differences
+     * @throws BaselineCandidateNotFoundException if the candidate of the baseline cannot be found
+     * @throws BaselineNotFoundException          if the baseline cannot be found
      */
-    public TextFile getBaseline(String baselineName) throws FileNotFoundException {
-        File directory = new File(baselineDirectory);
-        if (directory.exists() && directory.listFiles() != null) {
-            for (File file : directory.listFiles()) {
-                if (file.getPath().equals(baselineDirectory + baselineName)) {
-                    return new TextFile(file.getPath());
-                }
-            }
-        }
-        throw new FileNotFoundException("Found no approved version for passed file " + baselineName);
-    }
+    String getDifferences(BaselineCandidate baselineCandidate)
+            throws BaselineCandidateNotFoundException, BaselineNotFoundException;
 
     /**
-     * Creates a new {@link TextFile} for a baseline name.
+     * Returns true if the baseline exists and false otherwise.
      *
-     * @param baselineName the name of the baseline
-     * @return the created {@link TextFile}
+     * @param baselineCandidate the baseline candidate for which the baseline should be found.
+     * @return true if the baseline exists and false otherwise.
      */
-    public TextFile createBaseline(String baselineName) {
-        TextFile baseline = new TextFile(baselineDirectory + baselineName);
-        try {
-            baseline.create();
-        } catch (IOException e) {
-            throw new FileCreationFailedException(baseline.getName());
-        }
-        return baseline;
-    }
+    boolean baselineExists(BaselineCandidate baselineCandidate);
 
+    /**
+     * Returns the content of the baseline candidate in a file.
+     *
+     * @param baselineCandidateName the name of the baseline candidate.
+     * @return the content of the baseline candidate in a file.
+     * @throws IOException in the case of problems with the created file.
+     */
+    File getBaselineCandidateAsFile(String baselineCandidateName) throws IOException;
+
+    /**
+     * Returns the content of the baseline in a file.
+     *
+     * @param baseline the name of the baseline.
+     * @return the content of the baseline in a file.
+     * @throws IOException in the case of problems with the created file.
+     */
+    File getBaselineAsFile(String baseline) throws IOException;
 }
