@@ -28,7 +28,7 @@ public class DifferTask extends DefaultTask {
         ApprovalTestingEngine approvalTestingEngine =
                 new ApprovalTestingEngine(baselineRepository, approvalTestingConfiguration);
         Differ differ = approvalTestingEngine.getDiffer();
-        differ.diff(baseline);
+        differ.callExternalDiffTool(baseline);
     }
 
 }

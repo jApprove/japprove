@@ -2,7 +2,6 @@ package org.junitapprovaltesting.verifier;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flipkart.zjsonpatch.JsonDiff;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.logging.log4j.LogManager;
@@ -24,16 +23,6 @@ import java.util.List;
  */
 public class JsonVerifier extends Verifier {
 
-    private static final String BACKSLASH = "\"";
-    private static final String EMPTY_STRING = "";
-    private static final String SLASH = "/";
-    private static final String REMOVE = "\"remove\"";
-    private static final String ADD = "\"add\"";
-    private static final String COPY = "\"copy\"";
-    private static final String MOVE = "\"move\"";
-    private static final String PATH = "path";
-    private static final String OPERATION = "op";
-    private static final String FROM = "from";
     private static final Logger LOGGER = LogManager.getLogger(JsonVerifier.class);
     private List<String> ignoredFields = new ArrayList<>();
     private JsonNode baselineData;
@@ -74,13 +63,13 @@ public class JsonVerifier extends Verifier {
         if (!baselineWithoutIgnoredFields.equals(dataWithoutIgnoredFields)) {
             LOGGER.info("Current version is not equal to approved version");
             LOGGER.info("Create new baseline candidate");
-            List<String> differences = getDifferences(baselineWithoutIgnoredFields, dataWithoutIgnoredFields);
+            String differences = differ.getDifferences(baselineWithoutIgnoredFields, dataWithoutIgnoredFields);
             try {
                 baselineRepository.createBaselineCandidate(data, baseline);
             } catch (BaselineCandidateCreationFailedException e) {
                 throw new VerificationFailedException("Internal error while creating baseline");
             }
-            throw new VerificationFailedError(formatDifferences(differences));
+            throw new VerificationFailedError(differences);
         }
         LOGGER.info("Current version is equal to approved version");
         baselineRepository.removeBaselineCandidate(baseline);
@@ -112,60 +101,6 @@ public class JsonVerifier extends Verifier {
             return objectMapper.readTree(jsonString);
         } catch (IOException e) {
             throw new RuntimeException("Error while reading Json String");
-        }
-    }
-
-    private List<String> getDifferences(JsonNode original, JsonNode revised) {
-        List<String> differences = new ArrayList<>();
-        JsonNode changes = JsonDiff.asJson(original, revised);
-        for (JsonNode change : changes) {
-            differences.add(visualizeChange(change, revised, original));
-        }
-        return differences;
-    }
-
-    private String visualizeChange(JsonNode change, JsonNode revised, JsonNode original) {
-        StringBuilder builder = new StringBuilder();
-        String path = change.get(PATH).toString();
-        String operation = change.get(OPERATION).toString();
-        JsonNode newElement = getLeafOfJsonNode(path, revised);
-        JsonNode oldElement = getLeafOfJsonNode(path, original);
-        builder.append("Operation: " + operation + "\n");
-        builder.append("Path: " + path + "\n");
-        if (operation.equals(REMOVE)) {
-            builder.append("--- " + oldElement + " \n");
-        } else
-            if (operation.equals(ADD) || operation.equals(COPY)) {
-                builder.append("+++ " + newElement + " \n");
-            } else
-                if (operation.equals(MOVE)) {
-                    builder.append("From " + change.get(FROM).toString() + " \n");
-                    builder.append("To: " + path + " \n");
-                    builder.append("+++ " + newElement + " \n");
-                } else {
-                    builder.append("+++ " + newElement + " \n");
-                    builder.append("--- " + oldElement + " \n");
-                }
-        return builder.toString();
-    }
-
-    private JsonNode getLeafOfJsonNode(String path, JsonNode jsonNode) {
-        for (String pathElement : path.replace(BACKSLASH, EMPTY_STRING).substring(1).split(SLASH)) {
-            if (isNumeric(pathElement)) {
-                jsonNode = jsonNode.get(Integer.parseInt(pathElement));
-            } else {
-                jsonNode = jsonNode.get(pathElement);
-            }
-        }
-        return jsonNode;
-    }
-
-    private boolean isNumeric(String str) {
-        try {
-            Integer.parseInt(str);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
         }
     }
 

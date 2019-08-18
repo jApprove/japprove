@@ -1,10 +1,6 @@
 package org.junitapprovaltesting.verifier;
 
 
-import com.github.difflib.DiffUtils;
-import com.github.difflib.UnifiedDiffUtils;
-import com.github.difflib.algorithm.DiffException;
-import com.github.difflib.patch.Patch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junitapprovaltesting.engine.ApprovalTestingEngine;
@@ -14,7 +10,6 @@ import org.junitapprovaltesting.exceptions.VerificationFailedException;
 import org.junitapprovaltesting.exceptions.errors.VerificationFailedError;
 import org.junitapprovaltesting.exceptions.errors.VersionNotApprovedError;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -59,13 +54,13 @@ public class StringVerifier extends Verifier {
         if (!this.baselineData.equals(data)) {
             LOGGER.info("Current version is not equal to approved version");
             LOGGER.info("Create new baseline candidate");
-            List<String> differences = getDifferences(this.baselineData, data);
+            String differences = differ.getDifferences(this.baselineData, data);
             try {
                 baselineRepository.createBaselineCandidate(data, baseline);
             } catch (BaselineCandidateCreationFailedException e) {
                 throw new VerificationFailedException("Internal error while creating baseline");
             }
-            throw new VerificationFailedError(formatDifferences(differences));
+            throw new VerificationFailedError(differences);
         }
         LOGGER.info("Current version is equal to approved version");
         baselineRepository.removeBaselineCandidate(baseline);
@@ -85,13 +80,4 @@ public class StringVerifier extends Verifier {
         verify(String.join("\n", data));
     }
 
-    private List<String> getDifferences(String original, String revised) {
-        try {
-            Patch<String> patch = DiffUtils.diff(Arrays.asList(original), Arrays.asList(revised));
-            return UnifiedDiffUtils
-                    .generateUnifiedDiff("Baseline", "Baseline Candidate", Arrays.asList(original), patch, 0);
-        } catch (DiffException e) {
-            throw new RuntimeException("Cannot compute differences! " + e);
-        }
-    }
 }

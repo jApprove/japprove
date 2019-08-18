@@ -97,7 +97,7 @@ public class Approver {
             }
             LOGGER.info("Show entire diff? (y/n)");
             if (userAcceptsRequest(scanner)) {
-                differ.diff(baselineCandidate.getName());
+                differ.callExternalDiffTool(baselineCandidate.getName());
             }
             LOGGER.info("Approve current version? (y/n)");
             if (userAcceptsRequest(scanner)) {
