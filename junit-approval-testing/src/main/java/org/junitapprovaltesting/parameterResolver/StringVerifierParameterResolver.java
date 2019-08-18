@@ -4,6 +4,9 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
+import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
+import org.junitapprovaltesting.engine.ApprovalTestingEngine;
+import org.junitapprovaltesting.repositories.BaselineRepositoryImpl;
 import org.junitapprovaltesting.verifier.StringVerifier;
 
 /**
@@ -34,7 +37,11 @@ public class StringVerifierParameterResolver extends ApprovalTestParameterResolv
         Object stringVerifier = null;
         if (supportsParameter(parameterContext, extensionContext)) {
             String baselineName = getBaselineName(extensionContext);
-            stringVerifier = new StringVerifier(baselineName);
+            ApprovalTestingConfiguration approvalTestingConfiguration = new ApprovalTestingConfiguration();
+            BaselineRepositoryImpl baselineRepository = new BaselineRepositoryImpl(approvalTestingConfiguration);
+            ApprovalTestingEngine approvalTestingEngine =
+                    new ApprovalTestingEngine(baselineRepository, approvalTestingConfiguration, baselineName);
+            stringVerifier = approvalTestingEngine.getStringVerifier();
         }
         return stringVerifier;
     }

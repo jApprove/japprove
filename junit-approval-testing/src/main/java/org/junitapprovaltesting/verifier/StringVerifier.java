@@ -7,6 +7,7 @@ import com.github.difflib.algorithm.DiffException;
 import com.github.difflib.patch.Patch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junitapprovaltesting.engine.ApprovalTestingEngine;
 import org.junitapprovaltesting.exceptions.BaselineCandidateCreationFailedException;
 import org.junitapprovaltesting.exceptions.BaselineNotFoundException;
 import org.junitapprovaltesting.exceptions.VerificationFailedException;
@@ -24,8 +25,8 @@ public class StringVerifier extends Verifier {
     private static final Logger LOGGER = LogManager.getLogger(StringVerifier.class);
     private String baselineData;
 
-    public StringVerifier(String baseline) {
-        super(baseline);
+    public StringVerifier(ApprovalTestingEngine approvalTestingEngine) {
+        super(approvalTestingEngine);
         try {
             baselineData = baselineRepository.getContentOfTextBaseline(baseline);
         } catch (BaselineNotFoundException e) {

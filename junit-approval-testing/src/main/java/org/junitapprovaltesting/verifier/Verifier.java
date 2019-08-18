@@ -1,6 +1,6 @@
 package org.junitapprovaltesting.verifier;
 
-import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
+import org.junitapprovaltesting.engine.ApprovalTestingEngine;
 import org.junitapprovaltesting.repositories.BaselineRepositoryImpl;
 
 import java.util.List;
@@ -13,9 +13,9 @@ public abstract class Verifier {
     String baseline;
     BaselineRepositoryImpl baselineRepository;
 
-    public Verifier(String baseline) {
-        this.baseline = baseline;
-        baselineRepository = new BaselineRepositoryImpl(new ApprovalTestingConfiguration());
+    public Verifier(ApprovalTestingEngine approvalTestingEngine) {
+        this.baselineRepository = (BaselineRepositoryImpl) approvalTestingEngine.getBaselineRepository();
+        this.baseline = approvalTestingEngine.getBaseline();
     }
 
     String formatDifferences(List<String> differences) {

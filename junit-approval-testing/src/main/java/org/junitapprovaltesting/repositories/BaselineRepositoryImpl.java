@@ -101,7 +101,7 @@ public class BaselineRepositoryImpl implements BaselineRepository {
             baseline = getFile(baselineCandidateName, baselineDirectory);
         } catch (FileNotFoundException e) {
             try {
-                baseline = createBaseline(baselineCandidateName);
+                baseline = createBaseline(baselineCandidateName + TXT_EXTENSION);
             } catch (BaselineCreationFailedException ex) {
                 throw new BaselineCreationFailedException(baselineCandidateName);
             }

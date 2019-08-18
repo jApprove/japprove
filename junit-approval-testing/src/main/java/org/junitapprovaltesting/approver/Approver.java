@@ -2,8 +2,8 @@ package org.junitapprovaltesting.approver;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
 import org.junitapprovaltesting.differ.Differ;
+import org.junitapprovaltesting.engine.ApprovalTestingEngine;
 import org.junitapprovaltesting.exceptions.*;
 import org.junitapprovaltesting.model.BaselineCandidate;
 import org.junitapprovaltesting.repositories.BaselineRepositoryImpl;
@@ -15,11 +15,11 @@ public class Approver {
 
     private static Logger LOGGER = LogManager.getLogger(Approver.class);
     private BaselineRepositoryImpl baselineRepository;
-    private ApprovalTestingConfiguration config;
+    private Differ differ;
 
-    public Approver() {
-        config = new ApprovalTestingConfiguration();
-        baselineRepository = new BaselineRepositoryImpl(config);
+    public Approver(ApprovalTestingEngine approvalTestingEngine) {
+        this.baselineRepository = (BaselineRepositoryImpl) approvalTestingEngine.getBaselineRepository();
+        this.differ = approvalTestingEngine.getDiffer();
     }
 
     /**
@@ -78,7 +78,6 @@ public class Approver {
         LOGGER.info("Found " + baselineCandidates.size() + " baseline candidates");
         LOGGER.info("Starting batch process ..");
         Scanner scanner = new Scanner(System.in);
-        Differ differ = new Differ();
         for (BaselineCandidate baselineCandidate : baselineCandidates) {
             LOGGER.info("Baseline candidate: " + baselineCandidate.getName());
             if (!baselineRepository.baselineExists(baselineCandidate)) {

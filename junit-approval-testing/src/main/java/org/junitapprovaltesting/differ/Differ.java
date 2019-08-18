@@ -1,6 +1,6 @@
 package org.junitapprovaltesting.differ;
 
-import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
+import org.junitapprovaltesting.engine.ApprovalTestingEngine;
 import org.junitapprovaltesting.exceptions.DiffingFailedException;
 import org.junitapprovaltesting.repositories.BaselineRepositoryImpl;
 
@@ -9,12 +9,12 @@ import java.io.IOException;
 
 public class Differ {
 
-    private ApprovalTestingConfiguration config;
     private BaselineRepositoryImpl baselineRepository;
+    private String pathToDiffTool;
 
-    public Differ() {
-        config = new ApprovalTestingConfiguration();
-        baselineRepository = new BaselineRepositoryImpl(config);
+    public Differ(ApprovalTestingEngine approvalTestingEngine, String pathToDiffTool) {
+        this.baselineRepository = (BaselineRepositoryImpl) approvalTestingEngine.getBaselineRepository();
+        this.pathToDiffTool = pathToDiffTool;
     }
 
     /**
@@ -35,12 +35,11 @@ public class Differ {
         } catch (IOException e) {
             throw new DiffingFailedException("Baseline " + baselineCandidateName + " not found!");
         }
-        String diffTool = config.getDiffTool();
-        String cmd = diffTool + " " + baselineCandidate.getPath() + " " + baseline.getPath();
+        String cmd = pathToDiffTool + " " + baselineCandidate.getPath() + " " + baseline.getPath();
         try {
             Runtime.getRuntime().exec(cmd);
         } catch (IOException e) {
-            throw new DiffingFailedException("Diff tool " + diffTool + " not found!");
+            throw new DiffingFailedException("Diff tool " + pathToDiffTool + " not found!");
         }
     }
 }

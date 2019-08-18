@@ -7,6 +7,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junitapprovaltesting.engine.ApprovalTestingEngine;
 import org.junitapprovaltesting.exceptions.BaselineCandidateCreationFailedException;
 import org.junitapprovaltesting.exceptions.BaselineNotFoundException;
 import org.junitapprovaltesting.exceptions.VerificationFailedException;
@@ -37,8 +38,8 @@ public class JsonVerifier extends Verifier {
     private List<String> ignoredFields = new ArrayList<>();
     private JsonNode baselineData;
 
-    public JsonVerifier(String baseline) {
-        super(baseline);
+    public JsonVerifier(ApprovalTestingEngine approvalTestingEngine) {
+        super(approvalTestingEngine);
         try {
             baselineData = baselineRepository.getContentOfJsonBaseline(baseline);
         } catch (BaselineNotFoundException e) {
