@@ -142,13 +142,13 @@ public class BaselineRepositoryImpl implements BaselineRepository {
     }
 
     @Override
-    public File getBaselineCandidateAsFile(String baselineCandidateName) throws IOException {
-        return getFile(baselineCandidateName, baselineCandidateDirectory);
+    public File getBaselineCandidateAsFile(String name) throws IOException {
+        return getFile(name, baselineCandidateDirectory);
     }
 
     @Override
-    public File getBaselineAsFile(String baseline) throws IOException {
-        return getFile(baseline, baselineDirectory);
+    public File getBaselineAsFile(String name) throws IOException {
+        return getFile(name, baselineDirectory);
     }
 
     private List<String> computeDifferences(TextFile revisedFile, TextFile originalFile) {

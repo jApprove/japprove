@@ -12,7 +12,6 @@ import org.junitapprovaltesting.repositories.BaselineRepositoryImpl;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -92,12 +91,13 @@ public class Differ {
      * @return a formatted string with the differences
      */
     public String getDifferences(JsonNode original, JsonNode revised) {
-        List<String> differences = new ArrayList<>();
+        StringBuilder differences = new StringBuilder();
         JsonNode changes = JsonDiff.asJson(original, revised);
         for (JsonNode change : changes) {
-            differences.add(visualizeChange(change, revised, original));
+            differences.append(visualizeChange(change, revised, original));
+            differences.append("\n");
         }
-        return formatDifferences(differences);
+        return differences.toString();
     }
 
     private String formatDifferences(List<String> differences) {

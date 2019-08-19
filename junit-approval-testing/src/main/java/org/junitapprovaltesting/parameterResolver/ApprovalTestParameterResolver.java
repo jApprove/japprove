@@ -36,8 +36,9 @@ public abstract class ApprovalTestParameterResolver {
     }
 
     private String createBaselineNameByHashCode(ExtensionContext extensionContext) {
-        long hashCode = Math.abs(extensionContext.getTestMethod().get().hashCode());
-        String filename = Long.toString(hashCode);
+        long hashCodeClass = Math.abs(extensionContext.getTestClass().get().hashCode());
+        long hashCodeMethod = Math.abs(extensionContext.getTestMethod().get().hashCode());
+        String filename = Long.toString(hashCodeClass) + hashCodeMethod;
         return filename;
     }
 

@@ -99,18 +99,18 @@ public interface BaselineRepository {
     /**
      * Returns the content of the baseline candidate in a file.
      *
-     * @param baselineCandidateName the name of the baseline candidate.
+     * @param name the name of the baseline candidate.
      * @return the content of the baseline candidate in a file.
      * @throws IOException in the case of problems with the created file.
      */
-    File getBaselineCandidateAsFile(String baselineCandidateName) throws IOException;
+    File getBaselineCandidateAsFile(String name) throws IOException;
 
     /**
      * Returns the content of the baseline in a file.
      *
-     * @param baseline the name of the baseline.
+     * @param name the name of the baseline.
      * @return the content of the baseline in a file.
      * @throws IOException in the case of problems with the created file.
      */
-    File getBaselineAsFile(String baseline) throws IOException;
+    File getBaselineAsFile(String name) throws IOException;
 }

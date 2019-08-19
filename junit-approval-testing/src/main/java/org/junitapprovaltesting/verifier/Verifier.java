@@ -9,13 +9,13 @@ import org.junitapprovaltesting.repositories.BaselineRepositoryImpl;
  */
 public abstract class Verifier {
 
-    String baseline;
+    String baselineName;
     BaselineRepositoryImpl baselineRepository;
     Differ differ;
 
     public Verifier(ApprovalTestingEngine approvalTestingEngine) {
         this.baselineRepository = (BaselineRepositoryImpl) approvalTestingEngine.getBaselineRepository();
-        this.baseline = approvalTestingEngine.getBaseline();
+        this.baselineName = approvalTestingEngine.getBaseline();
         this.differ = approvalTestingEngine.getDiffer();
     }
 

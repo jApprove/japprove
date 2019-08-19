@@ -14,7 +14,7 @@ import java.util.List;
 
 public class ApprovalTestingExample {
 
-    @ApprovalTest(baseline = "strings1")
+    @ApprovalTest()
     void simpleStringExample(StringVerifier stringVerifier) {
         // arrange
         String s = "Hello World";

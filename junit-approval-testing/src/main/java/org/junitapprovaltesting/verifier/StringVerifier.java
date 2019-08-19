@@ -18,15 +18,9 @@ import java.util.List;
 public class StringVerifier extends Verifier {
 
     private static final Logger LOGGER = LogManager.getLogger(StringVerifier.class);
-    private String baselineData;
 
     public StringVerifier(ApprovalTestingEngine approvalTestingEngine) {
         super(approvalTestingEngine);
-        try {
-            baselineData = baselineRepository.getContentOfTextBaseline(baseline);
-        } catch (BaselineNotFoundException e) {
-            baselineData = null;
-        }
     }
 
     /**
@@ -40,30 +34,25 @@ public class StringVerifier extends Verifier {
      * @param data The String that should be verified
      */
     public void verify(String data) {
-        LOGGER.info("Starting new approval test with baseline: " + baseline);
-        if (this.baselineData == null) {
+        LOGGER.info("Starting new approval test with baseline: " + baselineName);
+        String baselineData;
+        try {
+            baselineData = baselineRepository.getContentOfTextBaseline(baselineName);
+        } catch (BaselineNotFoundException e) {
             LOGGER.info("No approved version found");
             LOGGER.info("Creating new baseline candidate");
-            try {
-                baselineRepository.createBaselineCandidate(data, baseline);
-            } catch (BaselineCandidateCreationFailedException e) {
-                throw new VerificationFailedException("Internal error while creating baseline");
-            }
-            throw new VersionNotApprovedError(baseline);
+            createBaselineCandidate(data);
+            throw new VersionNotApprovedError(baselineName);
         }
-        if (!this.baselineData.equals(data)) {
+        if (!baselineData.equals(data)) {
             LOGGER.info("Current version is not equal to approved version");
             LOGGER.info("Create new baseline candidate");
-            String differences = differ.getDifferences(this.baselineData, data);
-            try {
-                baselineRepository.createBaselineCandidate(data, baseline);
-            } catch (BaselineCandidateCreationFailedException e) {
-                throw new VerificationFailedException("Internal error while creating baseline");
-            }
+            String differences = differ.getDifferences(baselineData, data);
+            createBaselineCandidate(data);
             throw new VerificationFailedError(differences);
         }
         LOGGER.info("Current version is equal to approved version");
-        baselineRepository.removeBaselineCandidate(baseline);
+        baselineRepository.removeBaselineCandidate(baselineName);
     }
 
     /**
@@ -79,5 +68,14 @@ public class StringVerifier extends Verifier {
     public void verify(List<String> data) {
         verify(String.join("\n", data));
     }
+
+    private void createBaselineCandidate(String data) {
+        try {
+            baselineRepository.createBaselineCandidate(data, baselineName);
+        } catch (BaselineCandidateCreationFailedException e) {
+            throw new VerificationFailedException("Internal error while creating baseline");
+        }
+    }
+
 
 }

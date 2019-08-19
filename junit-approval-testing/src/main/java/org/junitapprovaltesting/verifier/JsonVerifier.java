@@ -25,15 +25,9 @@ public class JsonVerifier extends Verifier {
 
     private static final Logger LOGGER = LogManager.getLogger(JsonVerifier.class);
     private List<String> ignoredFields = new ArrayList<>();
-    private JsonNode baselineData;
 
     public JsonVerifier(ApprovalTestingEngine approvalTestingEngine) {
         super(approvalTestingEngine);
-        try {
-            baselineData = baselineRepository.getContentOfJsonBaseline(baseline);
-        } catch (BaselineNotFoundException e) {
-            baselineData = null;
-        }
     }
 
     /**
@@ -47,16 +41,15 @@ public class JsonVerifier extends Verifier {
      * @param data The JsonNode that should be verified
      */
     public void verify(JsonNode data) {
-        LOGGER.info("Starting new approval test with baseline: " + baseline);
-        if (baselineData == null) {
+        LOGGER.info("Starting new approval test with baseline: " + baselineName);
+        JsonNode baselineData;
+        try {
+            baselineData = baselineRepository.getContentOfJsonBaseline(baselineName);
+        } catch (BaselineNotFoundException e) {
             LOGGER.info("No approved version found");
             LOGGER.info("Creating new baseline candidate");
-            try {
-                baselineRepository.createBaselineCandidate(data, baseline);
-            } catch (BaselineCandidateCreationFailedException e) {
-                throw new VerificationFailedException("Internal error while creating baseline");
-            }
-            throw new VersionNotApprovedError(baseline);
+            createBaselineCandidate(data);
+            throw new VersionNotApprovedError(baselineName);
         }
         JsonNode dataWithoutIgnoredFields = removeIgnoredFields(data);
         JsonNode baselineWithoutIgnoredFields = removeIgnoredFields(baselineData);
@@ -64,15 +57,11 @@ public class JsonVerifier extends Verifier {
             LOGGER.info("Current version is not equal to approved version");
             LOGGER.info("Create new baseline candidate");
             String differences = differ.getDifferences(baselineWithoutIgnoredFields, dataWithoutIgnoredFields);
-            try {
-                baselineRepository.createBaselineCandidate(data, baseline);
-            } catch (BaselineCandidateCreationFailedException e) {
-                throw new VerificationFailedException("Internal error while creating baseline");
-            }
+            createBaselineCandidate(data);
             throw new VerificationFailedError(differences);
         }
         LOGGER.info("Current version is equal to approved version");
-        baselineRepository.removeBaselineCandidate(baseline);
+        baselineRepository.removeBaselineCandidate(baselineName);
     }
 
     /**
@@ -85,6 +74,14 @@ public class JsonVerifier extends Verifier {
         LOGGER.info("Ignoring Json element in approval test: " + jsonPath);
         ignoredFields.add(jsonPath);
         return this;
+    }
+
+    private void createBaselineCandidate(JsonNode data) {
+        try {
+            baselineRepository.createBaselineCandidate(data, baselineName);
+        } catch (BaselineCandidateCreationFailedException e) {
+            throw new VerificationFailedException("Internal error while creating baseline");
+        }
     }
 
     private JsonNode removeIgnoredFields(JsonNode jsonToApprove) {

@@ -25,30 +25,21 @@ public class Approver {
     /**
      * Approves a baseline candidate by its name.
      *
-     * @param baselineCandidateName the name of the baseline candidate
+     * @param name the name of the baseline candidate
      */
-    public void approveBaselineCandidate(String baselineCandidateName) {
+    public void approveBaselineCandidate(String name) {
         try {
-            baselineRepository.copyBaselineCandidateToBaseline(baselineCandidateName);
+            baselineRepository.copyBaselineCandidateToBaseline(name);
         } catch (BaselineCandidateNotFoundException e) {
-            throw new ApprovingFailedException("Baseline candidate not found " + baselineCandidateName);
+            throw new ApprovingFailedException("Baseline candidate not found " + name);
         } catch (BaselineCreationFailedException e) {
-            throw new ApprovingFailedException("Cannot create baseline " + baselineCandidateName);
+            throw new ApprovingFailedException("Cannot create baseline " + name);
         } catch (CopyingFailedException e) {
             throw new ApprovingFailedException("Error while copying baseline candidate to baseline");
         }
-        if (baselineRepository.removeBaselineCandidate(baselineCandidateName)) {
-            LOGGER.info("Successfully approved file " + baselineCandidateName);
+        if (baselineRepository.removeBaselineCandidate(name)) {
+            LOGGER.info("Successfully approved file " + name);
         }
-    }
-
-    /**
-     * Approves a baseline candidate.
-     *
-     * @param baselineCandidate the baseline candidate
-     */
-    public void approveBaselineCandidate(BaselineCandidate baselineCandidate) {
-        approveBaselineCandidate(baselineCandidate.getName());
     }
 
     /**
@@ -62,7 +53,7 @@ public class Approver {
         }
         LOGGER.info("Found " + baselineCandidates.size() + " baseline candidates");
         for (BaselineCandidate baselineCandidate : baselineCandidates) {
-            approveBaselineCandidate(baselineCandidate);
+            approveBaselineCandidate(baselineCandidate.getName());
         }
     }
 
@@ -79,29 +70,29 @@ public class Approver {
         LOGGER.info("Starting batch process ..");
         Scanner scanner = new Scanner(System.in);
         for (BaselineCandidate baselineCandidate : baselineCandidates) {
-            LOGGER.info("Baseline candidate: " + baselineCandidate.getName());
+            System.out.println("Baseline candidate: " + baselineCandidate.getName());
             if (!baselineRepository.baselineExists(baselineCandidate)) {
-                LOGGER.info("No baseline exists");
-                LOGGER.info("Approve current version? (y/n)");
+                System.out.println("No baseline exists");
+                System.out.println("Approve current version? (y/n)");
                 if (userAcceptsRequest(scanner)) {
-                    approveBaselineCandidate(baselineCandidate);
+                    approveBaselineCandidate(baselineCandidate.getName());
                 }
                 continue;
             }
             try {
-                LOGGER.info("Differences:\n" + baselineRepository.getDifferences(baselineCandidate));
+                System.out.println("Differences:\n" + baselineRepository.getDifferences(baselineCandidate));
             } catch (BaselineCandidateNotFoundException e) {
                 throw new ApprovingFailedException("Baseline candidate not found " + baselineCandidate.getName());
             } catch (BaselineNotFoundException e) {
                 throw new ApprovingFailedException("Baseline not found " + baselineCandidate.getName());
             }
-            LOGGER.info("Show entire diff? (y/n)");
+            System.out.println("Show entire diff? (y/n)");
             if (userAcceptsRequest(scanner)) {
                 differ.callExternalDiffTool(baselineCandidate.getName());
             }
-            LOGGER.info("Approve current version? (y/n)");
+            System.out.println("Approve current version? (y/n)");
             if (userAcceptsRequest(scanner)) {
-                approveBaselineCandidate(baselineCandidate);
+                approveBaselineCandidate(baselineCandidate.getName());
             }
         }
         scanner.close();
