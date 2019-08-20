@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 import org.junitapprovaltesting.differ.Differ;
 import org.junitapprovaltesting.engine.ApprovalTestingEngine;
 import org.junitapprovaltesting.exceptions.*;
-import org.junitapprovaltesting.model.BaselineCandidate;
 import org.junitapprovaltesting.repositories.BaselineRepositoryImpl;
 
 import java.util.List;
@@ -46,14 +45,14 @@ public class Approver {
      * Approves all existing baseline candidates.
      */
     public void approveAllBaselineCandidates() {
-        List<BaselineCandidate> baselineCandidates = baselineRepository.getBaselineCandidates();
-        if (baselineCandidates.size() == 0) {
+        List<String> baselineCandidateNames = baselineRepository.getBaselineCandidateNames();
+        if (baselineCandidateNames.size() == 0) {
             LOGGER.info("Found no baseline candidates");
             return;
         }
-        LOGGER.info("Found " + baselineCandidates.size() + " baseline candidates");
-        for (BaselineCandidate baselineCandidate : baselineCandidates) {
-            approveBaselineCandidate(baselineCandidate.getName());
+        LOGGER.info("Found " + baselineCandidateNames.size() + " baseline candidates");
+        for (String baselineCandidate : baselineCandidateNames) {
+            approveBaselineCandidate(baselineCandidate);
         }
     }
 
@@ -61,38 +60,38 @@ public class Approver {
      * Starts a batch process to approve or diff all baseline candidates step by step.
      */
     public void startApprovingBatchProcess() {
-        List<BaselineCandidate> baselineCandidates = baselineRepository.getBaselineCandidates();
-        if (baselineCandidates.size() == 0) {
+        List<String> baselineCandidateNames = baselineRepository.getBaselineCandidateNames();
+        if (baselineCandidateNames.size() == 0) {
             LOGGER.info("Found no baseline candidates");
             return;
         }
-        LOGGER.info("Found " + baselineCandidates.size() + " baseline candidates");
+        LOGGER.info("Found " + baselineCandidateNames.size() + " baseline candidates");
         LOGGER.info("Starting batch process ..");
         Scanner scanner = new Scanner(System.in);
-        for (BaselineCandidate baselineCandidate : baselineCandidates) {
-            System.out.println("Baseline candidate: " + baselineCandidate.getName());
+        for (String baselineCandidate : baselineCandidateNames) {
+            System.out.println("Baseline candidate: " + baselineCandidate);
             if (!baselineRepository.baselineExists(baselineCandidate)) {
                 System.out.println("No baseline exists");
                 System.out.println("Approve current version? (y/n)");
                 if (userAcceptsRequest(scanner)) {
-                    approveBaselineCandidate(baselineCandidate.getName());
+                    approveBaselineCandidate(baselineCandidate);
                 }
                 continue;
             }
             try {
                 System.out.println("Differences:\n" + baselineRepository.getDifferences(baselineCandidate));
             } catch (BaselineCandidateNotFoundException e) {
-                throw new ApprovingFailedException("Baseline candidate not found " + baselineCandidate.getName());
+                throw new ApprovingFailedException("Baseline candidate not found " + baselineCandidate);
             } catch (BaselineNotFoundException e) {
-                throw new ApprovingFailedException("Baseline not found " + baselineCandidate.getName());
+                throw new ApprovingFailedException("Baseline not found " + baselineCandidate);
             }
             System.out.println("Show entire diff? (y/n)");
             if (userAcceptsRequest(scanner)) {
-                differ.callExternalDiffTool(baselineCandidate.getName());
+                differ.callExternalDiffTool(baselineCandidate);
             }
             System.out.println("Approve current version? (y/n)");
             if (userAcceptsRequest(scanner)) {
-                approveBaselineCandidate(baselineCandidate.getName());
+                approveBaselineCandidate(baselineCandidate);
             }
         }
         scanner.close();

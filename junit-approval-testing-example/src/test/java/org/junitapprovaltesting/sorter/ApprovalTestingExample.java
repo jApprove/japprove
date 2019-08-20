@@ -87,28 +87,30 @@ public class ApprovalTestingExample {
         jsonVerifier.ignore("$.store.book[*].price").verify(jsonNode);
     }
 
-//    @ApprovalTest(baseline = "restAPI")
+//    @ApprovalTest(baseline = "restApiTest")
 //    void restApiTest(JsonVerifier jsonVerifier) {
+//        String webService = "http://localhost:8080/tasks";
+//        JsonNode json = callWebService(webService);
+//        //jsonVerifier.verify(json);
+//        jsonVerifier.ignore("*.updatedAt").verify(json);
+//    }
 //
+//    private JsonNode callWebService(String webService) {
 //        ObjectMapper objectMapper = new ObjectMapper();
-//
-//        String service = "http://localhost:8080/info?info=test";
-//
+//        JsonNode json = null;
 //        try {
-//            URL url = new URL(service);
+//            URL url = new URL(webService);
 //            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 //            conn.setRequestMethod("GET");
 //            conn.setRequestProperty("Accept", "application/json");
-//
 //            BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-//
-//            jsonVerifier.ignore("$.id").ignore("$.date").verify(objectMapper.readTree(br.readLine()));
-//
+//            json = objectMapper.readTree(br.readLine());
 //            conn.disconnect();
 //        } catch (MalformedURLException e) {
 //            e.printStackTrace();
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
+//        return json;
 //    }
 }

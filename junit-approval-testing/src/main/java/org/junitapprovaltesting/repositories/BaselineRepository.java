@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.junitapprovaltesting.exceptions.*;
 import org.junitapprovaltesting.files.JsonFile;
 import org.junitapprovaltesting.files.TextFile;
-import org.junitapprovaltesting.model.BaselineCandidate;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,11 +40,11 @@ public interface BaselineRepository {
     boolean removeBaselineCandidate(String name);
 
     /**
-     * Returns a list of all {@link BaselineCandidate}s.
+     * Returns a list of all baseline candidates names.
      *
-     * @return a list of all {@link BaselineCandidate}s
+     * @return a list of all baseline candidates names.
      */
-    List<BaselineCandidate> getBaselineCandidates();
+    List<String> getBaselineCandidateNames();
 
     /**
      * Returns the content of the requested baseline.
@@ -80,21 +79,21 @@ public interface BaselineRepository {
     /**
      * Computes differences of the baseline candidate and the baseline.
      *
-     * @param baselineCandidate the baseline candidate
+     * @param baselineCandidateName the name of the baseline candidate
      * @return a string with the differences
      * @throws BaselineCandidateNotFoundException if the candidate of the baseline cannot be found
      * @throws BaselineNotFoundException          if the baseline cannot be found
      */
-    String getDifferences(BaselineCandidate baselineCandidate)
+    String getDifferences(String baselineCandidateName)
             throws BaselineCandidateNotFoundException, BaselineNotFoundException;
 
     /**
      * Returns true if the baseline exists and false otherwise.
      *
-     * @param baselineCandidate the baseline candidate for which the baseline should be found.
+     * @param baselineCandidateName the baseline candidate for which the baseline should be found.
      * @return true if the baseline exists and false otherwise.
      */
-    boolean baselineExists(BaselineCandidate baselineCandidate);
+    boolean baselineExists(String baselineCandidateName);
 
     /**
      * Returns the content of the baseline candidate in a file.

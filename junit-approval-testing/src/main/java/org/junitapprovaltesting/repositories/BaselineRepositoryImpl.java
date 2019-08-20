@@ -10,7 +10,6 @@ import org.junitapprovaltesting.config.ApprovalTestingConfiguration;
 import org.junitapprovaltesting.exceptions.*;
 import org.junitapprovaltesting.files.JsonFile;
 import org.junitapprovaltesting.files.TextFile;
-import org.junitapprovaltesting.model.BaselineCandidate;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -62,15 +61,15 @@ public class BaselineRepositoryImpl implements BaselineRepository {
     }
 
     @Override
-    public List<BaselineCandidate> getBaselineCandidates() {
+    public List<String> getBaselineCandidateNames() {
         File directory = new File(baselineCandidateDirectory);
-        List<BaselineCandidate> baselineCandidates = new ArrayList<>();
+        List<String> baselineCandidateNames = new ArrayList<>();
         if (directory.exists() && directory.listFiles() != null) {
             for (File file : directory.listFiles()) {
-                baselineCandidates.add(new BaselineCandidate(file.getName().replace(TXT_EXTENSION, "")));
+                baselineCandidateNames.add(file.getName().replace(TXT_EXTENSION, ""));
             }
         }
-        return baselineCandidates;
+        return baselineCandidateNames;
     }
 
     @Override
@@ -114,27 +113,27 @@ public class BaselineRepositoryImpl implements BaselineRepository {
     }
 
     @Override
-    public String getDifferences(BaselineCandidate baselineCandidate)
+    public String getDifferences(String baselineCandidateName)
             throws BaselineCandidateNotFoundException, BaselineNotFoundException {
         TextFile baselineCandidateFile;
         try {
-            baselineCandidateFile = getFile(baselineCandidate.getName(), baselineCandidateDirectory);
+            baselineCandidateFile = getFile(baselineCandidateName, baselineCandidateDirectory);
         } catch (FileNotFoundException e) {
-            throw new BaselineCandidateNotFoundException(baselineCandidate.getName());
+            throw new BaselineCandidateNotFoundException(baselineCandidateName);
         }
         TextFile baseline;
         try {
-            baseline = getFile(baselineCandidate.getName(), baselineDirectory);
+            baseline = getFile(baselineCandidateName, baselineDirectory);
         } catch (FileNotFoundException e) {
-            throw new BaselineNotFoundException(baselineCandidate.getName());
+            throw new BaselineNotFoundException(baselineCandidateName);
         }
         return formatDifferences(computeDifferences(baselineCandidateFile, baseline));
     }
 
     @Override
-    public boolean baselineExists(BaselineCandidate baselineCandidate) {
+    public boolean baselineExists(String baselineCandidateName) {
         try {
-            getFile(baselineCandidate.getName(), baselineDirectory);
+            getFile(baselineCandidateName, baselineDirectory);
         } catch (FileNotFoundException e) {
             return false;
         }
