@@ -13,7 +13,7 @@ apply plugin: 'differ-plugin'
 apply plugin: 'approver-plugin'
 
 group = 'org.junitapprovaltesting'
-version = '1.1'
+version = '1.2'
 
 sourceCompatibility = 1.8
 
