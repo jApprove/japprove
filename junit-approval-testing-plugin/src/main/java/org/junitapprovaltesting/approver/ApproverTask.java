@@ -11,10 +11,10 @@ import org.junitapprovaltesting.repositories.BaselineRepositoryImpl;
 public class ApproverTask extends DefaultTask {
 
     @Input
-    private String baseline;
+    private String baseline = "";
 
     @Input
-    private boolean approveAll;
+    private boolean approveAll = false;
 
     @Option(option = "baseline", description = "Provides the name of the baseline candidate that should be approved")
     public void setBaseline(String baseline) {
@@ -35,11 +35,19 @@ public class ApproverTask extends DefaultTask {
         Approver approver = approvalTestingEngine.getApprover();
         if(approveAll) {
             approver.approveAllBaselineCandidates();
-        } else if (baseline != null) {
+        } else if (baseline != "") {
             approver.approveBaselineCandidate(baseline);
         } else {
             approver.startApprovingBatchProcess();
         }
+    }
+
+    public String getBaseline() {
+        return baseline;
+    }
+
+    public boolean isApproveAll() {
+        return approveAll;
     }
 
 }

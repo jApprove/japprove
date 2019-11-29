@@ -31,4 +31,8 @@ public class DifferTask extends DefaultTask {
         differ.callExternalDiffTool(baseline);
     }
 
+    public String getBaseline() {
+        return baseline;
+    }
+
 }

@@ -23,9 +23,9 @@ repositories {
 }
 
 dependencies {
-    compile("org.junitapprovaltesting:junit-approval-testing:${junitApprovalTestingVersion}")
-    compile("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
-    compile("com.jayway.jsonpath:json-path:${jsonPathVersion}")
+    implementation("org.junitapprovaltesting:junit-approval-testing:${junitApprovalTestingVersion}")
+    implementation("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
+    implementation("com.jayway.jsonpath:json-path:${jsonPathVersion}")
 }
 
 test {

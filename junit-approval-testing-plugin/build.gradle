@@ -13,6 +13,6 @@ repositories {
 }
 
 dependencies {
-    compile("org.junitapprovaltesting:junit-approval-testing:${junitApprovalTestingVersion}")
+    implementation("org.junitapprovaltesting:junit-approval-testing:${junitApprovalTestingVersion}")
 }
 
