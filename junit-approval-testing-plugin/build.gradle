@@ -8,11 +8,32 @@ version = '1.2'
 sourceCompatibility = 1.8
 
 repositories {
-    mavenCentral()
     mavenLocal()
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/kklaeger/junit-approval-testing")
+    }
+    mavenCentral()
 }
 
 dependencies {
     implementation("org.junitapprovaltesting:junit-approval-testing:${junitApprovalTestingVersion}")
 }
 
+publishing {
+    publications {
+        approvalTestingPlugin(MavenPublication) {
+            from(components.java)
+        }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/kklaeger/junit-approval-testing")
+            credentials {
+                username = project.findProperty("github.username")
+                password = project.findProperty("github.token")
+            }
+        }
+    }
+}

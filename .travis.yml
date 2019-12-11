@@ -2,14 +2,14 @@ language: java
 
 jdk:
   - oraclejdk11
-
-script:
-  - (cd junit-approval-testing && gradle clean build install)
-  - (cd junit-approval-testing-plugin && gradle clean build publishToMavenLocal)
-  - (cd junit-approval-testing-example && gradle clean build)
-
+  
 cache:
   directories:
     - $HOME/.m2
     - $HOME/.gradle
+
+script:
+  - (cd junit-approval-testing && gradle clean build publishToMavenLocal)
+  - (cd junit-approval-testing-plugin && gradle clean build publishToMavenLocal)
+  - (cd junit-approval-testing-example && gradle clean build)
 

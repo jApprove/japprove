@@ -1,5 +1,4 @@
 apply plugin: 'java'
-apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
 group = 'org.junitapprovaltesting'
@@ -9,7 +8,6 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
-    mavenLocal()
 }
 
 dependencies {
@@ -24,9 +22,7 @@ dependencies {
     implementation("io.github.java-diff-utils:java-diff-utils:${javaDiffUtilsVersion}")
 
     implementation("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
-
     implementation("com.flipkart.zjsonpatch:zjsonpatch:${zjsonpatchVersion}")
-
     implementation("com.jayway.jsonpath:json-path:${jsonPathVersion}")
 }
 
@@ -36,4 +32,22 @@ test {
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+}
+
+publishing {
+    publications {
+        approvalTestingLibrary(MavenPublication) {
+            from(components.java)
+        }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/kklaeger/junit-approval-testing")
+            credentials {
+                username = project.findProperty("github.username")
+                password = project.findProperty("github.token")
+            }
+        }
+    }
 }

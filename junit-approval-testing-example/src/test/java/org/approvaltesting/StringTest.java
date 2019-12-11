@@ -11,13 +11,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StringTest {
 
-    @ApprovalTest(baseline = "formatNames")
-    void formatNames(StringVerifier stringVerifier) {
-        List<String> names = Arrays.asList("john", "P E T E R", "Bob", "Alice");
+    @ApprovalTest(baseline = "strings")
+    void formatString(StringVerifier verifier) {
+        List<String> names = Arrays.asList("BoB", "ALICE", "paul", "J O h N");
 
-        List<String> formattedNames = Formatter.formatStrings(names);
+        List<String> formattedStrings = Formatter.formatStrings(names);
 
-        stringVerifier.verify(formattedNames);
+        verifier.verify(formattedStrings);
     }
+
 
 }
