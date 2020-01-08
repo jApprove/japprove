@@ -3,7 +3,7 @@ apply plugin: 'java-gradle-plugin'
 apply plugin: 'maven-publish'
 
 group = 'org.junitapprovaltesting'
-version = '1.2'
+version = junitApprovalTestingVersion
 
 sourceCompatibility = 1.8
 

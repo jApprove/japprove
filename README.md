@@ -21,7 +21,7 @@ Currently, this Approval Testing framework contains the following features:
 
    ```
    dependencies {
-       compile("org.junitapprovaltesting:junit-approval-testing:1.2")
+       compile("org.junitapprovaltesting:junit-approval-testing:1.2.0-SNAPSHOT")
    }
    ```
 
@@ -34,7 +34,7 @@ Currently, this Approval Testing framework contains the following features:
            mavenLocal()
        }
        dependencies {
-           classpath("org.junitapprovaltesting:approval-testing-plugin:1.2")
+           classpath("org.junitapprovaltesting:approval-testing-plugin:1.2.0-SNAPSHOT")
        }
    }
 

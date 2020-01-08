@@ -4,16 +4,13 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.junitapprovaltesting:approval-testing-plugin:${junitApprovalTestingVersion}")
+        classpath("org.junitapprovaltesting:junit-approval-testing-plugin:${junitApprovalTestingVersion}")
     }
 }
 
 apply plugin: 'java'
 apply plugin: 'differ-plugin'
 apply plugin: 'approver-plugin'
-
-group = 'org.junitapprovaltesting'
-version = '1.2'
 
 sourceCompatibility = 1.8
 
