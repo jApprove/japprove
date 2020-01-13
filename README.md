@@ -1,7 +1,7 @@
-# JUnit Approval Testing
+# JApproval
 
-[![Build Status](https://travis-ci.com/kklaeger/junit-approval-testing.svg?branch=master)](https://travis-ci.com/kklaeger/junit-approval-testing)
-[![GitHub version](https://badge.fury.io/gh/kklaeger%2Fjunit-approval-testing.svg)](http://badge.fury.io/gh/kklaeger%2Fjunit-approval-testing)
+[![Build Status](https://travis-ci.com/kklaeger/japproval.svg?branch=master)](https://travis-ci.com/kklaeger/japproval)
+[![GitHub version](https://badge.fury.io/gh/kklaeger%2Fjapproval.svg)](http://badge.fury.io/gh/kklaeger%2Fjapproval)
 ![License](https://img.shields.io/badge/License-Apache%20License%202.0-brightgreen.svg)
 
 An extension of JUnit5 that enables approval testing for Java-based software.
@@ -22,7 +22,7 @@ Currently, this Approval Testing framework contains the following features:
 
    ```
    dependencies {
-       compile("org.junitapprovaltesting:junit-approval-testing:1.2.0-SNAPSHOT")
+       compile("org.japproval:japproval-core:1.2.0-SNAPSHOT")
    }
    ```
 
@@ -35,7 +35,7 @@ Currently, this Approval Testing framework contains the following features:
            mavenLocal()
        }
        dependencies {
-           classpath("org.junitapprovaltesting:approval-testing-plugin:1.2.0-SNAPSHOT")
+           classpath("org.japproval:japproval-gradle-plugin:1.2.0-SNAPSHOT")
        }
    }
 
@@ -80,9 +80,9 @@ Currently, this Approval Testing framework contains the following features:
    `gradle diff --baseline=sorting1`
 
 
-6. Customize approval testing properties (optional):
+6. Customize jApproval properties (optional):
 
-	Create a "approvaltesting.properties" file in the "src/main/resources" directory. In this file it is possible to specify the following values:
+	Create a "japproval.properties" file in the "src/main/resources" directory. In this file it is possible to specify the following values:
 	
 	- The directory of the baseline
 	- The temporary directory of the unapproved files
@@ -104,27 +104,27 @@ Currently, this Approval Testing framework contains the following features:
 
 This project consists of a core library, a gradle plugin and an example that demonstrates the functionality. Currently, the library and the plugin are not published. Therefore, it is necessary to build them manually.
 
-### JUnit Approval Testing
+### jApproval core
 
 The core part of the framework that provides the Approval Testing functionality. 
 
 ##### Publish to MavenLocal
 
 ```
-cd junit-approval-testing
+cd japproval-core
 gradle clean build install
 ``` 
 
-### JUnit Approval Testing Plugin
+### jApproval Gradle Plugin
 
 A gradle plugin that automates the "diff" and "approve" steps.
 
 ##### Publish to MavenLocal
 ```
-cd junit-approval-testing-plugin
+cd japproval-gradle-plugin
 gradle clean build publishToMavenLocal
 ``` 
 
-### JUnit Approval Testing Example
+### jApproval Example
 
 Uses the testing framework and the plugin to demonstrate the functionality on a simple example.

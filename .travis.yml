@@ -9,7 +9,7 @@ cache:
     - $HOME/.gradle
 
 script:
-  - (cd junit-approval-testing && gradle clean build publishToMavenLocal)
-  - (cd junit-approval-testing-plugin && gradle clean build publishToMavenLocal)
-  - (cd junit-approval-testing-example && gradle clean build)
+  - (cd japproval-core && gradle clean build publishToMavenLocal)
+  - (cd japproval-gradle-plugin && gradle clean build publishToMavenLocal)
+  - (cd japproval-example && gradle clean build)
 

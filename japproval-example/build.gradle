@@ -1,0 +1,34 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.japproval:japproval-gradle-plugin:${jApprovalVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'differ-plugin'
+apply plugin: 'approver-plugin'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation("org.japproval:japproval-core:${jApprovalVersion}")
+    implementation("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
+    implementation("com.jayway.jsonpath:json-path:${jsonPathVersion}")
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
