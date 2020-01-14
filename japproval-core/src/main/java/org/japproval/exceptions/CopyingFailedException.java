@@ -1,9 +1,12 @@
 package org.japproval.exceptions;
 
 /**
- * This Exception is thrown if the content of the baseline candidate cannot be copied to the baseline.
+ * This Exception is thrown if the content of the baseline candidate cannot be copied to the
+ * baseline.
  */
 public class CopyingFailedException extends Exception {
 
-    public CopyingFailedException(String message) {super(message);}
+    public CopyingFailedException(String message) {
+        super(message);
+    }
 }

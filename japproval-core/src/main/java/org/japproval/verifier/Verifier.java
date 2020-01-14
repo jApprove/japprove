@@ -14,9 +14,9 @@ public abstract class Verifier {
     Differ differ;
 
     public Verifier(ApprovalTestingEngine approvalTestingEngine) {
-        this.baselineRepository = (BaselineRepositoryImpl) approvalTestingEngine.getBaselineRepository();
+        this.baselineRepository =
+                (BaselineRepositoryImpl) approvalTestingEngine.getBaselineRepository();
         this.baselineName = approvalTestingEngine.getBaseline();
         this.differ = approvalTestingEngine.getDiffer();
     }
-
 }

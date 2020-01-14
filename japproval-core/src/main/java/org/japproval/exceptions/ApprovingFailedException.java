@@ -5,5 +5,8 @@ package org.japproval.exceptions;
  */
 public class ApprovingFailedException extends RuntimeException {
 
-    public ApprovingFailedException(String message) {super(message);}
+    public ApprovingFailedException(String message) {
+        super(message);
+    }
 }
+

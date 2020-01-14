@@ -5,5 +5,7 @@ package org.japproval.exceptions;
  */
 public class BaselineCreationFailedException extends Exception {
 
-    public BaselineCreationFailedException(String baseline) {super(baseline + " cannot be created");}
+    public BaselineCreationFailedException(String baseline) {
+        super(baseline + " cannot be created");
+    }
 }

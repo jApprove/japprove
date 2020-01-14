@@ -5,5 +5,7 @@ package org.japproval.exceptions;
  */
 public class VerificationFailedException extends RuntimeException {
 
-    public VerificationFailedException(String message) {super(message);}
+    public VerificationFailedException(String message) {
+        super(message);
+    }
 }

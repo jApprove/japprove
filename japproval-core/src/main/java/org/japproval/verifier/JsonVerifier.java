@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.japproval.engine.ApprovalTestingEngine;
@@ -13,13 +16,9 @@ import org.japproval.exceptions.VerificationFailedException;
 import org.japproval.exceptions.errors.VerificationFailedError;
 import org.japproval.exceptions.errors.VersionNotApprovedError;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * The {@code JsonVerifier} provides a method to verify JSON objects within Approval Tests. With its ignore method it
- * is also possible to ignore specific elements of a JSON object.
+ * The {@code JsonVerifier} provides a method to verify JSON objects within Approval Tests. With its
+ * ignore method it is also possible to ignore specific elements of a JSON object.
  */
 public class JsonVerifier extends Verifier {
 
@@ -32,11 +31,12 @@ public class JsonVerifier extends Verifier {
 
     /**
      * Receives a JsonNode that should be verified within an Approval Test.
-     * <p>
-     * Within the verification process, a baseline candidate is created in the baseline candidate's directory and
-     * compared to a {@code baseline} (if exists). In the case the versions are equal, the test passes. If no
-     * baseline exists, a {@code VersionNotApprovedError} is thrown. If there is a baseline that is not equal to the
-     * current version, a {@code VerificationFailedError} is thrown.
+     *
+     * <p>Within the verification process, a baseline candidate is created in the baseline
+     * candidate's directory and compared to a {@code baseline} (if exists). In the case the
+     * versions are equal, the test passes. If no baseline exists, a {@code VersionNotApprovedError}
+     * is thrown. If there is a baseline that is not equal to the current version, a {@code
+     * VerificationFailedError} is thrown.
      *
      * @param data The JsonNode that should be verified
      */
@@ -56,7 +56,8 @@ public class JsonVerifier extends Verifier {
         if (!baselineWithoutIgnoredFields.equals(dataWithoutIgnoredFields)) {
             LOGGER.info("Current version is not equal to approved version");
             LOGGER.info("Create new baseline candidate");
-            String differences = differ.getDifferences(baselineWithoutIgnoredFields, dataWithoutIgnoredFields);
+            String differences =
+                    differ.getDifferences(baselineWithoutIgnoredFields, dataWithoutIgnoredFields);
             createBaselineCandidate(data);
             throw new VerificationFailedError(differences);
         }
@@ -100,5 +101,4 @@ public class JsonVerifier extends Verifier {
             throw new RuntimeException("Error while reading Json String");
         }
     }
-
 }

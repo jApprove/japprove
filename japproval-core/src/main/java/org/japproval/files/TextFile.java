@@ -1,16 +1,16 @@
 package org.japproval.files;
 
-import org.japproval.exceptions.FileCreationFailedException;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import org.japproval.exceptions.FileCreationFailedException;
 
 /**
- * An extension of an {@link File} that provides functionality to read and write data of {@link TextFile}.
+ * An extension of an {@link File} that provides functionality to read and write data of {@link
+ * TextFile}.
  */
 public class TextFile extends File {
 
@@ -19,7 +19,7 @@ public class TextFile extends File {
     }
 
     /**
-     * Stores a String in the {@link TextFile}
+     * Stores a String in the {@link TextFile}.
      *
      * @param data the String that should be stored
      * @throws FileNotFoundException thrown if the file not exists
@@ -43,7 +43,7 @@ public class TextFile extends File {
     /**
      * Checks if the File already exists and creates a new one if not.
      *
-     * @throws IOException
+     * @throws IOException thrown if the file cannot be created
      */
     public void create() throws FileCreationFailedException {
         if (!exists()) {
@@ -58,5 +58,4 @@ public class TextFile extends File {
             }
         }
     }
-
 }

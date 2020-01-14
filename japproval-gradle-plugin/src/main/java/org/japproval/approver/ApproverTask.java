@@ -8,6 +8,9 @@ import org.japproval.config.ApprovalTestingConfiguration;
 import org.japproval.engine.ApprovalTestingEngine;
 import org.japproval.repositories.BaselineRepositoryImpl;
 
+/**
+ * The task that contains the options to approve one or more baseline candidates.
+ */
 public class ApproverTask extends DefaultTask {
 
     @Input
@@ -16,7 +19,8 @@ public class ApproverTask extends DefaultTask {
     @Input
     private boolean approveAll = false;
 
-    @Option(option = "baseline", description = "Provides the name of the baseline candidate that should be approved")
+    @Option(option = "baseline",
+            description = "Provides the name of the baseline candidate that should be approved")
     public void setBaseline(String baseline) {
         this.baseline = baseline;
     }
@@ -26,14 +30,20 @@ public class ApproverTask extends DefaultTask {
         this.approveAll = true;
     }
 
+    /**
+     * Approves all baseline candidates, a specific baseline or starts a batch process depending on
+     * the set options.
+     */
     @TaskAction
     public void approve() {
-        ApprovalTestingConfiguration approvalTestingConfiguration = new ApprovalTestingConfiguration();
-        BaselineRepositoryImpl baselineRepository = new BaselineRepositoryImpl(approvalTestingConfiguration);
+        ApprovalTestingConfiguration approvalTestingConfiguration =
+                new ApprovalTestingConfiguration();
+        BaselineRepositoryImpl baselineRepository =
+                new BaselineRepositoryImpl(approvalTestingConfiguration);
         ApprovalTestingEngine approvalTestingEngine =
                 new ApprovalTestingEngine(baselineRepository, approvalTestingConfiguration);
         Approver approver = approvalTestingEngine.getApprover();
-        if(approveAll) {
+        if (approveAll) {
             approver.approveAllBaselineCandidates();
         } else if (baseline != "") {
             approver.approveBaselineCandidate(baseline);
@@ -49,5 +59,4 @@ public class ApproverTask extends DefaultTask {
     public boolean isApproveAll() {
         return approveAll;
     }
-
 }

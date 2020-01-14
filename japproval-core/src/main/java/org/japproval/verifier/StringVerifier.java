@@ -1,6 +1,6 @@
 package org.japproval.verifier;
 
-
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.japproval.engine.ApprovalTestingEngine;
@@ -10,10 +10,9 @@ import org.japproval.exceptions.VerificationFailedException;
 import org.japproval.exceptions.errors.VerificationFailedError;
 import org.japproval.exceptions.errors.VersionNotApprovedError;
 
-import java.util.List;
-
 /**
- * The {@code StringVerifier} provides methods to verify String objects or String lists within Approval Tests.
+ * The {@code StringVerifier} provides methods to verify String objects or String lists within
+ * Approval Tests.
  */
 public class StringVerifier extends Verifier {
 
@@ -25,11 +24,11 @@ public class StringVerifier extends Verifier {
 
     /**
      * Receives a String that should be verified within an Approval Test.
-     * <p>
-     * Within the verification process, the passed data is compared to the data in the corresponding baseline. In the
-     * case the versions are equal, the test passes. If no baseline exists, a {@code VersionNotApprovedError} is
-     * thrown. If there is a baseline that is not equal to the current version, a {@code VerificationFailedError}
-     * is thrown.
+     *
+     * <p>Within the verification process, the passed data is compared to the data in the
+     * corresponding baseline. In the case the versions are equal, the test passes. If no baseline
+     * exists, a {@code VersionNotApprovedError} is thrown. If there is a baseline that is not equal
+     * to the current version, a {@code VerificationFailedError} is thrown.
      *
      * @param data The String that should be verified
      */
@@ -57,11 +56,11 @@ public class StringVerifier extends Verifier {
 
     /**
      * Receives a List of Strings that should be verified within an Approval Test.
-     * <p>
-     * Within the verification process, the passed data is compared to the data in the corresponding baseline. In the
-     * case the versions are equal, the test passes. If no baseline exists, a {@code VersionNotApprovedError} is
-     * thrown. If there is a baseline that is not equal to the current version, a {@code VerificationFailedError}
-     * is thrown.
+     *
+     * <p>Within the verification process, the passed data is compared to the data in the
+     * corresponding baseline. In the case the versions are equal, the test passes. If no baseline
+     * exists, a {@code VersionNotApprovedError} is thrown. If there is a baseline that is not equal
+     * to the current version, a {@code VerificationFailedError} is thrown.
      *
      * @param data The String that should be verified
      */
@@ -76,6 +75,4 @@ public class StringVerifier extends Verifier {
             throw new VerificationFailedException("Internal error while creating baseline");
         }
     }
-
-
 }

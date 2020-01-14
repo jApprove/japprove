@@ -1,23 +1,30 @@
 package org.japproval.approver;
 
+import java.util.List;
+import java.util.Scanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.japproval.differ.Differ;
 import org.japproval.engine.ApprovalTestingEngine;
-import org.japproval.exceptions.*;
+import org.japproval.exceptions.ApprovingFailedException;
+import org.japproval.exceptions.BaselineCandidateNotFoundException;
+import org.japproval.exceptions.BaselineCreationFailedException;
+import org.japproval.exceptions.BaselineNotFoundException;
+import org.japproval.exceptions.CopyingFailedException;
 import org.japproval.repositories.BaselineRepositoryImpl;
 
-import java.util.List;
-import java.util.Scanner;
-
+/**
+ * A central class that is responsible for approving a new version of a file.
+ */
 public class Approver {
 
-    private static Logger LOGGER = LogManager.getLogger(Approver.class);
+    private static final Logger LOGGER = LogManager.getLogger(Approver.class);
     private BaselineRepositoryImpl baselineRepository;
     private Differ differ;
 
     public Approver(ApprovalTestingEngine approvalTestingEngine) {
-        this.baselineRepository = (BaselineRepositoryImpl) approvalTestingEngine.getBaselineRepository();
+        this.baselineRepository =
+                (BaselineRepositoryImpl) approvalTestingEngine.getBaselineRepository();
         this.differ = approvalTestingEngine.getDiffer();
     }
 
@@ -34,7 +41,8 @@ public class Approver {
         } catch (BaselineCreationFailedException e) {
             throw new ApprovingFailedException("Cannot create baseline " + name);
         } catch (CopyingFailedException e) {
-            throw new ApprovingFailedException("Error while copying baseline candidate to baseline");
+            throw new ApprovingFailedException(
+                    "Error while copying baseline candidate to " + "baseline");
         }
         if (baselineRepository.removeBaselineCandidate(name)) {
             LOGGER.info("Successfully approved file " + name);
@@ -42,7 +50,7 @@ public class Approver {
     }
 
     /**
-     * Approves all existing baseline candidates.
+     * Approves all existing baseline candidates at once.
      */
     public void approveAllBaselineCandidates() {
         List<String> baselineCandidateNames = baselineRepository.getBaselineCandidateNames();
@@ -79,9 +87,11 @@ public class Approver {
                 continue;
             }
             try {
-                System.out.println("Differences:\n" + baselineRepository.getDifferences(baselineCandidate));
+                System.out.println(
+                        "Differences:\n" + baselineRepository.getDifferences(baselineCandidate));
             } catch (BaselineCandidateNotFoundException e) {
-                throw new ApprovingFailedException("Baseline candidate not found " + baselineCandidate);
+                throw new ApprovingFailedException(
+                        "Baseline candidate not found " + baselineCandidate);
             } catch (BaselineNotFoundException e) {
                 throw new ApprovingFailedException("Baseline not found " + baselineCandidate);
             }

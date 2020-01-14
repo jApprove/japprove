@@ -5,5 +5,7 @@ package org.japproval.exceptions;
  */
 public class DiffingFailedException extends RuntimeException {
 
-    public DiffingFailedException(String message) {super(message);}
+    public DiffingFailedException(String message) {
+        super(message);
+    }
 }

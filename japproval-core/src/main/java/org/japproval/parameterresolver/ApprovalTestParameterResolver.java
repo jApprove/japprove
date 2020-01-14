@@ -1,4 +1,4 @@
-package org.japproval.parameterResolver;
+package org.japproval.parameterresolver;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -11,12 +11,13 @@ public abstract class ApprovalTestParameterResolver {
 
     private static final String EMPTY_STRING = "";
     private static final String BACKSLASH = "\"";
-    ;
 
-    public abstract boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
+    public abstract boolean supportsParameter(ParameterContext parameterContext,
+                                              ExtensionContext extensionContext)
             throws ParameterResolutionException;
 
-    public abstract Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
+    public abstract Object resolveParameter(ParameterContext parameterContext,
+                                            ExtensionContext extensionContext)
             throws ParameterResolutionException;
 
     String getBaselineName(ExtensionContext extensionContext) {
@@ -29,8 +30,13 @@ public abstract class ApprovalTestParameterResolver {
     }
 
     private String getAnnotationParameter(ExtensionContext extensionContext) {
-        String declaredAnnotation = extensionContext.getTestMethod().get().getDeclaredAnnotations()[0].toString();
-        declaredAnnotation = declaredAnnotation.substring(declaredAnnotation.indexOf(BACKSLASH) + 1);
+        String declaredAnnotation = extensionContext
+                .getTestMethod()
+                .get()
+                .getDeclaredAnnotations()[0]
+                .toString();
+        declaredAnnotation = declaredAnnotation
+                .substring(declaredAnnotation.indexOf(BACKSLASH) + 1);
         declaredAnnotation = declaredAnnotation.substring(0, declaredAnnotation.indexOf(BACKSLASH));
         return declaredAnnotation;
     }
@@ -41,5 +47,4 @@ public abstract class ApprovalTestParameterResolver {
         String filename = Long.toString(hashCodeClass) + hashCodeMethod;
         return filename;
     }
-
 }

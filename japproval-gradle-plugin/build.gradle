@@ -1,6 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'maven-publish'
+apply plugin: 'checkstyle'
 
 group = 'org.japproval'
 version = jApprovalVersion
@@ -22,4 +23,9 @@ publishing {
             from(components.java)
         }
     }
+}
+
+checkstyle {
+    configFile file("qa/checkstyle/checkstyle.xml")
+    toolVersion = "8.28"
 }

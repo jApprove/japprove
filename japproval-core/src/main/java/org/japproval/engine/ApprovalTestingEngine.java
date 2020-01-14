@@ -22,7 +22,8 @@ public class ApprovalTestingEngine {
     }
 
     public ApprovalTestingEngine(BaselineRepository baselineRepository,
-                                 ApprovalTestingConfiguration approvalTestingConfiguration, String baseline) {
+                                 ApprovalTestingConfiguration approvalTestingConfiguration,
+                                 String baseline) {
         this.baselineRepository = baselineRepository;
         this.approvalTestingConfiguration = approvalTestingConfiguration;
         this.baseline = baseline;

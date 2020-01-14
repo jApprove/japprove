@@ -1,13 +1,16 @@
 package org.japproval.repositories;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.japproval.exceptions.*;
-import org.japproval.files.JsonFile;
-import org.japproval.files.TextFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import org.japproval.exceptions.BaselineCandidateCreationFailedException;
+import org.japproval.exceptions.BaselineCandidateNotFoundException;
+import org.japproval.exceptions.BaselineCreationFailedException;
+import org.japproval.exceptions.BaselineNotFoundException;
+import org.japproval.exceptions.CopyingFailedException;
+import org.japproval.files.JsonFile;
+import org.japproval.files.TextFile;
 
 /**
  * A central administration point for the baselines and the baseline candidates.
@@ -20,7 +23,8 @@ public interface BaselineRepository {
      * @param name The name of the current baseline
      * @throws BaselineCandidateCreationFailedException if the baseline candidate cannot be created
      */
-    void createBaselineCandidate(String data, String name) throws BaselineCandidateCreationFailedException;
+    void createBaselineCandidate(String data, String name)
+            throws BaselineCandidateCreationFailedException;
 
     /**
      * Creates a new {@link JsonFile} and writes the data into this file.
@@ -29,7 +33,8 @@ public interface BaselineRepository {
      * @param name The name of the current baseline
      * @throws BaselineCandidateCreationFailedException if the baseline candidate cannot be created
      */
-    void createBaselineCandidate(JsonNode data, String name) throws BaselineCandidateCreationFailedException;
+    void createBaselineCandidate(JsonNode data, String name)
+            throws BaselineCandidateCreationFailedException;
 
     /**
      * Removes an baseline candidate by its name.
@@ -70,11 +75,12 @@ public interface BaselineRepository {
      * @param baselineCandidateName the name of the baseline candidate
      * @throws BaselineCandidateNotFoundException if the candidate of the baseline cannot be found
      * @throws BaselineCreationFailedException    if the baseline cannot be created
-     * @throws CopyingFailedException             in the case the content of the baseline candidate cannot be copied
-     *                                            to the baseline
+     * @throws CopyingFailedException             in the case the content of the baseline candidate
+     *                                            cannot be copied to the baseline
      */
     void copyBaselineCandidateToBaseline(String baselineCandidateName)
-            throws BaselineCandidateNotFoundException, BaselineCreationFailedException, CopyingFailedException;
+            throws BaselineCandidateNotFoundException, BaselineCreationFailedException,
+            CopyingFailedException;
 
     /**
      * Computes differences of the baseline candidate and the baseline.

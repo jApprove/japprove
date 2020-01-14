@@ -5,5 +5,7 @@ package org.japproval.exceptions;
  */
 public class FileCreationFailedException extends Exception {
 
-    public FileCreationFailedException(String filename) {super(filename + " cannot be created");}
+    public FileCreationFailedException(String filename) {
+        super(filename + " cannot be created");
+    }
 }

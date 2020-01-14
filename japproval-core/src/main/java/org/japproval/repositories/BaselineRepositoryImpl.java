@@ -6,21 +6,32 @@ import com.github.difflib.DiffUtils;
 import com.github.difflib.UnifiedDiffUtils;
 import com.github.difflib.algorithm.DiffException;
 import com.github.difflib.patch.Patch;
-import org.japproval.config.ApprovalTestingConfiguration;
-import org.japproval.exceptions.*;
-import org.japproval.files.JsonFile;
-import org.japproval.files.TextFile;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.japproval.config.ApprovalTestingConfiguration;
+import org.japproval.exceptions.BaselineCandidateCreationFailedException;
+import org.japproval.exceptions.BaselineCandidateNotFoundException;
+import org.japproval.exceptions.BaselineCreationFailedException;
+import org.japproval.exceptions.BaselineNotFoundException;
+import org.japproval.exceptions.CopyingFailedException;
+import org.japproval.exceptions.DiffingFailedException;
+import org.japproval.exceptions.FileCreationFailedException;
+import org.japproval.files.JsonFile;
+import org.japproval.files.TextFile;
 
 /**
  * An implementation of the {@link BaselineRepository} with a text file based approach.
  */
 public class BaselineRepositoryImpl implements BaselineRepository {
 
-    private final String TXT_EXTENSION = ".txt";
+    static final String TXT_EXTENSION = ".txt";
     private String baselineDirectory;
     private String baselineCandidateDirectory;
 
@@ -30,8 +41,10 @@ public class BaselineRepositoryImpl implements BaselineRepository {
     }
 
     @Override
-    public void createBaselineCandidate(String data, String name) throws BaselineCandidateCreationFailedException {
-        TextFile baselineCandidate = new TextFile(baselineCandidateDirectory + name + TXT_EXTENSION);
+    public void createBaselineCandidate(String data, String name)
+            throws BaselineCandidateCreationFailedException {
+        TextFile baselineCandidate =
+                new TextFile(baselineCandidateDirectory + name + TXT_EXTENSION);
         try {
             baselineCandidate.create();
             baselineCandidate.writeData(data);
@@ -41,8 +54,10 @@ public class BaselineRepositoryImpl implements BaselineRepository {
     }
 
     @Override
-    public void createBaselineCandidate(JsonNode data, String name) throws BaselineCandidateCreationFailedException {
-        JsonFile baselineCandidate = new JsonFile(baselineCandidateDirectory + name + TXT_EXTENSION);
+    public void createBaselineCandidate(JsonNode data, String name)
+            throws BaselineCandidateCreationFailedException {
+        JsonFile baselineCandidate =
+                new JsonFile(baselineCandidateDirectory + name + TXT_EXTENSION);
         try {
             baselineCandidate.create();
             baselineCandidate.writeData(data);
@@ -88,7 +103,8 @@ public class BaselineRepositoryImpl implements BaselineRepository {
 
     @Override
     public void copyBaselineCandidateToBaseline(String baselineCandidateName)
-            throws BaselineCandidateNotFoundException, BaselineCreationFailedException, CopyingFailedException {
+            throws BaselineCandidateNotFoundException, BaselineCreationFailedException,
+            CopyingFailedException {
         TextFile baselineCandidate;
         try {
             baselineCandidate = getFile(baselineCandidateName, baselineCandidateDirectory);
@@ -108,7 +124,8 @@ public class BaselineRepositoryImpl implements BaselineRepository {
         try {
             copyFiles(baselineCandidate, baseline);
         } catch (IOException e) {
-            throw new CopyingFailedException("Cannot copy content of " + baselineCandidateName + " to the baseline");
+            throw new CopyingFailedException(
+                    "Cannot copy content of " + baselineCandidateName + " to the baseline");
         }
     }
 
@@ -155,7 +172,8 @@ public class BaselineRepositoryImpl implements BaselineRepository {
             List<String> original = readFileLineByLine(originalFile.getPath());
             List<String> revised = readFileLineByLine(revisedFile.getPath());
             Patch<String> patch = DiffUtils.diff(original, revised);
-            return UnifiedDiffUtils.generateUnifiedDiff("Baseline", "toApprove", original, patch, 0);
+            return UnifiedDiffUtils
+                    .generateUnifiedDiff("Baseline", "toApprove", original, patch, 0);
         } catch (DiffException | IOException e) {
             throw new DiffingFailedException("Cannot compute differences! " + e);
         }
@@ -207,12 +225,14 @@ public class BaselineRepositoryImpl implements BaselineRepository {
         return baseline;
     }
 
-    private TextFile getFile(String baselineCandidateName, String directoryPath) throws FileNotFoundException {
+    private TextFile getFile(String baselineCandidateName, String directoryPath)
+            throws FileNotFoundException {
         File directory = new File(directoryPath);
         if (directory.exists() && directory.listFiles() != null) {
             for (File file : directory.listFiles()) {
-                if ((file.getPath().equals(directoryPath + baselineCandidateName)) ||
-                        (file.getPath().equals(directoryPath + baselineCandidateName + TXT_EXTENSION))) {
+                if ((file.getPath().equals(directoryPath + baselineCandidateName))
+                        || (file.getPath()
+                        .equals(directoryPath + baselineCandidateName + TXT_EXTENSION))) {
                     return new TextFile(file.getPath());
                 }
             }

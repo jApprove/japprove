@@ -3,14 +3,13 @@ package org.japproval.files;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.japproval.exceptions.FileCreationFailedException;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import org.japproval.exceptions.FileCreationFailedException;
 
 /**
- * {@code JsonFile} is a wrapper around TextFile that provides functionality to read and write data of
- * {@code JsonFile}s.
+ * {@code JsonFile} is a wrapper around TextFile that provides functionality to read and write data
+ * of {@code JsonFile}s.
  */
 public class JsonFile {
 
@@ -21,7 +20,7 @@ public class JsonFile {
     }
 
     /**
-     * Stores a {@link JsonNode} in the {@link JsonFile}
+     * Stores a {@link JsonNode} in the {@link JsonFile}.
      *
      * @param data the {@link JsonNode} that should be stored
      * @throws FileNotFoundException   thrown if the file not exists
