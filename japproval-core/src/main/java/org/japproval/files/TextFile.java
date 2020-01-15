@@ -43,7 +43,7 @@ public class TextFile extends File {
     /**
      * Checks if the File already exists and creates a new one if not.
      *
-     * @throws IOException thrown if the file cannot be created
+     * @throws FileCreationFailedException thrown if the file cannot be created
      */
     public void create() throws FileCreationFailedException {
         if (!exists()) {

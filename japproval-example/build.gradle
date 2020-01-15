@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.japproval:japproval-gradle-plugin:${jApprovalVersion}")
+        classpath("io.github.kklaeger:japproval-gradle-plugin:${jApprovalVersion}")
     }
 }
 
@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.japproval:japproval-core:${jApprovalVersion}")
+    implementation("io.github.kklaeger:japproval-core:${jApprovalVersion}")
     implementation("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
     implementation("com.jayway.jsonpath:json-path:${jsonPathVersion}")
 }
