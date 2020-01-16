@@ -20,9 +20,9 @@ repositories {
 }
 
 dependencies {
-    implementation("org.japprove:japprove-core:${jApproveVersion}")
-    implementation("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
-    implementation("com.jayway.jsonpath:json-path:${jsonPathVersion}")
+    testImplementation("org.japprove:japprove-core:${jApproveVersion}")
+    testImplementation("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
+    testImplementation("com.jayway.jsonpath:json-path:${jsonPathVersion}")
 }
 
 test {

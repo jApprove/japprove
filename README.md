@@ -6,7 +6,7 @@
 
 An extension of JUnit5 that enables approval testing for Java-based software.
 
-## Features:
+## Features
 
 Currently, this Approval Testing framework contains the following features:
 
@@ -25,7 +25,7 @@ Currently, this Approval Testing framework contains the following features:
        mavenCentral()
    }
    dependencies {
-       compile("org.japprove:japprove-core:1.2.0")
+       testImplementation("org.japprove:japprove-core:1.2.0")
    }
    ```
 
@@ -43,7 +43,6 @@ Currently, this Approval Testing framework contains the following features:
 
    apply plugin: 'differ-plugin'
    apply plugin: 'approver-plugin'
-   
    ```
 
 3. Add an Approval Test:
