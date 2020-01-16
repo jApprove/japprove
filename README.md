@@ -18,24 +18,26 @@ Currently, this Approval Testing framework contains the following features:
 
 ## Usage
 
-1. Use the Approval Testing Dependency:
+1. Use the jApprove Dependency that is located on the Maven Central Repository in the following way:
 
    ```
+   repositories {
+       mavenCentral()
+   }
    dependencies {
-       compile("org.japprove:japprove-core:1.2.0-SNAPSHOT")
+       compile("org.japprove:japprove-core:1.2.0")
    }
    ```
 
-2. Use the Approval Testing Gradle Plugin:
+2. Use the jApprove Gradle Plugin in the following way:
 
    ```
    buildscript {
        repositories {
            mavenCentral()
-           mavenLocal()
        }
        dependencies {
-           classpath("org.japprove:japprove-gradle-plugin:1.2.0-SNAPSHOT")
+           classpath("org.japprove:japprove-gradle-plugin:1.2.0")
        }
    }
 
@@ -61,13 +63,17 @@ Currently, this Approval Testing framework contains the following features:
    }
    ```
 
-4. Run the test to check if there are changes. These changes are printed in the error message.
+4. Run the test to check whether there are changes comparing to a previously approved version. In the case there are changes, they are printed in the error message. 
+
+    Note: If there is no approved version, the test fails anyway. In this case you first have to approve the current version. 
 
 5. Approve the failing tests with the following command:  
 
    `gradle approve`  
    
-   During a starting batch process it is possible to see all changes and approve each failing test. To approve the changes of all failing test at once, use the following command:
+   During a starting batch process it is possible to see all changes and approve each failing test.
+   
+   To approve the changes of all failing test at once, use the following command:
 
    `gradle approve --all`
 
@@ -75,12 +81,11 @@ Currently, this Approval Testing framework contains the following features:
 
    `gradle approve --baseline=sorting1`
 
-   To highlight the changes of a specific failing test, use for example:
+6. To get a better overview of all changes, it is possible to highlight the changes of a failing test within an external diff tool. Use for example:
 
    `gradle diff --baseline=sorting1`
 
-
-6. Customize jApprove properties (optional):
+7. Customize jApprove properties (optional):
 
 	Create a "japprove.properties" file in the "src/main/resources" directory. In this file it is possible to specify the following values:
 	
@@ -93,7 +98,7 @@ Currently, this Approval Testing framework contains the following features:
 	```
 	baselineDirectory=baselines\\
 	baselineCandidateDirectory=build\\baselineCandidates\\
-	diffTool=C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2019.1.3\\bin\\idea64 diff
+	diffTool=C:\\Program Files\\JetBrains\\IntelliJ IDEA Community Edition 2019.2.3\\bin\\idea64 diff
 
 	```
 	
@@ -102,28 +107,16 @@ Currently, this Approval Testing framework contains the following features:
   
 ## Components
 
-This project consists of a core library, a gradle plugin and an example that demonstrates the functionality. Currently, the library and the plugin are not published. Therefore, it is necessary to build them manually.
+This project consists of a core library, a gradle plugin and an example that demonstrates the functionality. 
 
-### jApprove core
+### jApprove Core
 
-The core part of the framework that provides the Approval Testing functionality. 
+The core part of this tool is an extension of the jUnit testing framework. It enables to use the @ApprovalTest annotation to mark a test as an approval test and run them like usual unit tests.
 
-##### Publish to MavenLocal
-
-```
-cd japprove-core
-gradle clean build install
-``` 
 
 ### jApprove Gradle Plugin
 
 A gradle plugin that automates the "diff" and "approve" steps.
-
-##### Publish to MavenLocal
-```
-cd japprove-gradle-plugin
-gradle clean build publishToMavenLocal
-``` 
 
 ### jApprove Example
 
