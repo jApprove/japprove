@@ -49,7 +49,7 @@ publishing {
                 }
                 developers {
                     developer {
-                        name = 'Konstantin Kläger'
+                        name = 'Konstantin Klaeger'
                         email = 'konstantin.klaeger@novatec-gmbh.de'
                     }
                 }
