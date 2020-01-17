@@ -45,43 +45,6 @@ public class ApprovalTestingConfiguration {
         loadProperties();
     }
 
-    private void loadProperties() {
-        Properties props = new Properties();
-        try {
-            props.load(new FileInputStream(APPROVAL_TESTING_PROPERTIES));
-            if (props.getProperty("baselineDirectory") == null) {
-                baselineDirectory = DEFAULT_BASELINE_DIRECTORY;
-            } else {
-                baselineDirectory = props
-                        .getProperty("baselineDirectory")
-                        .replace("\\", File.separator)
-                        .replace("/", File.separator);
-            }
-            if (props.getProperty("toApproveDirectory") == null) {
-                baselineCandidateDirectory = DEFAULT_BASELINE_CANDIDATE_DIRECTORY;
-            } else {
-                baselineCandidateDirectory = props
-                        .getProperty("baselineCandidateDirectory")
-                        .replace("\\", File.separator)
-                        .replace("/", File.separator);
-            }
-            if (props.getProperty("diffTool") == null) {
-                diffTool = DEFAULT_IDEA_DIFF;
-            } else {
-                diffTool = props
-                        .getProperty("diffTool")
-                        .replace("\\", File.separator)
-                        .replace("/", File.separator);
-            }
-            LOGGER.info("Loading properties from: " + APPROVAL_TESTING_PROPERTIES);
-        } catch (IOException e) {
-            baselineDirectory = DEFAULT_BASELINE_DIRECTORY;
-            baselineCandidateDirectory = DEFAULT_BASELINE_CANDIDATE_DIRECTORY;
-            diffTool = DEFAULT_IDEA_DIFF;
-            LOGGER.info("Using default properties");
-        }
-    }
-
     /**
      * Returns the path to the baseline directory.
      *
@@ -107,5 +70,53 @@ public class ApprovalTestingConfiguration {
      */
     public String getDiffTool() {
         return diffTool;
+    }
+
+    private void loadProperties() {
+        Properties props = new Properties();
+        try {
+            props.load(new FileInputStream(APPROVAL_TESTING_PROPERTIES));
+            if (props.getProperty("baselineDirectory") == null) {
+                baselineDirectory = DEFAULT_BASELINE_DIRECTORY;
+            } else {
+                String rawPath = props.getProperty("baselineDirectory");
+                baselineDirectory = formatPath(rawPath);
+            }
+            if (props.getProperty("toApproveDirectory") == null) {
+                baselineCandidateDirectory = DEFAULT_BASELINE_CANDIDATE_DIRECTORY;
+            } else {
+                baselineCandidateDirectory =
+                        formatPath(props.getProperty("baselineCandidateDirectory"));
+            }
+            if (props.getProperty("diffTool") == null) {
+                diffTool = DEFAULT_IDEA_DIFF;
+            } else {
+                diffTool = adaptFileSeparatorsToOperatingSystem(props.getProperty("diffTool"));
+            }
+            LOGGER.info("Loading properties from: " + APPROVAL_TESTING_PROPERTIES);
+        } catch (IOException e) {
+            baselineDirectory = DEFAULT_BASELINE_DIRECTORY;
+            baselineCandidateDirectory = DEFAULT_BASELINE_CANDIDATE_DIRECTORY;
+            diffTool = DEFAULT_IDEA_DIFF;
+            LOGGER.info("Using default properties");
+        }
+    }
+
+    private String formatPath(String path) {
+        String formattedPath;
+        formattedPath = adaptFileSeparatorsToOperatingSystem(path);
+        formattedPath = ensureTrailingFileSeparatorExists(formattedPath);
+        return formattedPath;
+    }
+
+    private String adaptFileSeparatorsToOperatingSystem(String path) {
+        return path.replace("\\", File.separator).replace("/", File.separator);
+    }
+
+    private String ensureTrailingFileSeparatorExists(String path) {
+        if (!path.endsWith(File.separator)) {
+            path += File.separator;
+        }
+        return path;
     }
 }

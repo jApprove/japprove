@@ -116,7 +116,7 @@ public class BaselineRepositoryImpl implements BaselineRepository {
             baseline = getFile(baselineCandidateName, baselineDirectory);
         } catch (FileNotFoundException e) {
             try {
-                baseline = createBaseline(baselineCandidateName + TXT_EXTENSION);
+                baseline = createBaseline(baselineCandidateName);
             } catch (BaselineCreationFailedException ex) {
                 throw new BaselineCreationFailedException(baselineCandidateName);
             }
@@ -216,7 +216,7 @@ public class BaselineRepositoryImpl implements BaselineRepository {
     }
 
     private TextFile createBaseline(String baselineName) throws BaselineCreationFailedException {
-        TextFile baseline = new TextFile(baselineDirectory + baselineName);
+        TextFile baseline = new TextFile(baselineDirectory + baselineName + TXT_EXTENSION);
         try {
             baseline.create();
         } catch (FileCreationFailedException e) {
