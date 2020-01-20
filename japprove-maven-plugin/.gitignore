@@ -4,15 +4,11 @@
 *.ipr
 .idea/
 
-# Gradle
-.gradle
+# Maven
 build/
-out/
+target/
 
 # Misc
 *.orig
 *.log
-
-# Application text files
-toApprove.txt
 
