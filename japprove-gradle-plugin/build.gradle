@@ -49,7 +49,7 @@ publishing {
                 }
                 developers {
                     developer {
-                        name = 'Konstantin Kläger'
+                        name = 'Konstantin Klaeger'
                         email = 'konstantin.klaeger@novatec-gmbh.de'
                     }
                 }
@@ -69,7 +69,9 @@ publishing {
     }
     repositories {
         maven {
-            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            def releaseUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+            url = version.endsWith('SNAPSHOT') ? snapshotUrl : releaseUrl
             credentials {
                 username project.property('publishing.sonatype.username')
                 password project.property('publishing.sonatype.password')
