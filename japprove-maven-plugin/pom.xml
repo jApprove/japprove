@@ -5,7 +5,7 @@
 
     <groupId>org.japprove</groupId>
     <artifactId>japprove-maven-plugin</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>org.japprove:japprove-maven-plugin</name>
@@ -26,7 +26,7 @@
         <version.maven.gpg>1.6</version.maven.gpg>
         <version.maven.source>3.2.1</version.maven.source>
         <version.maven.javadoc>3.1.1</version.maven.javadoc>
-        <version.japprove>1.2.0</version.japprove>
+        <version.japprove>1.2.1-SNAPSHOT</version.japprove>
         <version.checkstyle>8.28</version.checkstyle>
         <version.sonatype>1.6.8</version.sonatype>
     </properties>
