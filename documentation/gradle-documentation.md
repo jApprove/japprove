@@ -69,13 +69,13 @@ public class StringFormatterTest {
 }
 ```
 
-The test can be started like a usual JUnit test (e.g. by clicking a button within an IDE). Because there is no approved version, the test obviously fails the first time. As a side effect, the file _simpleSorting.txt_ has been created in the _build/baselineCandidates/_ directory. This directory is used to store all unapproved versions. To approve this version, use the following command: 
+The test can be started like a usual JUnit test (e.g. by clicking a button within an IDE). Because there is no approved version, the test obviously fails the first time. As a side effect, the file _strings.txt_ has been created in the _build/baselineCandidates/_ directory. This directory is used to store all unapproved versions. To approve this version, use the following command: 
 
 `gradle approve --baseline=strings`
 
 With the `gradle approve` command the approve function of the Gradle-Plugin is called. The --baseline option is used to specify the baseline of the respective test case. In this case `--baseline=strings`. 
 
-Finally, if the test is started again, it passes successfully. Meanwhile, the file _simpleSorting.txt_ has been moved from _build/baselineCandidates/_ directory to a new _baselines/_ directory where all approved versions are stored.
+Finally, if the test is started again, it passes successfully. Meanwhile, the file _strings.txt_ has been moved from _build/baselineCandidates/_ directory to a new _baselines/_ directory where all approved versions are stored.
 
 If you make some changes to the the code (e.g. refactoring, remodularization, ...), you can simply rerun the test to verify that the behaviour of the method is still the same. If there are changes, the test fails and the the error message shows the differences. At this point you are also able to approve the new version, if the changes are accepted or even desired.
 
