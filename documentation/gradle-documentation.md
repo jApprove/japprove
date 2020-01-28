@@ -112,11 +112,11 @@ public class SimpleStatus {
 To create an Approval Test for this state, it is necessary to pass a JsonVerifier instead of a StringVerifier. The JsonVerifier is designed for JsonObjects and consists of a separate implementation. That means, for example, the order of the nodes does not matter and the test passes even if you change the order. Furthermore, it enables to ignore elements of the JSON object. For example a timestamp that is different every time the test is started can simply be excluded from the test by the usage of the ignore method.
 
 ```java
-public class SimpleStateTest {
+public class SimpleStatusTest {
 
-    @ApprovalTest(baseline = "json")
-    public void testGetState(JsonVerifier jsonVerifier) {
-        JsonNode state = SimpleState.getState();
+    @ApprovalTest(baseline = "status")
+    public void testGetStatus(JsonVerifier jsonVerifier) throws JsonProcessingException {
+        JsonNode state = SimpleStatus.getStatus();
         jsonVerifier.ignore("timestamp").verify(state);
     }
 }
