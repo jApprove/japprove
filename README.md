@@ -22,8 +22,8 @@ Currently, jApprove contains the following features:
 
 The usage of jApprove depends on the build tool that is used. Therefore, there are tutorials for Gradle- and Maven-based projects.
 
-* [Getting Started with jApprove (using Gradle)](documentation/gradle-documentation.md)
-* [Getting Started with jApprove (using Maven)](documentation/maven-documentation.md)
+* [Getting Started with Gradle](documentation/gradle-documentation.md)
+* [Getting Started with Maven](documentation/maven-documentation.md)
 
 
 ### Examples

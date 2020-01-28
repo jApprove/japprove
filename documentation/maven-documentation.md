@@ -111,18 +111,16 @@ To call this tool, use the following command:
 The test of JSON objects is very similar to the test of strings. But nevertheless, there are a few differences. To demonstrate them, a simple method that returns a simple mock state is used. The state is returned as JsonNode and consists of the actual state and a simple timestamp.
 
 ```java
-public class SimpleState {
+public class SimpleStatus {
 
-    public static JsonNode getState() {
-        String json = "{\"state\" : \"OK\"," + "\"timestamp\" : \"1579622991\"}";
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = null;
-        try {
-            jsonNode = objectMapper.readTree(json);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return jsonNode;
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    public static JsonNode getStatus() throws JsonProcessingException {
+        JSONObject json = new JSONObject();
+        json.put("statusCode", "200");
+        json.put("statusText", "OK");
+        json.put("timestamp", Instant.now());
+        return mapper.readTree(json.toString());
     }
 }
 ```

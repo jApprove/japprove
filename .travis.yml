@@ -10,5 +10,5 @@ cache:
 
 script:
   - (cd japprove-core && gradle clean build publishToMavenLocal)
-  - (cd japprove-gradle-plugin && gradle clean build publishToMavenLocal)
+  - (cd japprove-gradle-plugin && gradle clean build)
   - (cd japprove-maven-plugin && mvn clean install)
